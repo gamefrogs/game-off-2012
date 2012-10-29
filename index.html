@@ -1,49 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Game-off-2012 : Gamefrogs participation to the GitHub Game Off 2012" />
+    <title>Branch Off!</title>
+    <style type="text/css">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+* {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
 
-    <title>Game-off-2012</title>
+body {
+  background-color: #f0f0f0;
+}
+
+.buttonup {
+  border: 1px solid grey;
+  background-color: #e0e0e0;
+  display: inline-block;
+  padding: 2px 5px;
+}
+
+.buttonup a {
+  color: #000000;
+}
+
+.buttondown {
+  border: 1px solid grey;
+  background-color: #000000;
+  color: #e0e0e0;
+  display: inline-block;
+  padding: 2px 5px;
+}
+
+.buttondown a {
+  color: #e0e0e0;
+}
+
+    </style>
+    <script src="branchoff.js"></script>
   </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/gamefrogs/game-off-2012">View on GitHub</a>
-
-          <h1 id="project_title">Game-off-2012</h1>
-          <h2 id="project_tagline">Gamefrogs participation to the GitHub Game Off 2012</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/gamefrogs/game-off-2012/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/gamefrogs/game-off-2012/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>Work In Progress</h3>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Game-off-2012 maintained by <a href="https://github.com/gamefrogs">gamefrogs</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
+  <body onload="branchoff.start()">
+    <canvas id="view" width="600" height="600" >Sorry, no canvas, no game!</canvas><br>
+    <div class="buttonup" id="grow"><a href="javascript:branchoff.grow();">Grow</a></div>&nbsp;|
+    <div class="buttonup" id="push"><a href="javascript:branchoff.setMode('push');">Push</a></div>
+    <div class="buttonup" id="cut"><a href="javascript:branchoff.setMode('cut');">Cut</a></div>
+    <div class="buttonup" id="branch"><a href="javascript:branchoff.setMode('branch');">Branch</a></div>
   </body>
 </html>
