@@ -15,7 +15,7 @@ branchoff.renderTree = function(ctx, tree) {
           branchoff.renderSection(ctx, section);
         }
       } else {
-        branchoff.renderBackground(ctx, pos);
+        branchoff.renderBackground(ctx, pos, false);
       }
     }
   }
@@ -59,7 +59,7 @@ branchoff.renderSectionEnd = function(ctx, section) {
 branchoff.renderEnd = function(ctx, pos, srcdir) {
   var xd = pos.x * branchoff.CELLSIZE;
   var yd = (branchoff.MAXSIZE - 1 - pos.y) * branchoff.CELLSIZE;
-  branchoff.renderBackground(ctx, pos);
+  branchoff.renderBackground(ctx, pos, true);
   ctx.fillStyle = "#800000";
   switch (srcdir) {
   case branchoff.SOUTH:
@@ -102,7 +102,7 @@ branchoff.renderStraight = function(ctx, pos, srcdir, nobackground) {
   var xd = pos.x * branchoff.CELLSIZE;
   var yd = (branchoff.MAXSIZE - 1 - pos.y) * branchoff.CELLSIZE;
   if (!nobackground) {
-    branchoff.renderBackground(ctx, pos);
+    branchoff.renderBackground(ctx, pos, true);
   }
   ctx.fillStyle = "#800000";
   switch (srcdir) {
@@ -137,7 +137,7 @@ branchoff.renderCurve = function(ctx, pos, srcdir, destdir, nobackground) {
   var xd = pos.x * branchoff.CELLSIZE;
   var yd = (branchoff.MAXSIZE - 1 - pos.y) * branchoff.CELLSIZE;
   if (!nobackground) {
-    branchoff.renderBackground(ctx, pos);
+    branchoff.renderBackground(ctx, pos, true);
   }
   ctx.fillStyle = "#800000";
   ctx.beginPath();
@@ -253,11 +253,11 @@ branchoff.renderBud = function(ctx, pos, dir, alive) {
   ctx.fill();
 };
 
-branchoff.renderBackground = function(ctx, pos) {
+branchoff.renderBackground = function(ctx, pos, inTree) {
   var xd = pos.x * branchoff.CELLSIZE;
   var yd = (branchoff.MAXSIZE - 1 - pos.y) * branchoff.CELLSIZE;
-  ctx.fillStyle = "#00a000";
-  ctx.strokeStyle = "#009000";
+  ctx.fillStyle = (inTree ? "#00a000" : "#00d0d0");
+  ctx.strokeStyle = (inTree ? "#009000" : "#00c0c0");
   ctx.fillRect(xd, yd, branchoff.CELLSIZE, branchoff.CELLSIZE);
   ctx.globalAlpha = 0.5;
   ctx.strokeRect(xd + 0.5, yd + 0.5, branchoff.CELLSIZE - 1, branchoff.CELLSIZE - 1);
