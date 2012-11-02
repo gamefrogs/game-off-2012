@@ -60,6 +60,7 @@ branchoff.setMode = function(mode) {
 };
 
 branchoff.grow = function() {
+  var start = new Date().getTime();
   util.log("Growing...");
   branchoff.tree.grow();
   branchoff.renderTree(branchoff.ctx, branchoff.tree);

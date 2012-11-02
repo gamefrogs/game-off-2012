@@ -15,7 +15,7 @@ branchoff.renderTree = function(ctx, tree) {
           branchoff.renderSection(ctx, section);
         }
       } else {
-        branchoff.renderBackground(ctx, pos, false);
+        branchoff.renderBackground(ctx, pos, false, tree);
       }
     }
   }
@@ -253,12 +253,69 @@ branchoff.renderBud = function(ctx, pos, dir, alive) {
   ctx.fill();
 };
 
-branchoff.renderBackground = function(ctx, pos, inTree) {
+branchoff.COLOR_LEAVES = "#00a000";
+branchoff.COLOR_LEAVES_DARK = "#009000";
+branchoff.COLOR_SKY = "#00d0d0";
+branchoff.COLOR_SKY_DARK = "#00c0c0";
+
+branchoff.renderBackground = function(ctx, pos, inTree, tree) {
   var xd = pos.x * branchoff.CELLSIZE;
   var yd = (branchoff.MAXSIZE - 1 - pos.y) * branchoff.CELLSIZE;
-  ctx.fillStyle = (inTree ? "#00a000" : "#00d0d0");
-  ctx.strokeStyle = (inTree ? "#009000" : "#00c0c0");
+  ctx.fillStyle = (inTree ? branchoff.COLOR_LEAVES : branchoff.COLOR_SKY);
   ctx.fillRect(xd, yd, branchoff.CELLSIZE, branchoff.CELLSIZE);
+  ctx.strokeStyle = (inTree ? branchoff.COLOR_LEAVES_DARK : branchoff.COLOR_SKY_DARK);
+  branchoff.renderBorder(ctx, pos);
+
+  if (!inTree) {
+    branchoff.renderOutline(ctx, pos, tree);
+  }
+};
+
+branchoff.renderOutline = function(ctx, pos, tree) {
+  var xd = pos.x * branchoff.CELLSIZE;
+  var yd = (branchoff.MAXSIZE - 1 - pos.y) * branchoff.CELLSIZE;
+  ctx.fillStyle = branchoff.COLOR_LEAVES;
+  
+  // Above
+  if (tree.hasSectionAt(branchoff.nextPos(pos, branchoff.NORTH))) {
+    ctx.beginPath();
+    ctx.arc(xd + branchoff.CELLSIZE / 2, yd - branchoff.CELLSIZE / 2,
+            branchoff.CELLSIZE / Math.sqrt(2), Math.PI * 0.25, Math.PI * 0.75, false);
+    ctx.closePath();
+    ctx.fill();
+  }
+      
+  // Right
+  if (tree.hasSectionAt(branchoff.nextPos(pos, branchoff.EAST))) {
+    ctx.beginPath();
+    ctx.arc(xd + 3 * branchoff.CELLSIZE / 2, yd + branchoff.CELLSIZE / 2,
+            branchoff.CELLSIZE / Math.sqrt(2), Math.PI * 0.75, Math.PI * 1.25, false);
+    ctx.closePath();
+    ctx.fill();
+  }
+  
+  // Below
+  if (tree.hasSectionAt(branchoff.nextPos(pos, branchoff.SOUTH))) {
+    ctx.beginPath();
+    ctx.arc(xd + branchoff.CELLSIZE / 2, yd + 3 * branchoff.CELLSIZE / 2,
+            branchoff.CELLSIZE / Math.sqrt(2), -Math.PI * 0.75, -Math.PI * 0.25, false);
+    ctx.closePath();
+    ctx.fill();
+  }
+  
+  // Left
+  if (tree.hasSectionAt(branchoff.nextPos(pos, branchoff.WEST))) {
+    ctx.beginPath();
+    ctx.arc(xd - branchoff.CELLSIZE / 2, yd + branchoff.CELLSIZE / 2,
+            branchoff.CELLSIZE / Math.sqrt(2), -Math.PI * 0.25, Math.PI * 0.25, false);
+    ctx.closePath();
+    ctx.fill();
+  }
+};
+
+branchoff.renderBorder = function(ctx, pos) {
+  var xd = pos.x * branchoff.CELLSIZE;
+  var yd = (branchoff.MAXSIZE - 1 - pos.y) * branchoff.CELLSIZE;
   ctx.globalAlpha = 0.5;
   ctx.strokeRect(xd + 0.5, yd + 0.5, branchoff.CELLSIZE - 1, branchoff.CELLSIZE - 1);
   ctx.globalAlpha = 1;
