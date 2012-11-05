@@ -1,67 +1,5 @@
 "use strict";
 
-var util = {};
-
-util.nop = function() {};
-
-util.getPagePosition = function(elem) {
-  var x = 0;
-  var y = 0;
-  var e = elem;
-  while (e) {
-    x += e.offsetLeft;
-    y += e.offsetTop;
-    e = e.offsetParent;
-  }
-  return {x: x, y: y};
-};
-
-util.init = function() {
-  util.initLog();
-  util.initScroll();
-};
-
-util.initLog = function() {
-  if (!window.console) {
-    if (window.opera) {
-      util.log = opera.postError;
-    } else {
-      util.log = util.nop;
-    }
-  } else if (console.log["apply"]) {
-    // Chrome does not allow direct aliasing of console.log... but console.log is a normal
-    //  javascript function with an "apply" method
-    util.log = function() { console.log.apply(console, arguments); };
-  } else {
-    // IE9 has console.log, but it's not a real function: no apply available
-    // Also, arguments is not a real array, so no join()...
-    // And it's only available when developer tools are open
-    util.log = function() { var args = [];
-                            for (var i in arguments) args.push(arguments[i]);
-                            console.log(args.join(" "));
-                          };
-  }
-};
-
-util.initScroll = function() {
-  if (window.scrollX !== undefined) {
-    util.windowScrollX = function() {
-      return window.scrollX;
-    };
-    util.windowScrollY = function() {
-      return window.scrollY;
-    };
-  } else {
-    // This is for Internet Explorer
-    util.windowScrollX = function() {
-      return document.body.parentNode.scrollLeft;
-    };
-    util.windowScrollY = function() {
-      return document.body.parentNode.scrollTop;
-    };
-  }
-};
-
 var branchoff = {};
 
 branchoff.Pair = function(x, y) {
@@ -231,3 +169,142 @@ branchoff.Tree.prototype.growSection = function(section) {
 };
 
 
+// A "level" object contains specific condition of the level:
+// - width   number of cells in width
+// - height  number of cells in height
+// - actions object containing the number of allowed actions of each type (null for unlimited):
+//   - push
+//   - but
+//   - branch
+//   - grow
+
+branchoff.ACTIONS = ["push", "cut", "branch", "grow"];
+
+// Class representing one game in progress
+branchoff.Game = function(level) {
+  this.level = level;
+  // Duplicate values from the level definition to allow decrementing during play
+  this.actions = {};
+  for (var a = 0; a < branchoff.ACTIONS.length; ++a) {
+    var action = branchoff.ACTIONS[a];
+    if (action in level.actions) {
+      this.actions[action] = level.actions[action];
+    } else {
+      this.actions[action] = null;
+    }
+  }
+
+  this.tree = new branchoff.Tree();
+  // TODO: initialize with level definition
+  this.tree.addSection(new branchoff.Section(new branchoff.Pair(7, 0), branchoff.SOUTH,
+                                             branchoff.SECTION_STRAIGHT, branchoff.BUD_ALIVE));
+
+};
+
+branchoff.Game.prototype.actionCount = function(action) {
+  return this.actions[action];
+};
+
+branchoff.Game.prototype.actionAllowed = function(action) {
+  var countOrNull = this.actionCount(action);
+  return (countOrNull === null) || (countOrNull > 0);
+};
+
+branchoff.Game.ACTION_CONSUMED = "ACTION_CONSUMED";
+branchoff.Game.ACTION_CANCELED = "ACTION_CANCELED";
+
+branchoff.Game.prototype.registerAction = function(action) {
+  // Should have checked actionAllowed() before
+  var countOrNull = this.actionCount(action);
+  if (countOrNull !== null) {
+    this.actions[action] -= 1;
+    this.notify({ type: branchoff.Game.ACTION_CONSUMED,
+                  src: this,
+                  action: action });
+  }
+};
+
+branchoff.Game.prototype.registerIfAllowed = function(action) {
+  var allowed = this.actionAllowed(action);
+  if (allowed) {
+    this.registerAction(action);
+  }
+  return allowed;
+};
+
+branchoff.Game.prototype.unregisterAction = function(action) {
+  var countOrNull = this.actionCount(action);
+  if (countOrNull !== null) {
+    this.actions[action] += 1;
+    this.notify({ type: branchoff.Game.ACTION_CANCELED,
+                  src: this,
+                  action: action });
+  }
+};
+
+branchoff.Game.prototype.applyAction = function(action, pos) {
+  var sections = this.tree.getSectionsAt(pos);
+  if (sections != null) {
+      
+    for (var s = 0; s < sections.length; ++s) {
+      var section = sections[s];
+      if (action === "cut") {
+        if (section.bud === branchoff.BUD_ALIVE) {
+          if (this.registerIfAllowed(action)) {
+            section.bud = branchoff.BUD_DEAD;
+          }
+        } else if (section.bud === branchoff.BUD_DEAD) {
+          section.bud = branchoff.BUD_ALIVE;
+          this.unregisterAction(action);
+        }
+        
+      } else if (action === "push") {
+        if (section.bud === branchoff.BUD_ALIVE) {
+          if (section.type === branchoff.SECTION_STRAIGHT) {
+            if (this.registerIfAllowed(action)) {
+              section.type = branchoff.SECTION_CURVE;
+              section.destdir1 = branchoff.rotateDirLeft(section.srcdir);
+            }
+            
+          } else if (section.type === branchoff.SECTION_CURVE) {
+            if (section.destdir1 === branchoff.rotateDirLeft(section.srcdir)) {
+              section.destdir1 = branchoff.oppositeDir(section.destdir1);
+            } else {
+              section.type = branchoff.SECTION_STRAIGHT;
+              this.unregisterAction(action);
+            }
+          }
+        }
+        
+      } else if (action === "branch") {
+        if (section.bud === branchoff.BUD_ALIVE) {
+          if ((section.type === branchoff.SECTION_STRAIGHT) ||
+              (section.type === branchoff.SECTION_CURVE)) {
+            if (this.registerIfAllowed(action)) {
+              if (section.type === branchoff.SECTION_CURVE) {
+                this.unregisterAction("push");
+              }
+              section.type = branchoff.SECTION_FORK;
+              section.destdir1 = branchoff.rotateDirRight(section.srcdir);
+              section.destdir2 = branchoff.rotateDirRight(section.destdir1);
+            }
+            
+          } else if (section.type === branchoff.SECTION_FORK) {
+            if (section.destdir2 === branchoff.rotateDirRight(section.destdir1)) {
+              if (section.destdir1 === branchoff.rotateDirRight(section.srcdir)) {
+                section.destdir2 = branchoff.rotateDirRight(section.destdir2);
+              } else {
+                section.type = branchoff.SECTION_STRAIGHT;
+                this.unregisterAction(action);
+              }
+            } else {
+              section.destdir1 = branchoff.rotateDirRight(section.destdir1);
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+Observable.makeObservable(branchoff.Game);
