@@ -1,10 +1,23 @@
 "use strict";
 
-var dt = {};
+var dt = dt || {};
 
 // Start function
 dt.start = function() {
   util.init();
+
+  var game = new dt.Game();
+  game.addObserver({
+    update: function(event) {
+      util.log("Game update", event);
+    }
+  });
+  game.changeState("toto");
+
+  var view = new dt.View(document.getElementById("gamearea"));
+  view.switchTo("result");
+
+  /*
   var view = document.getElementById("view");
   var ctx = view.getContext("2d");
 
@@ -14,16 +27,14 @@ dt.start = function() {
 
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, view.width, view.height);
-
-  var game;
-
+  
   view.addEventListener("mousedown", function(event) {
     dt.onClick(event, view, ctx, game);
   }, false);
 
   view.addEventListener("contextmenu", function(event) {
     event.preventDefault();
-  }, false);
+  }, false);*/
 };
 
 dt.onClick = function(event, view, ctx, game) {

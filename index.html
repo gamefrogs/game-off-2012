@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Branch Off!</title>
+    <title>Domino Trail</title>
     <style type="text/css">
 
 * {
@@ -16,11 +16,71 @@ body {
   background-color: #f0f0f0;
 }
 
+#gamearea {
+  width: 800px;
+  height: 600px;
+  border: 1px solid #808080;
+  font-family: Verdana, Arial, sans;
+  overflow: auto;
+  padding: 0;
+}
+
+.screen {
+  padding: 0;
+  margin: 0;
+  top: 0px;
+  left: 0px;
+  width: 800px;
+  height: 600px;
+}
+
+h1 {
+  margin: 0;
+}
+
+#splash {
+  background-color: pink;
+}
+#profile {
+  background-color: yellow;
+  display: none;
+}
+#menu {
+  background-color: grey;
+  display: none;
+}
+#round {
+  background-color: cyan;
+  display: none;
+}
+#result {
+  background-color: green;
+  display: none;
+}
+
     </style>
+    <!-- Generic utility functions -->
     <script src="util.js"></script>
+    <!-- 'Model' part of the game -->
+    <script src="model/game.js"></script>
+    <!-- 'View' part of the game -->
+    <script src="view/screens.js"></script>
+    <!-- Main entry point -->
     <script src="main.js"></script>
   </head>
   <body onload="dt.start()">
+    <div id="gamearea">
+      <!-- Splash screen -->
+      <div id="splash" class="screen"><center><h1>Domino Trail</h1></center></div>
+      <!-- Profile selection screen -->
+      <div id="profile" class="screen">Select profile...</div>
+      <!-- Level selection screen -->
+      <div id="menu" class="screen">Select level...</div>
+      <!-- Level round screen -->
+      <div id="round" class="screen">Play...</div>
+      <!-- Level result screen -->
+      <div id="result" class="screen">Success/Failure</div>
+    </div>
     <canvas id="view" width="600" height="600" >Sorry, no canvas, no game!</canvas><br>
   </body>
 </html>

@@ -64,16 +64,16 @@ util.initScroll = function() {
 
 
 // Observable pattern
-var Observable = function() {};
+util.Observable = function() {};
 
-Observable.prototype.addObserver = function(observer) {
+util.Observable.prototype.addObserver = function(observer) {
   if (!this.observers) {
     this.observers = [];
   }
   this.observers.push(observer);
 };
 
-Observable.prototype.removeObserver = function(observer) {
+util.Observable.prototype.removeObserver = function(observer) {
   if (this.observers) {
     for (var i = 0; i < this.observers.length; ++i) {
       if (this.observers[i] === observer) {
@@ -87,7 +87,7 @@ Observable.prototype.removeObserver = function(observer) {
   }
 };
 
-Observable.prototype.notify = function(event) {
+util.Observable.prototype.notify = function(event) {
   if (this.observers) {
     for (var i = 0; i < this.observers.length; ++i) {
       this.observers[i].update(event);
@@ -95,20 +95,19 @@ Observable.prototype.notify = function(event) {
   }
 };
 
-Observable.makeObservable = function(klass_or_obj) {
+util.Observable.makeObservable = function(klass_or_obj) {
+  var dest;
   if (typeof klass_or_obj == "function") {
-    var klass = klass_or_obj;
-    klass.prototype.addObserver = Observable.prototype.addObserver;
-    klass.prototype.removeObserver = Observable.prototype.removeObserver;
-    klass.prototype.notify = Observable.prototype.notify;
+    dest = klass_or_obj.prototype;
     
   } else if (typeof klass_or_obj == "object") {
-    var obj = klass_or_obj;
-    obj.addObserver = Observable.prototype.addObserver;
-    obj.removeObserver = Observable.prototype.removeObserver;
-    obj.notify = Observable.prototype.notify;
+    dest = klass_or_obj;
     
   } else {
     throw "Cannot make observable: " + klass_or_obj;
   }
+  
+  dest.addObserver = util.Observable.prototype.addObserver;
+  dest.removeObserver = util.Observable.prototype.removeObserver;
+  dest.notify = util.Observable.prototype.notify;
 };
