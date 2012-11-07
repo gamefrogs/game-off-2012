@@ -62,6 +62,19 @@ util.initScroll = function() {
   }
 };
 
+// 'Inheritance'
+util.extend = function(base, derived, onlyFunctions) {
+  var proto = (base instanceof Function) ? base.prototype : base;
+  var derivedProto = (derived instanceof Function) ? derived.prototype : derived;
+  for (var key in proto) {
+    if (proto.hasOwnProperty(key)) {
+      var value = proto[key];
+      if ((value instanceof Function) || !onlyFunctions) {
+        derivedProto[key] = value;
+      }
+    }
+  }
+};
 
 // Observable pattern
 util.Observable = function() {};
@@ -96,18 +109,5 @@ util.Observable.prototype.notify = function(event) {
 };
 
 util.Observable.makeObservable = function(klass_or_obj) {
-  var dest;
-  if (typeof klass_or_obj == "function") {
-    dest = klass_or_obj.prototype;
-    
-  } else if (typeof klass_or_obj == "object") {
-    dest = klass_or_obj;
-    
-  } else {
-    throw "Cannot make observable: " + klass_or_obj;
-  }
-  
-  dest.addObserver = util.Observable.prototype.addObserver;
-  dest.removeObserver = util.Observable.prototype.removeObserver;
-  dest.notify = util.Observable.prototype.notify;
+  util.extend(util.Observable, klass_or_obj);
 };

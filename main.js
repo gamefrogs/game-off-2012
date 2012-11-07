@@ -12,10 +12,10 @@ dt.start = function() {
       util.log("Game update", event);
     }
   });
-  game.changeState("toto");
 
-  var view = new dt.View(document.getElementById("gamearea"));
-  view.switchTo("result");
+  var view = new dt.View(document.getElementById("gamearea"), game);
+
+  game.changeState(dt.STATE_ROUND_SUCCESS);
 
   /*
   var view = document.getElementById("view");
