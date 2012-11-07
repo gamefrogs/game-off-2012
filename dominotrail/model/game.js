@@ -13,7 +13,8 @@ dt.STATE_ROUND_FAILURE =  "RoundFailure";  // Level round failure
 // Possible game events
 dt.EVENT_STATE_CHANGE   = "StateChange";
 dt.EVENT_PROFILE_CHANGE = "ProfileChange";
-
+dt.EVENT_CREATE_ROUND   = "CreateRound";
+dt.EVENT_DESTROY_ROUND  = "DestroyRound";
 
 // Top-level logic class. Singleton.
 dt.Game = function() {
@@ -51,14 +52,24 @@ dt.Game.prototype.chooseProfile = function(profileId) {
 
 dt.Game.prototype.startRound = function(levelId) {
   this.levelId = levelId;
-  this.round = levelId; // TODO: create a Round object from the level definition
+
+  // TODO: use the correct level definition
+  this.round = new dt.Round(dt.LEVELDEF1);
+  this.notify({ src: this,
+                type: dt.EVENT_CREATE_ROUND,
+                round: this.round });
+  
   this.changeState(dt.STATE_ROUND_LAYOUT);
 };
 
 dt.Game.prototype.quitRound = function() {
   this.levelId = -1;
-  this.round = null;
   this.changeState(dt.STATE_MENU);
+
+  this.notify({ src: this,
+                type: dt.EVENT_DESTROY_ROUND,
+                round: this.round });
+  this.round = null;
 };
 
 dt.Game.prototype.runRound = function() {
@@ -66,9 +77,14 @@ dt.Game.prototype.runRound = function() {
   // Program a random result in 1 second
   var that = this;
   window.setTimeout(function() {
-    that.endRound(Math.random() < 0);
+    that.round.level.notify({ src: that.round.level,
+                              type: "Dummy" });
+    window.setTimeout(function() {
+      that.endRound(Math.random() < 0);
+    },
+                      500);
   },
-                   1000);
+                    500);
 };
 
 dt.Game.prototype.endRound = function(success) {
