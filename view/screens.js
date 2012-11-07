@@ -10,6 +10,8 @@ dt.View = function(domRoot, game) {
   this.initEvents();
 };
 
+util.extend(util.Observable, dt.View);
+
 // IDs of page elements that represent the screens
 dt.View.SCREEN_SPLASH =  "splash";
 dt.View.SCREEN_PROFILE = "profile";

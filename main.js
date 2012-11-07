@@ -14,8 +14,9 @@ dt.start = function() {
   });
 
   var view = new dt.View(document.getElementById("gamearea"), game);
+  var controller = new dt.Controller(view, game);
 
-  game.changeState(dt.STATE_ROUND_SUCCESS);
+  //game.changeState(dt.STATE_ROUND_SUCCESS);
 
   /*
   var view = document.getElementById("view");
