@@ -2,6 +2,7 @@
 
 var util = {};
 
+util.global = this;
 util.nop = function() {};
 
 util.getPagePosition = function(elem) {
@@ -73,6 +74,47 @@ util.extend = function(base, derived, onlyFunctions) {
         derivedProto[key] = value;
       }
     }
+  }
+};
+
+// Dynamic constructor call, borrowed (and adapted) from
+// http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript
+util.applyConstructor = function(ctor, params) {
+  // Use a fake constructor function with the target constructor's
+  // `prototype` property to create the object with the right prototype
+  var dynCtor = function() {};
+  dynCtor.prototype = ctor.prototype;
+  var obj = new dynCtor();
+  
+  // Set the object's `constructor`
+  obj.constructor = ctor;
+  
+  // Call the constructor function
+  var newobj = ctor.apply(obj, params);
+  
+  // Use the returned object if there is one.
+  // Note that we handle the funky edge case of the `Function` constructor,
+  // thanks to Mike's comment below. Double-checked the spec, that should be
+  // the lot.
+  if ((newobj !== null) &&
+      (typeof newobj === "object" || typeof newobj === "function")) {
+    return newobj;
+    
+  } else {
+    return obj;
+  }
+}
+
+// Enum-like class and objects. enumClass should be a constructor taking id and name as arguments
+util.makeEnum = function(enumClass) {
+  enumClass.ALL = [];
+  for (var i = 1; i < arguments.length; i += 2) {
+    var id = arguments[i];
+    var name = arguments[i + 1];
+    var value = util.applyConstructor(enumClass, [id, name]);
+    enumClass.ALL[id] = value;
+    enumClass[name] = value;
+    enumClass[name + "_ID"] = id;
   }
 };
 

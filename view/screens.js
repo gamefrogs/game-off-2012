@@ -48,6 +48,11 @@ dt.View.prototype.initScreens = function() {
       screen.style.display = "none";
     }
   }
+
+  this.viewport = document.getElementById("viewport");
+  this.ctx = this.viewport.getContext("2d");
+  this.ctx.fillStyle = "#ffffff";
+  this.ctx.fillRect(5, 5, this.viewport.width - 10, this.viewport.height - 10);
 };
 
 dt.View.prototype.initEvents = function() {
