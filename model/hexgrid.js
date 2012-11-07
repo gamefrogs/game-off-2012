@@ -54,32 +54,43 @@ util.makeEnum(dt.Dir,
               6, "NONE");
 
 
-dt.Dir.prototype.left = function() {
-  if (this === dt.Dir.NONE) {
-    return this;
+dt.Dir.left = function(dir) {
+  if (dir === dt.Dir.NONE) {
+    return dir;
     
   } else {
-    return dt.Dir.ALL[(this.id + 5) % 6]; // -1 modulo 6
+    return dt.Dir.ALL[(dir.id + 5) % 6]; // -1 modulo 6
   }
 };
 
-dt.Dir.prototype.right = function() {
-  if (this === dt.Dir.NONE) {
-    return this;
+dt.Dir.right = function(dir) {
+  if (dir === dt.Dir.NONE) {
+    return dir;
     
   } else {
-    return dt.Dir.ALL[(this.id + 1) % 6]; // +1 modulo 6
+    return dt.Dir.ALL[(dir.id + 1) % 6]; // +1 modulo 6
   }
 };
 
-dt.Dir.prototype.opposite = function() {
-  if (this === dt.Dir.NONE) {
-    return this;
+dt.Dir.opposite = function(dir) {
+  if (dir === dt.Dir.NONE) {
+    return dir;
     
   } else {
-    return dt.Dir.ALL[(this.id + 3) % 6]; // +3 modulo 6
+    return dt.Dir.ALL[(dir.id + 3) % 6]; // +3 modulo 6
   }
 };
+
+dt.Dir.precompute = function() {
+  for (var k = 0; k < dt.Dir.ALL.length; ++k) {
+    var dir = dt.Dir.ALL[k];
+    dir.left = dt.Dir.left(dir);
+    dir.right = dt.Dir.right(dir);
+    dir.opposite = dt.Dir.opposite(dir);
+  }
+};
+
+dt.Dir.precompute();
 
 
 // Coordinates on hex grid ---------------
