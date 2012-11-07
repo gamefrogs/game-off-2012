@@ -72,6 +72,14 @@ dt.View.prototype.update = function(event) {
     if (event.type === dt.EVENT_STATE_CHANGE) {
       var nextScreen = dt.View.STATE_SCREENS[event.to];
       this.switchTo(nextScreen);
+
+    } else if (event.type === dt.EVENT_CREATE_ROUND) {
+      this.renderer = new dt.LevelRenderer(event.round.level, this.ctx);
+
+    } else if (event.type === dt.EVENT_DESTROY_ROUND) {
+      this.renderer.destroy();
+      this.renderer = null;
+      
     } else {
       util.log("Received unknown event from game", event);
     }

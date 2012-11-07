@@ -116,6 +116,10 @@ dt.Pos.prototype.dir = function(dir) {
 
 // Hexagonal grid ------------------------
 dt.Hexgrid = function(width, height) {
+  this.init(width, height);
+};
+
+dt.Hexgrid.prototype.init = function(width, height) {
   this.width = width;
   this.height = height;
   this.cells = [];
@@ -124,7 +128,7 @@ dt.Hexgrid = function(width, height) {
   }
 };
 
-dt.Hexgrid.prototype.inInside = function(pos) {
+dt.Hexgrid.prototype.isInside = function(pos) {
   return ((pos.x >= 0) && (pos.x < this.width) &&
           (pos.y >= 0) && (pos.y < this.height));
 };
@@ -135,4 +139,58 @@ dt.Hexgrid.prototype.getValue = function(pos) {
 
 dt.Hexgrid.prototype.setValue = function(pos, value) {
   this.cells[pos.y][pos.x] = value;
+};
+
+dt.Hexgrid.prototype.isInsideXY = function(x, y) {
+  return ((x >= 0) && (x < this.width) &&
+          (y >= 0) && (y < this.height));
+};
+
+dt.Hexgrid.prototype.getValueXY = function(x, y) {
+  return this.cells[y][x];
+};
+
+dt.Hexgrid.prototype.setValueXY = function(x, y, value) {
+  this.cells[y][x] = value;
+};
+
+// Hexagonal grid with cell edges ---------------------
+dt.Edgegrid = function(width, height) {
+  this.init(width, height);
+};
+
+util.extend(dt.Hexgrid, dt.Edgegrid);
+
+dt.Edgegrid.prototype.init = function(width, height) {
+  dt.Hexgrid.prototype.init.call(this, width, height);
+  this.edges = new dt.Hexgrid(width, height);
+  for (var x = 0; x < width; ++x) {
+    for (var y = 0; y < height; ++y) {
+      this.edges.setValueXY(x, y, []);
+    }
+  }
+};
+
+dt.Edgegrid.prototype.getEdgeXY = function(x, y, dir) {
+  var cellEdges = this.edges.getValueXY(x, y);
+  return cellEdges[dir.id];
+};
+
+dt.Edgegrid.prototype.setEdgeXY = function(x, y, dir, value) {
+  this.setEdge(new dt.Pos(x, y), dir, value);
+};
+
+dt.Edgegrid.prototype.getEdge = function(pos, dir) {
+  return this.getEdgeXY(pos.x, pos.y, dir);
+};
+
+dt.Edgegrid.prototype.setEdge = function(pos, dir, value) {
+  var cellEdges = this.edges.getValue(pos);
+  cellEdges[dir.id] = value;
+  // Put the same value for the opposite edge of the neighbour cell
+  var neighbour = pos.dir(dir);
+  if (this.isInside(neighbour)) {
+    cellEdges = this.edges.getValue(neighbour);
+    cellEdges[dir.opposite.id] = value;
+  }
 };
