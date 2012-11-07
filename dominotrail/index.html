@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Domino Trail</title>
+    <style type="text/css">
+
+* {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body {
+  background-color: #f0f0f0;
+}
+
+#gamearea {
+  width: 800px;
+  height: 600px;
+  border: 1px solid #808080;
+  font-family: Verdana, Arial, sans;
+  overflow: auto;
+  padding: 0;
+}
+
+.screen {
+  padding: 0;
+  margin: 0;
+  top: 0px;
+  left: 0px;
+  width: 800px;
+  height: 600px;
+  position: relative;
+}
+
+h1 {
+  margin: 0;
+}
+
+#splash {
+  background-color: pink;
+}
+#profile {
+  background-color: yellow;
+  display: none;
+}
+#menu {
+  background-color: grey;
+  display: none;
+}
+#round {
+  background-color: cyan;
+  display: none;
+}
+#result {
+  background-color: green;
+  display: none;
+}
+
+    </style>
+    <!-- Generic utility functions -->
+    <script src="util.js"></script>
+    <!-- 'Model' part of the game -->
+    <script src="model/hexgrid.js"></script>
+    <script src="model/game.js"></script>
+    <!-- 'View' part of the game -->
+    <script src="view/screens.js"></script>
+    <!-- 'Controller' part of the game -->
+    <script src="ctrl/controller.js"></script>
+    <!-- Main entry point -->
+    <script src="main.js"></script>
+  </head>
+  <body onload="dt.start()">
+    <div id="gamearea">
+      <!-- Splash screen -->
+      <div id="splash" class="screen">
+        <center><h1>Domino Trail</h1></center>
+        <a id="play" class="button" href="javascript:util.nop();">Play</a>
+      </div>
+
+
+      
+      <!-- Profile selection screen -->
+      <div id="profile" class="screen">
+        Select profile...
+        <a id="profile1" class="button" href="javascript:util.nop();">Profile 1</a>
+        <a id="profile2" class="button" href="javascript:util.nop();">Profile 2</a>
+        <a id="profile3" class="button" href="javascript:util.nop();">Profile 3</a>
+      </div>
+
+
+      
+      <!-- Level selection screen -->
+      <div id="menu" class="screen">Select level...
+        <a id="level1" class="button" href="javascript:util.nop();">Level 1</a>
+        <a id="level2" class="button" href="javascript:util.nop();">Level 2</a>
+        <a id="level3" class="button" href="javascript:util.nop();">Level 3</a>
+        <a id="level4" class="button" href="javascript:util.nop();">Level 4</a>
+        <a id="level5" class="button" href="javascript:util.nop();">Level 5</a>
+        <hr>
+        <a id="menu_back" class="button" href="javascript:util.nop();">Change profile</a>
+      </div>
+
+
+      
+      <!-- Level round screen -->
+      <div id="round" class="screen">
+        <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 200px; overflow: hidden; background-color: pink">
+          Tools
+          <hr>
+          <a id="round_run" class="button" href="javascript:util.nop();">Run</a>
+          <a id="round_quit" class="button" href="javascript:util.nop();">Quit level</a>
+        </div>
+        <canvas id="viewport" width="600" height="600"
+                style="position: absolute; top: 0; left: 200px">Sorry, no canvas, no game!</canvas>
+      </div>
+
+
+      
+      <!-- Level result screen -->
+      <div id="result" class="screen">Success/Failure
+        <hr>
+        <a id="next_level" class="button" href="javascript:util.nop();">Next level</a>
+        <a id="replay_level" class="button" href="javascript:util.nop();">Replay level</a>
+        <a id="result_quit" class="button" href="javascript:util.nop();">Quit to menu</a>
+      </div>
+
+
+      
+    </div>
+  </body>
+</html>
