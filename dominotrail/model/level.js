@@ -18,6 +18,10 @@ dt.LevelDef.prototype.isInside = function(pos) {
   return this.grid.isInside(pos);
 };
 
+dt.LevelDef.prototype.getValueXY = function(x, y) {
+  return this.grid.getValueXY(x, y);
+};
+
 dt.LevelDef.prototype.parseLevel = function(str) {
   var lines = str.split("\n");
   var edges = true;

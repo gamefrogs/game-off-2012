@@ -25,15 +25,17 @@ dt.LevelRenderer.prototype.destroy = function() {
 
 dt.LevelRenderer.prototype.initListeners = function() {
   var that = this;
-  this.mousemoveListener = function(event) {
-    that.mousemoveHandler(event);
+  this.mouseListener = function(event) {
+    that.mouseHandler(event);
   };
-  this.viewport.addEventListener("mousemove", this.mousemoveListener, false);
+  this.viewport.addEventListener("mousemove", this.mouseListener, false);
+  this.viewport.addEventListener("mouseout", this.mouseListener, false);
 };
 
 dt.LevelRenderer.prototype.exitListeners = function() {
-  this.viewport.removeEventListener("mousemove", this.mousemoveListener, false);
-  this.moveHandler = null;
+  this.viewport.removeEventListener("mousemove", this.mouseListener, false);
+  this.viewport.removeEventListener("mouseout", this.mouseListener, false);
+  this.mouseListener = null;
 };
 
 dt.LevelRenderer.prototype.render = function(ctx) {
@@ -42,7 +44,9 @@ dt.LevelRenderer.prototype.render = function(ctx) {
   var back = this.level.getBackground();
   for (var x = 0; x < back.getWidth(); ++x) {
     for (var y = 0; y < back.getHeight(); ++y) {
-      dt.LevelRenderer.renderCell(ctx, x, y);
+      var value = back.getValueXY(x, y);
+      var fill = "rgb(0, 0, " + ((+value) * 0x50) + ")";
+      dt.LevelRenderer.renderCell(ctx, x, y, fill);
     }
   }
 };
@@ -66,7 +70,7 @@ dt.LevelRenderer.getCellCenter = function(x, y) {
                     dt.DCY * y);
 };
 
-dt.LevelRenderer.renderCell = function(ctx, x, y) {
+dt.LevelRenderer.renderCell = function(ctx, x, y, fill) {
   ctx.beginPath();
   var center = dt.LevelRenderer.getCellCenter(x, y);
   var cx = center.x;
@@ -78,6 +82,10 @@ dt.LevelRenderer.renderCell = function(ctx, x, y) {
   ctx.lineTo(cx - dt.HX, cy + dt.HY);
   ctx.lineTo(cx, cy + 2 * dt.HY);
   ctx.closePath();
+  if (fill !== undefined) {
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
   ctx.strokeStyle = "#c0c0c0";
   ctx.stroke();
 };
@@ -111,14 +119,19 @@ dt.LevelRenderer.prototype.update = function(event) {
   this.render(this.ctx);
 };
 
-dt.LevelRenderer.prototype.mousemoveHandler = function(event) {
+dt.LevelRenderer.prototype.mouseHandler = function(event) {
   this.render(this.ctx);
 
+  if (event.type === "mouseout") {
+    return;
+  }
+  
   var mx = event.clientX + util.windowScrollX() - this.x0;
   var my = event.clientY + util.windowScrollY() - this.y0;
 
   var hcc = dt.LevelRenderer.getHexPosition(mx, my);
   if (this.level.isInside(hcc)) {
+    dt.LevelRenderer.renderCell(this.ctx, hcc.x, hcc.y, "#00ff00");
     var hc = dt.LevelRenderer.getCellCenter(hcc.x, hcc.y);
     var ctx = this.ctx;
     ctx.fillStyle = "#ff0000";
