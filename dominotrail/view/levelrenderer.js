@@ -45,8 +45,14 @@ dt.LevelRenderer.prototype.render = function(ctx) {
   for (var x = 0; x < back.getWidth(); ++x) {
     for (var y = 0; y < back.getHeight(); ++y) {
       var value = back.getValueXY(x, y);
-      var fill = "rgb(0, 0, " + ((+value) * 0x50) + ")";
+      var fill = "rgb(0, 0, " + (value * 0x40) + ")";
       dt.LevelRenderer.renderCell(ctx, x, y, fill);
+
+      if (this.level.getObjectXY(x, y) !== undefined) {
+        var hc = dt.LevelRenderer.getCellCenter(x, y);
+        ctx.fillStyle = "#ffc0c0";
+        ctx.fillRect(hc.x - 5, hc.y - 5, 11, 11);
+      }
     }
   }
 };
