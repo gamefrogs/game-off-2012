@@ -14,6 +14,14 @@ dt.LevelDef.prototype.getHeight = function() {
   return this.grid.height;
 };
 
+dt.LevelDef.prototype.isInside = function(pos) {
+  return this.grid.isInside(pos);
+};
+
+dt.LevelDef.prototype.getValueXY = function(x, y) {
+  return this.grid.getValueXY(x, y);
+};
+
 dt.LevelDef.prototype.parseLevel = function(str) {
   var lines = str.split("\n");
   var edges = true;
@@ -67,4 +75,8 @@ util.Observable.makeObservable(dt.Level);
 
 dt.Level.prototype.getBackground = function() {
   return this.def;
+};
+
+dt.Level.prototype.isInside = function(pos) {
+  return this.def.isInside(pos);
 };
