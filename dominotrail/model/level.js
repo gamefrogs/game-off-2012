@@ -146,7 +146,7 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
       var npos = pos.dir(dir);
       if (this.isInside(npos)) {
         var nobj = this.getObject(npos);
-        if ((nobj !== undefined) && (nobj.type === dt.TILE_DOMINO)) {
+        if ((nobj !== undefined) && nobj.isPossibleDestination(dir.opposite)) {
           // TODO also check the 'dest' of the object
           dirs.push(dir);
         }
@@ -154,6 +154,11 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
     }
   }
   return dirs;
+};
+
+dt.Level.prototype.canAddDomino = function(pos) {
+  var srcdirs = this.findIncomingDirs(pos);
+  return (srcdirs.length > 0);
 };
 
 dt.Level.prototype.addDomino = function(pos) {

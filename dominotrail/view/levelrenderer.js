@@ -93,6 +93,22 @@ dt.LevelRenderer.prototype.render = function() {
   }
 };
 
+dt.LevelRenderer.prototype.showLiveCells = function() {
+  var ctx = this.ctx;
+  var live = this.round.live;
+  for (var i = 0; i < live.length; ++i) {
+    var pos = live[i];
+    var hc = this.getCellCenter(pos.x, pos.y);
+    ctx.save();
+    ctx.fillStyle = "#008080";
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.arc(hc.x, hc.y, this.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
+    ctx.fill();
+    ctx.restore();
+  }
+};
+
 dt.squaredist = function(x0, y0, x1, y1) {
   return ((x1 - x0) * (x1 - x0)) + ((y1 - y0) * (y1 - y0));
 };
@@ -216,6 +232,9 @@ dt.LevelRenderer.prototype.getHexPosition = function(mx, my) {
 dt.LevelRenderer.prototype.update = function(event) {
   util.log("Renderer update", event);
   this.render();
+  if (event.type === dt.EVENT_ROUND_STEP_CHANGE) {
+    this.showLiveCells();
+  }
 };
 
 dt.LevelRenderer.prototype.mouseHandler = function(event) {
@@ -230,11 +249,20 @@ dt.LevelRenderer.prototype.mouseHandler = function(event) {
 
   var hcc = this.getHexPosition(mx, my);
   if (this.level.isInside(hcc)) {
-    this.renderCellBackground(hcc.x, hcc.y, undefined, "#000000", 2);
-    var hc = this.getCellCenter(hcc.x, hcc.y);
-    var ctx = this.ctx;
-    ctx.fillStyle = "#ff0000";
-    ctx.fillRect(hc.x - 2, hc.y - 2, 5, 5);
+    var canAdd = this.level.canAddDomino(hcc);
+    var borderColor = (canAdd ? "#000000" : "#ff0000");
+    this.renderCellBackground(hcc.x, hcc.y, undefined, borderColor, 2);
+    if (!canAdd) {
+      var ctx = this.ctx;
+      var hc = this.getCellCenter(hcc.x, hcc.y);
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = "#ff0000";
+      ctx.beginPath();
+      ctx.arc(hc.x, hc.y, this.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
+      ctx.fill();
+      ctx.restore();
+    }
   }
 
   if (event.type === "mousedown") {
