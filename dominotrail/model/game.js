@@ -55,6 +55,7 @@ dt.Game.prototype.startRound = function(levelId) {
 
   // TODO: use the correct level definition
   this.round = new dt.Round(dt.LEVELDEF1);
+  this.round.addObserver(this);
   this.notify({ src: this,
                 type: dt.EVENT_CREATE_ROUND,
                 round: this.round });
@@ -62,29 +63,33 @@ dt.Game.prototype.startRound = function(levelId) {
   this.changeState(dt.STATE_ROUND_LAYOUT);
 };
 
-dt.Game.prototype.quitRound = function() {
-  this.levelId = -1;
-  this.changeState(dt.STATE_MENU);
-
+dt.Game.prototype.destroyRound = function() {
   this.notify({ src: this,
                 type: dt.EVENT_DESTROY_ROUND,
                 round: this.round });
+  this.round.removeObserver(this);
   this.round = null;
+};
+
+dt.Game.prototype.quitRound = function() {
+  this.levelId = -1;
+  this.changeState(dt.STATE_MENU);
+  this.destroyRound();
 };
 
 dt.Game.prototype.runRound = function() {
   this.changeState(dt.STATE_ROUND_RUN);
-  // Program a random result in 1 second
+
+  this.round.start();
+  
   var that = this;
-  window.setTimeout(function() {
-    that.round.level.notify({ src: that.round.level,
-                              type: "Dummy" });
-    window.setTimeout(function() {
-      that.endRound(Math.random() < 0);
-    },
-                      500);
-  },
-                    500);
+  var stepFunc = function() {
+    var stillLive = that.round.runStep();
+    if (stillLive) {
+      window.setTimeout(stepFunc, 1000);
+    }
+  };
+  stepFunc();
 };
 
 dt.Game.prototype.endRound = function(success) {
@@ -96,9 +101,26 @@ dt.Game.prototype.endRound = function(success) {
 };
 
 dt.Game.prototype.nextRound = function() {
+  this.destroyRound();
   this.startRound(this.levelId + 1);
 };
 
 dt.Game.prototype.replayRound = function() {
+  this.destroyRound();
   this.startRound(this.levelId);
 };
+
+dt.Game.prototype.update = function(event) {
+  if (event.src === this.round) {
+    if (event.type === dt.EVENT_ROUND_STATUS_CHANGE) {
+      if (event.to === dt.ROUND_END_SUCCESS) {
+        this.endRound(true);
+      } else if (event.to == dt.ROUND_END_FAILURE) {
+        this.endRound(false);
+      }
+    }
+    util.log("Game received from Round", event);
+  } else {
+    util.log("Game received", event);
+  }
+}

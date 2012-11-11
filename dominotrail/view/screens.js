@@ -2,6 +2,9 @@
 
 var dt = dt || {};
 
+// Events dispatched by the view
+dt.EVENT_SWITCH_VIEW = "SwitchView";
+
 dt.View = function(domRoot, game) {
   this.root = domRoot;
   this.game = game;
@@ -60,23 +63,35 @@ dt.View.prototype.initEvents = function() {
 };
 
 dt.View.prototype.switchTo = function(name) {
-  if (this.current !== name) {
-    this[this.current].style.display = "none";
+  var old = this.current;
+  if (old !== name) {
+    this[old].style.display = "none";
     this.current = name;
-    this[this.current].style.display = "block";
+    this[name].style.display = "block";
+    this.notify({ src: this,
+                  type: dt.EVENT_SWITCH_VIEW,
+                  from: old,
+                  to: name });
   }
 };
 
 dt.View.prototype.update = function(event) {
   if (event.src === this.game) {
     if (event.type === dt.EVENT_STATE_CHANGE) {
+      var prevScreen = dt.View.STATE_SCREENS[event.from];
       var nextScreen = dt.View.STATE_SCREENS[event.to];
       this.switchTo(nextScreen);
+      
+      if ((nextScreen === dt.View.SCREEN_ROUND) && (prevScreen !== nextScreen)) {
+        this.renderer.init();
+      }
 
     } else if (event.type === dt.EVENT_CREATE_ROUND) {
-      this.renderer = new dt.LevelRenderer(event.round.level, this.ctx);
+      this.renderer = new dt.LevelRenderer(event.round, this.viewport, this.ctx);
+      this.controller = new dt.LevelController(event.round, this.renderer);
 
     } else if (event.type === dt.EVENT_DESTROY_ROUND) {
+      this.controller.destroy();
       this.renderer.destroy();
       this.renderer = null;
       
