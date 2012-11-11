@@ -78,16 +78,17 @@ dt.View.prototype.switchTo = function(name) {
 dt.View.prototype.update = function(event) {
   if (event.src === this.game) {
     if (event.type === dt.EVENT_STATE_CHANGE) {
+      var prevScreen = dt.View.STATE_SCREENS[event.from];
       var nextScreen = dt.View.STATE_SCREENS[event.to];
       this.switchTo(nextScreen);
       
-      if (nextScreen === dt.View.SCREEN_ROUND) {
+      if ((nextScreen === dt.View.SCREEN_ROUND) && (prevScreen !== nextScreen)) {
         this.renderer.init();
       }
 
     } else if (event.type === dt.EVENT_CREATE_ROUND) {
-      this.renderer = new dt.LevelRenderer(event.round.level, this.viewport, this.ctx);
-      this.controller = new dt.LevelController(event.round.level, this.renderer);
+      this.renderer = new dt.LevelRenderer(event.round, this.viewport, this.ctx);
+      this.controller = new dt.LevelController(event.round, this.renderer);
 
     } else if (event.type === dt.EVENT_DESTROY_ROUND) {
       this.controller.destroy();

@@ -103,6 +103,14 @@ dt.Level.prototype.initObjects = function() {
   this.objects.setValueXY(1, 1, tile);
 };
 
+dt.Level.prototype.getWidth = function() {
+  return this.def.getWidth();
+};
+
+dt.Level.prototype.getHeight = function() {
+  return this.def.getHeight();
+};
+
 dt.Level.prototype.getBackground = function() {
   return this.def;
 };
@@ -152,8 +160,32 @@ dt.Level.prototype.addDomino = function(pos) {
   var srcdirs = this.findIncomingDirs(pos);
 
   if (srcdirs.length > 0) {
-    var srcdir = srcdirs[0];
-    var tile = new dt.TileObject(dt.TILE_DOMINO, srcdir);
-    this.setObject(pos, tile);
+    for (var i = 0; i < srcdirs.length; ++i) {
+      var srcdir = srcdirs[i];
+      if (i === 0) {
+        var tile = new dt.TileObject(dt.TILE_DOMINO, srcdir);
+        this.setObject(pos, tile);
+      }
+
+      var prevPos = pos.dir(srcdir);
+      var prevObj = this.getObject(prevPos);
+      if (!prevObj.hasDestination(srcdir.opposite)) {
+        prevObj.addDestination(srcdir.opposite);
+      }
+    }
   }
 };
+
+dt.Level.prototype.getStartPositions = function() {
+  var starts = [];
+  for (var y = 0; y < this.getHeight(); ++y) {
+    for (var x = 0; x < this.getWidth(); ++x) {
+      var obj = this.getObjectXY(x, y);
+      if ((obj !== undefined) && obj.start) {
+        starts.push(new dt.Pos(x, y));
+      }
+    }
+  }
+  return starts;
+};
+
