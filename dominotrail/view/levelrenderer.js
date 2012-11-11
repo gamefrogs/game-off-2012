@@ -125,6 +125,7 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
     if (obj.type === dt.TILE_DOMINO) {
       ctx.save();
       ctx.translate(hc.x, hc.y);
+      ctx.scale(this.RADIUS / 30, this.RADIUS / 30); // Domino size is based on 30 pixels
       ctx.rotate(dt.LevelRenderer.ROTATION[obj.src.id]);
       ctx.fillStyle = "#000000";
       ctx.fillRect(-5, -9, 6, 19);
