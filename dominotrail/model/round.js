@@ -54,6 +54,10 @@ dt.Round.prototype.getObject = function(pos) {
 };
 
 dt.Round.prototype.runStep = function() {
+  if (this.live.length === 0) {
+    this.end();
+    return false;
+  }
   this.setStep(this.step + 1);
 
   var nextLive = [];
@@ -73,13 +77,9 @@ dt.Round.prototype.runStep = function() {
       }
     }
   }
-  this.live = nextLive;
   
-  var stillLive = (this.live.length > 0);
-  if (!stillLive) {
-    this.end();
-  }
-  return stillLive;
+  this.live = nextLive;
+  return true;
 };
 
 dt.Round.prototype.end = function() {
