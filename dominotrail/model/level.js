@@ -157,6 +157,9 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
 };
 
 dt.Level.prototype.canAddDomino = function(pos) {
+  if (this.getObject(pos) !== undefined) {
+    return false;
+  }
   var srcdirs = this.findIncomingDirs(pos);
   return (srcdirs.length > 0);
 };
