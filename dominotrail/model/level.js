@@ -96,6 +96,7 @@ util.Observable.makeObservable(dt.Level);
 
 dt.Level.prototype.initObjects = function() {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
+  // TODO init objects based on level definition
   var tile = new dt.TileObject(dt.TILE_DOMINO, dt.Dir.W);
   this.objects.setValueXY(1, 1, tile);
 };
@@ -114,4 +115,32 @@ dt.Level.prototype.getObject = function(pos) {
 
 dt.Level.prototype.getObjectXY = function(x, y) {
   return this.objects.getValueXY(x, y);
+};
+
+dt.Level.prototype.findIncomingDirs = function(pos) {
+  var dirs = [];
+  for (var k = 0; k < dt.Dir.ALL.length; ++k) {
+    var dir = dt.Dir.ALL[k];
+    if (dir !== dt.Dir.NONE) {
+      var npos = pos.dir(dir);
+      if (this.isInside(npos)) {
+        var nobj = this.getObject(npos);
+        if ((nobj !== undefined) && (nobj.type === dt.TILE_DOMINO)) {
+          // TODO also check the 'dest' of the object
+          dirs.push(dir);
+        }
+      }
+    }
+  }
+  return dirs;
+};
+
+dt.Level.prototype.addDomino = function(pos) {
+  var srcdirs = this.findIncomingDirs(pos);
+
+  if (srcdirs.length > 0) {
+    var srcdir = srcdirs[0];
+    var tile = new dt.TileObject(dt.TILE_DOMINO, srcdir);
+    this.objects.setValue(pos, tile);
+  }
 };

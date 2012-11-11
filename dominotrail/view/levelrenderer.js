@@ -16,6 +16,16 @@ dt.LevelRenderer = function(level, viewport, ctx, radius) {
   this.HY = (this.RADIUS - 2) / 2;
 };
 
+dt.LevelRenderer.BACKGROUND_COLOR = ["#000000", "#00ffff", "#0000ff", "#008000", "#c09060"];
+
+dt.LevelRenderer.ROTATION = [];
+dt.LevelRenderer.ROTATION[dt.Dir.E.id] = Math.PI;
+dt.LevelRenderer.ROTATION[dt.Dir.SE.id] = -2 * Math.PI / 3;
+dt.LevelRenderer.ROTATION[dt.Dir.SW.id] = -Math.PI / 3;
+dt.LevelRenderer.ROTATION[dt.Dir.W.id] = 0;
+dt.LevelRenderer.ROTATION[dt.Dir.NW.id] = Math.PI / 3;
+dt.LevelRenderer.ROTATION[dt.Dir.NE.id] = 2 * Math.PI / 3;
+
 dt.LevelRenderer.prototype.init = function() {
   var pos0 = util.getPagePosition(this.viewport);
   this.x0 = pos0.x;
@@ -38,12 +48,20 @@ dt.LevelRenderer.prototype.initListeners = function() {
   };
   this.viewport.addEventListener("mousemove", this.mouseListener, false);
   this.viewport.addEventListener("mouseout", this.mouseListener, false);
+  this.viewport.addEventListener("mousedown", this.mouseListener, false);
+  this.viewport.addEventListener("mouseup", this.mouseListener, false);
 };
 
 dt.LevelRenderer.prototype.exitListeners = function() {
   this.viewport.removeEventListener("mousemove", this.mouseListener, false);
   this.viewport.removeEventListener("mouseout", this.mouseListener, false);
+  this.viewport.removeEventListener("mousedown", this.mouseListener, false);
+  this.viewport.removeEventListener("mouseup", this.mouseListener, false);
   this.mouseListener = null;
+};
+
+dt.LevelRenderer.prototype.getBackground = function(value) {
+  return dt.LevelRenderer.BACKGROUND_COLOR[value];
 };
 
 dt.LevelRenderer.prototype.render = function() {
@@ -54,14 +72,10 @@ dt.LevelRenderer.prototype.render = function() {
   for (var x = 0; x < back.getWidth(); ++x) {
     for (var y = 0; y < back.getHeight(); ++y) {
       var value = back.getValueXY(x, y);
-      var fill = "rgb(0, 0, " + (value * 0x40) + ")";
-      this.renderCell(x, y, fill);
+      var fill = this.getBackground(value);
+      this.renderCellBackground(x, y, fill, "#c0c0c0");
 
-      if (this.level.getObjectXY(x, y) !== undefined) {
-        var hc = this.getCellCenter(x, y);
-        ctx.fillStyle = "#ffc0c0";
-        ctx.fillRect(hc.x - 5, hc.y - 5, 11, 11);
-      }
+      this.renderCellContent(x, y);
     }
   }
 };
@@ -75,8 +89,9 @@ dt.LevelRenderer.prototype.getCellCenter = function(x, y) {
                     this.DCY * y);
 };
 
-dt.LevelRenderer.prototype.renderCell = function(x, y, fill) {
+dt.LevelRenderer.prototype.renderCellBackground = function(x, y, fill, stroke, width) {
   var ctx = this.ctx;
+  ctx.save();
   ctx.beginPath();
   var center = this.getCellCenter(x, y);
   var cx = center.x;
@@ -92,8 +107,34 @@ dt.LevelRenderer.prototype.renderCell = function(x, y, fill) {
     ctx.fillStyle = fill;
     ctx.fill();
   }
-  ctx.strokeStyle = "#c0c0c0";
-  ctx.stroke();
+  if (stroke !== undefined) {
+    ctx.strokeStyle = stroke;
+    if (width !== undefined) {
+      ctx.lineWidth = width;
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+};
+
+dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
+  var ctx = this.ctx;
+  var obj = this.level.getObjectXY(x, y);
+  if (obj !== undefined) {
+    var hc = this.getCellCenter(x, y);
+    if (obj.type === dt.TILE_DOMINO) {
+      ctx.save();
+      ctx.translate(hc.x, hc.y);
+      ctx.rotate(dt.LevelRenderer.ROTATION[obj.src.id]);
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(-5, -9, 6, 19);
+      ctx.fillRect(-20, -9, 6, 19);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(1, -9, 5, 19);
+      ctx.fillRect(-14, -9, 5, 19);
+      ctx.restore();
+    }
+  }
 };
 
 // Returns the hex coordinates corresponding to some graphical "mouse" coordinates
@@ -137,11 +178,16 @@ dt.LevelRenderer.prototype.mouseHandler = function(event) {
 
   var hcc = this.getHexPosition(mx, my);
   if (this.level.isInside(hcc)) {
-    this.renderCell(hcc.x, hcc.y, "#00ff00");
+    this.renderCellBackground(hcc.x, hcc.y, undefined, "#000000", 2);
     var hc = this.getCellCenter(hcc.x, hcc.y);
     var ctx = this.ctx;
     ctx.fillStyle = "#ff0000";
     ctx.fillRect(hc.x - 2, hc.y - 2, 5, 5);
   }
+
+  if ((event.type === "mousedown") && (event.button === 0)) {
+    this.level.addDomino(hcc);
+  }
+
 };
 
