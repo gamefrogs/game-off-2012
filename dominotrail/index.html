@@ -60,6 +60,16 @@ h1 {
   background-color: green;
   display: none;
 }
+#btnPlay{
+margin-top:20%;
+margin-left:45%;
+ width: 100px;
+ height: 40px;
+  background-image:url('resources/btnPlay1.png');
+}
+#btnPlay:hover{
+  background-image:url('resources/btnPlay2.png');
+}
 
     </style>
     <!-- Generic utility functions -->
@@ -84,7 +94,7 @@ h1 {
       <!-- Splash screen -->
       <div id="splash" class="screen">
         <center><h1>Domino Trail</h1></center>
-        <a id="play" class="button" href="javascript:util.nop();">Play</a>
+        <a id="play" class="button" href="javascript:util.nop();"><img id="btnPlay"/></a>
       </div>
 
 
