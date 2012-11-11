@@ -54,7 +54,7 @@ dt.Game.prototype.startRound = function(levelId) {
   this.levelId = levelId;
 
   // TODO: use the correct level definition
-  this.round = new dt.Round(dt.LEVELDEF1);
+  this.round = new dt.Round(levelId === 1 ? dt.LEVELDEF1 : dt.LEVELDEF2);
   this.round.addObserver(this);
   this.notify({ src: this,
                 type: dt.EVENT_CREATE_ROUND,

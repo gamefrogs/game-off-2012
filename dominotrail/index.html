@@ -33,6 +33,18 @@ body {
   width: 800px;
   height: 600px;
   position: relative;
+  overflow: hidden;
+}
+
+.popup {
+  padding: 0;
+  margin: 0;
+  left: 300px;
+  top: 250px;
+  width: 200px;
+  height: 100px;
+  position: relative;
+  box-shadow: 2px 2px 10px 2px #808080;
 }
 
 h1 {
@@ -41,6 +53,8 @@ h1 {
 
 #splash {
   background-color: pink;
+  background-image:url('resources/splash.png');
+  background-repeat:no-repeat;
 }
 #profile {
   background-color: yellow;
@@ -55,8 +69,18 @@ h1 {
   display: none;
 }
 #result {
-  background-color: green;
+  background-color: #80c080;
   display: none;
+}
+#btnPlay{
+margin-top:20%;
+margin-left:45%;
+ width: 100px;
+ height: 40px;
+  background-image:url('resources/btnPlay1.png');
+}
+#btnPlay:hover{
+  background-image:url('resources/btnPlay2.png');
 }
 
     </style>
@@ -82,7 +106,7 @@ h1 {
       <!-- Splash screen -->
       <div id="splash" class="screen">
         <center><h1>Domino Trail</h1></center>
-        <a id="play" class="button" href="javascript:util.nop();">Play</a>
+        <a id="play" class="button" href="javascript:util.nop();"><div id="btnPlay"></div></a>
       </div>
 
 
@@ -120,16 +144,16 @@ h1 {
         </div>
         <canvas id="viewport" width="600" height="600"
                 style="position: absolute; top: 0; left: 200px">Sorry, no canvas, no game!</canvas>
-      </div>
 
 
       
-      <!-- Level result screen -->
-      <div id="result" class="screen">Success/Failure
-        <hr>
-        <a id="next_level" class="button" href="javascript:util.nop();">Next level</a>
-        <a id="replay_level" class="button" href="javascript:util.nop();">Replay level</a>
-        <a id="result_quit" class="button" href="javascript:util.nop();">Quit to menu</a>
+        <!-- Level result popup -->
+        <div id="result" class="popup"><p id="result_title">Success/Failure</p>
+          <hr>
+          <a id="next_level" class="button" href="javascript:util.nop();">Next level</a>
+          <a id="replay_level" class="button" href="javascript:util.nop();">Replay level</a>
+          <a id="result_quit" class="button" href="javascript:util.nop();">Quit to menu</a>
+        </div>
       </div>
 
 

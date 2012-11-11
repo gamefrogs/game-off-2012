@@ -36,8 +36,8 @@ dt.View.STATE_SCREENS[dt.STATE_PROFILE_SELECT] = dt.View.SCREEN_PROFILE;
 dt.View.STATE_SCREENS[dt.STATE_MENU]           = dt.View.SCREEN_MENU;
 dt.View.STATE_SCREENS[dt.STATE_ROUND_LAYOUT]   = dt.View.SCREEN_ROUND;
 dt.View.STATE_SCREENS[dt.STATE_ROUND_RUN]      = dt.View.SCREEN_ROUND;
-dt.View.STATE_SCREENS[dt.STATE_ROUND_SUCCESS]  = dt.View.SCREEN_RESULT;
-dt.View.STATE_SCREENS[dt.STATE_ROUND_FAILURE]  = dt.View.SCREEN_RESULT;
+dt.View.STATE_SCREENS[dt.STATE_ROUND_SUCCESS]  = dt.View.SCREEN_ROUND;
+dt.View.STATE_SCREENS[dt.STATE_ROUND_FAILURE]  = dt.View.SCREEN_ROUND;
 
 dt.View.prototype.initScreens = function() {
   for (var s = 0; s < dt.View.SCREENS.length; ++s) {
@@ -75,6 +75,26 @@ dt.View.prototype.switchTo = function(name) {
   }
 };
 
+dt.View.prototype.setVisible = function(name, visible) {
+  this[name].style.display = (visible ? "block" : "none");
+};
+
+dt.View.prototype.showSuccess = function() {
+  var title = document.getElementById("result_title");
+  title.innerHTML = "SUCCESS!";
+  this.setVisible(dt.View.SCREEN_RESULT, true);
+};
+
+dt.View.prototype.showFailure = function() {
+  var title = document.getElementById("result_title");
+  title.innerHTML = "FAILURE!";
+  this.setVisible(dt.View.SCREEN_RESULT, true);
+};
+
+dt.View.prototype.hideResult = function() {
+  this.setVisible(dt.View.SCREEN_RESULT, false);
+};
+
 dt.View.prototype.update = function(event) {
   if (event.src === this.game) {
     if (event.type === dt.EVENT_STATE_CHANGE) {
@@ -82,8 +102,16 @@ dt.View.prototype.update = function(event) {
       var nextScreen = dt.View.STATE_SCREENS[event.to];
       this.switchTo(nextScreen);
       
-      if ((nextScreen === dt.View.SCREEN_ROUND) && (prevScreen !== nextScreen)) {
+      if (event.to === dt.STATE_ROUND_LAYOUT) {
         this.renderer.init();
+      }
+
+      if (event.to === dt.STATE_ROUND_SUCCESS) {
+        this.showSuccess();
+      } else if (event.to === dt.STATE_ROUND_FAILURE) {
+        this.showFailure();
+      } else {
+        this.hideResult();
       }
 
     } else if (event.type === dt.EVENT_CREATE_ROUND) {

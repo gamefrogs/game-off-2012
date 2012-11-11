@@ -153,17 +153,26 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
   var obj = this.level.getObjectXY(x, y);
   if (obj !== undefined) {
     var hc = this.getCellCenter(x, y);
+    ctx.save();
+    if (obj.start) {
+      ctx.strokeStyle = "#00c000";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
+      ctx.stroke();
+    }
+    if (obj.goal) {
+      ctx.strokeStyle = "#000080";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
+      ctx.stroke();
+    }
+    ctx.restore();
+      
+      
     if (obj.type === dt.TILE_DOMINO) {
       ctx.save();
-
-      if (obj.start) {
-        ctx.strokeStyle = "#00c000";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
-        ctx.stroke();
-      }
-      
       ctx.translate(hc.x, hc.y);
       ctx.scale(this.RADIUS / 30, this.RADIUS / 30); // Domino size is based on 30 pixels
       ctx.save();
@@ -188,6 +197,12 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
       }
 
       ctx.restore();
+      
+    } else {
+      ctx.font = "20px Verdana";
+      ctx.fillStyle = "#000000";
+      ctx.textBaseline = "middle";
+      ctx.fillText("?", hc.x - 5, hc.y);
     }
 
     if (obj.dead) {
