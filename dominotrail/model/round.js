@@ -95,7 +95,18 @@ dt.Round.prototype.runStep = function() {
   return true;
 };
 
+dt.Round.prototype.isSuccess = function() {
+  var goals = this.level.getGoalPositions();
+  for (var i = 0; i < goals.length; ++i) {
+    var obj = this.getObject(goals[i]);
+    if ((obj === undefined) || (!obj.dead)) {
+      return false;
+    }
+  }
+  return true;
+};
+
 dt.Round.prototype.end = function() {
-  var success = (Math.random() < 0.5);
+  var success = this.isSuccess();
   this.setStatus(success ? dt.ROUND_END_SUCCESS : dt.ROUND_END_FAILURE);
 };

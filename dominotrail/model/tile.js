@@ -49,3 +49,33 @@ dt.TileObject.prototype.getDestinations = function() {
 dt.TileObject.prototype.die = function() {
   this.dead = true;
 };
+
+dt.TileObject.prototype.canReplace = function() {
+  return false;
+};
+
+
+// TileObject inheritance utilities -------
+dt.TileObject.newType = function(name, type, ctor) {
+  dt[name] = function(src, start) {
+    dt.TileObject.call(this, this.type, src, start);
+    ctor.apply(this, arguments)
+  };
+  dt[name].prototype = new dt.TileObject(type);
+};
+
+
+// GoalObject -----------------------
+dt.TILE_GOAL = "Goal";
+dt.TileObject.newType("GoalObject", dt.TILE_GOAL,
+                      function(type, src, start) {
+                        this.goal = true;
+                      });
+
+dt.GoalObject.prototype.canReplace = function() {
+  return true;
+};
+
+dt.GoalObject.prototype.replaceBy = function(obj) {
+  obj.goal = true;
+};
