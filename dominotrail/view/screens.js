@@ -87,8 +87,10 @@ dt.View.prototype.update = function(event) {
 
     } else if (event.type === dt.EVENT_CREATE_ROUND) {
       this.renderer = new dt.LevelRenderer(event.round.level, this.viewport, this.ctx);
+      this.controller = new dt.LevelController(event.round.level, this.renderer);
 
     } else if (event.type === dt.EVENT_DESTROY_ROUND) {
+      this.controller.destroy();
       this.renderer.destroy();
       this.renderer = null;
       

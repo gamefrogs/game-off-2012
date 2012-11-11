@@ -3,10 +3,11 @@
 dt.TILE_DOMINO = "Domino";
 
 // A TileObject represents an 'object' on a tile
-dt.TileObject = function(type, src) {
+dt.TileObject = function(type, src, start) {
   this.type = type;
   this.src = src; // Incoming direction
   this.dest = []; // Outgoing directions
+  this.start = !!start; // Make sure this.start is a boolean
 };
 
 dt.TileObject.prototype.hasDestination = function(dest) {

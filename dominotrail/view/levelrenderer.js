@@ -1,5 +1,14 @@
 "use strict";
 
+dt.EVENT_CELL_DOWN = "CellDown";
+dt.EVENT_CELL_UP = "CellUp";
+
+dt.BUTTON_LEFT = "ButtonLeft";
+dt.BUTTON_RIGHT = "ButtonRight";
+dt.BUTTON_MIDDLE = "ButtonMiddle";
+
+dt.BUTTON_MAPPING = [ dt.BUTTON_LEFT, dt.BUTTON_MIDDLE, dt.BUTTON_RIGHT ];
+
 dt.LevelRenderer = function(level, viewport, ctx, radius) {
   this.level = level;
   this.level.addObserver(this);
@@ -15,6 +24,8 @@ dt.LevelRenderer = function(level, viewport, ctx, radius) {
   this.HX = (this.RADIUS - 2) * Math.sqrt(3) / 2;
   this.HY = (this.RADIUS - 2) / 2;
 };
+
+util.extend(util.Observable, dt.LevelRenderer);
 
 dt.LevelRenderer.BACKGROUND_COLOR = ["#000000", "#00ffff", "#0000ff", "#008000", "#c09060"];
 
@@ -117,6 +128,8 @@ dt.LevelRenderer.prototype.renderCellBackground = function(x, y, fill, stroke, w
   ctx.restore();
 };
 
+dt.FULL_CIRCLE = 2 * Math.PI;
+
 dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
   var ctx = this.ctx;
   var obj = this.level.getObjectXY(x, y);
@@ -124,6 +137,15 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
     var hc = this.getCellCenter(x, y);
     if (obj.type === dt.TILE_DOMINO) {
       ctx.save();
+
+      if (obj.start) {
+        ctx.strokeStyle = "#00c000";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
+        ctx.stroke();
+      }
+      
       ctx.translate(hc.x, hc.y);
       ctx.scale(this.RADIUS / 30, this.RADIUS / 30); // Domino size is based on 30 pixels
       ctx.rotate(dt.LevelRenderer.ROTATION[obj.src.id]);
@@ -186,9 +208,16 @@ dt.LevelRenderer.prototype.mouseHandler = function(event) {
     ctx.fillRect(hc.x - 2, hc.y - 2, 5, 5);
   }
 
-  if ((event.type === "mousedown") && (event.button === 0)) {
-    this.level.addDomino(hcc);
+  if (event.type === "mousedown") {
+    this.notify({ src: this,
+                  type: dt.EVENT_CELL_DOWN,
+                  button: dt.BUTTON_MAPPING[event.button],
+                  pos: hcc });
+    
+  } else if (event.type === "mouseup") {
+    this.notify({ src: this,
+                  type: dt.EVENT_CELL_UP,
+                  button: dt.BUTTON_MAPPING[event.button],
+                  pos: hcc });
   }
-
 };
-

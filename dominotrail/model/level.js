@@ -54,7 +54,7 @@ dt.LevelDef.prototype.parseLevel = function(str) {
 
 dt.LEVEL1_STR = 
   " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
-  "| 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  "| 0 . 0 . 0 . 0 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
   " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
   "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
   " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
@@ -84,6 +84,8 @@ dt.LEVEL1_STR =
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
 dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR);
 
+// Events ------------------
+dt.EVENT_CELL_CHANGE = "CellChange";
 
 // A runtime playable level, modifiable by the player -----------
 dt.Level = function(def) {
@@ -97,7 +99,7 @@ util.Observable.makeObservable(dt.Level);
 dt.Level.prototype.initObjects = function() {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
   // TODO init objects based on level definition
-  var tile = new dt.TileObject(dt.TILE_DOMINO, dt.Dir.W);
+  var tile = new dt.TileObject(dt.TILE_DOMINO, dt.Dir.W, true);
   this.objects.setValueXY(1, 1, tile);
 };
 
@@ -115,6 +117,17 @@ dt.Level.prototype.getObject = function(pos) {
 
 dt.Level.prototype.getObjectXY = function(x, y) {
   return this.objects.getValueXY(x, y);
+};
+
+dt.Level.prototype.setObject = function(pos, obj) {
+  this.objects.setValue(pos, obj);
+  this.notify({ src: this,
+                type: dt.EVENT_CELL_CHANGE,
+                pos: pos });
+};
+
+dt.Level.prototype.setObjectXY = function(x, y, obj) {
+  this.objects.setValue(new dt.Pos(x, y), obj);
 };
 
 dt.Level.prototype.findIncomingDirs = function(pos) {
@@ -141,6 +154,6 @@ dt.Level.prototype.addDomino = function(pos) {
   if (srcdirs.length > 0) {
     var srcdir = srcdirs[0];
     var tile = new dt.TileObject(dt.TILE_DOMINO, srcdir);
-    this.objects.setValue(pos, tile);
+    this.setObject(pos, tile);
   }
 };
