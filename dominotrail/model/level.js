@@ -1,6 +1,6 @@
 "use strict";
 
-// The definition a level, used to build a playable instance -----------
+// The definition a level, used to build a playable instance of Level -----------
 dt.LevelDef = function(width, height, str) {
   this.grid = new dt.Hexgrid(width, height);
   this.parseLevel(str);
@@ -42,7 +42,7 @@ dt.LevelDef.prototype.parseLevel = function(str) {
 
       // Parse cells
       for (var x = 0; x < this.getWidth(); ++x) {
-        var value = elems[2 * x + 1];
+        var value = +elems[2 * x + 1]; // Notice the + to convert to number
         this.grid.setValueXY(x, y, value);
       }
       y += 1;
@@ -53,25 +53,55 @@ dt.LevelDef.prototype.parseLevel = function(str) {
 };
 
 dt.LEVEL1_STR = 
-  " _ _ _ _ _ _ _ _     \n" +
-  "| 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 |  \n" +
-  " _ . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 |    \n" +
-  " _ . . . . . . . _   \n" +
-  "  | 2 . 3 . 1 . 1 |  \n" +
-  "   _ _ _ _ _ _ _ _   ";
-dt.LEVELDEF1 = new dt.LevelDef(4, 4, dt.LEVEL1_STR);
+  " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
+  "| 0 . 0 . 0 . 0 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "| 2 . 2 . 3 . 4 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
+  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
+  "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
+  "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
+dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR);
 
+// Events ------------------
+dt.EVENT_CELL_CHANGE = "CellChange";
 
 // A runtime playable level, modifiable by the player -----------
 dt.Level = function(def) {
   this.def = def;
-  this.objects = new dt.Hexgrid(def.getWidth(), def.getHeight());
+
+  this.initObjects();
 };
 
 util.Observable.makeObservable(dt.Level);
+
+dt.Level.prototype.initObjects = function() {
+  this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
+  // TODO init objects based on level definition
+  var tile = new dt.TileObject(dt.TILE_DOMINO, dt.Dir.W, true);
+  this.objects.setValueXY(1, 1, tile);
+};
 
 dt.Level.prototype.getBackground = function() {
   return this.def;
@@ -79,4 +109,51 @@ dt.Level.prototype.getBackground = function() {
 
 dt.Level.prototype.isInside = function(pos) {
   return this.def.isInside(pos);
+};
+
+dt.Level.prototype.getObject = function(pos) {
+  return this.objects.getValue(pos);
+};
+
+dt.Level.prototype.getObjectXY = function(x, y) {
+  return this.objects.getValueXY(x, y);
+};
+
+dt.Level.prototype.setObject = function(pos, obj) {
+  this.objects.setValue(pos, obj);
+  this.notify({ src: this,
+                type: dt.EVENT_CELL_CHANGE,
+                pos: pos });
+};
+
+dt.Level.prototype.setObjectXY = function(x, y, obj) {
+  this.objects.setValue(new dt.Pos(x, y), obj);
+};
+
+dt.Level.prototype.findIncomingDirs = function(pos) {
+  var dirs = [];
+  for (var k = 0; k < dt.Dir.ALL.length; ++k) {
+    var dir = dt.Dir.ALL[k];
+    if (dir !== dt.Dir.NONE) {
+      var npos = pos.dir(dir);
+      if (this.isInside(npos)) {
+        var nobj = this.getObject(npos);
+        if ((nobj !== undefined) && (nobj.type === dt.TILE_DOMINO)) {
+          // TODO also check the 'dest' of the object
+          dirs.push(dir);
+        }
+      }
+    }
+  }
+  return dirs;
+};
+
+dt.Level.prototype.addDomino = function(pos) {
+  var srcdirs = this.findIncomingDirs(pos);
+
+  if (srcdirs.length > 0) {
+    var srcdir = srcdirs[0];
+    var tile = new dt.TileObject(dt.TILE_DOMINO, srcdir);
+    this.setObject(pos, tile);
+  }
 };
