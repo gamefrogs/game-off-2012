@@ -62,6 +62,9 @@ dt.View.prototype.initScreens = function() {
 
 dt.View.prototype.initEvents = function() {
   this.game.addObserver(this);
+  this.root.addEventListener("contextmenu", function(event) {
+    event.preventDefault();
+  }, false);
 };
 
 dt.View.prototype.createLevelButtons = function() {

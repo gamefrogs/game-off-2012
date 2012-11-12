@@ -15,27 +15,6 @@ dt.start = function() {
 
   var view = new dt.View(document.getElementById("gamearea"), game);
   var controller = new dt.Controller(view, game);
-
-  //game.changeState(dt.STATE_ROUND_SUCCESS);
-
-  /*
-  var view = document.getElementById("view");
-  var ctx = view.getContext("2d");
-
-  var viewpos = util.getPagePosition(view);
-  view.x0 = viewpos.x;
-  view.y0 = viewpos.y;
-
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, view.width, view.height);
-  
-  view.addEventListener("mousedown", function(event) {
-    dt.onClick(event, view, ctx, game);
-  }, false);
-
-  view.addEventListener("contextmenu", function(event) {
-    event.preventDefault();
-  }, false);*/
 };
 
 dt.onClick = function(event, view, ctx, game) {
