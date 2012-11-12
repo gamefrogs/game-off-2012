@@ -13,6 +13,8 @@ dt.Controller.prototype.initEvents = function() {
   dt.Controller.attachButton("play", function(event) {
     that.game.changeState(dt.STATE_PROFILE_SELECT);
   });
+
+  // Attach buttons from the "Profiles" page
   for (var i = 1; i <= 3; ++i) {
     dt.Controller.attachButton("profile" + i, (function(pid) {
       return function(event) {
@@ -24,13 +26,11 @@ dt.Controller.prototype.initEvents = function() {
   dt.Controller.attachButton("menu_back", function(event) {
     that.game.changeState(dt.STATE_PROFILE_SELECT);
   });
-  for (var i = 1; i <= 5; ++i) {
-    dt.Controller.attachButton("level" + i, (function(lid) {
-      return function(event) {
-        that.game.startRound(lid);
-      };
-    })(i));
-  }
+
+  // Create level start buttons
+  this.view.createLevelButtons();
+
+  // Attach buttons from the "round" screen
   dt.Controller.attachButton("round_quit", function(event) {
     that.game.quitRound();
   });
@@ -38,6 +38,7 @@ dt.Controller.prototype.initEvents = function() {
     that.game.runRound();
   });
 
+  // Attach buttons from the "end of round" popup
   dt.Controller.attachButton("next_level", function(event) {
     that.game.nextRound();
   });

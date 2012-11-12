@@ -77,6 +77,26 @@ util.extend = function(base, derived, onlyFunctions) {
   }
 };
 
+// Delegation: the proxy class must contain an instance variable named 'delegate' to which
+// all function calls will be delegated
+util.delegate = function(delegate, proxy) {
+  var proto = (delegate instanceof Function) ? delegate.prototype : delegate;
+  var proxyProto = (proxy instanceof Function) ? proxy.prototype : proxy;
+  var delegateFunction = function(key) {
+    return function() {
+      return proto[key].apply(this.delegate, arguments);
+    };
+  };
+  for (var key in proto) {
+    if (proto.hasOwnProperty(key)) {
+      var value = proto[key];
+      if (value instanceof Function) {
+        proxyProto[key] = delegateFunction(key);
+      }
+    }
+  }
+};
+
 // Dynamic constructor call, borrowed (and adapted) from
 // http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript
 util.applyConstructor = function(ctor, params) {

@@ -150,18 +150,18 @@ dt.FULL_CIRCLE = 2 * Math.PI;
 
 dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
   var ctx = this.ctx;
-  var obj = this.level.getObjectXY(x, y);
+  var obj = this.round.getObjectXY(x, y);
   if (obj !== undefined) {
     var hc = this.getCellCenter(x, y);
     ctx.save();
-    if (obj.start) {
+    if (obj.isStart()) {
       ctx.strokeStyle = "#00c000";
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
       ctx.stroke();
     }
-    if (obj.goal) {
+    if (obj.isGoal()) {
       ctx.strokeStyle = "#000080";
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -171,12 +171,12 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
     ctx.restore();
       
       
-    if (obj.type === dt.TILE_DOMINO) {
+    if (obj.getType() === dt.TILE_DOMINO) {
       ctx.save();
       ctx.translate(hc.x, hc.y);
       ctx.scale(this.RADIUS / 30, this.RADIUS / 30); // Domino size is based on 30 pixels
       ctx.save();
-      ctx.rotate(dt.LevelRenderer.ROTATION[obj.src.id]);
+      ctx.rotate(dt.LevelRenderer.ROTATION[obj.getSrc().id]);
       ctx.fillStyle = "#000000";
       ctx.fillRect(-5, -9, 6, 19);
       ctx.fillRect(-20, -9, 6, 19);
@@ -205,7 +205,7 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
       ctx.fillText("?", hc.x - 5, hc.y);
     }
 
-    if (obj.dead) {
+    if (obj.isDead()) {
       ctx.save();
       ctx.strokeStyle = "#808080";
       ctx.lineWidth = 3;

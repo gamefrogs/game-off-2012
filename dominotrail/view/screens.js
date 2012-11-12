@@ -28,6 +28,8 @@ dt.View.SCREENS = [ dt.View.SCREEN_SPLASH,
                     dt.View.SCREEN_ROUND,
                     dt.View.SCREEN_RESULT
                   ];
+// Other IDs
+dt.View.LEVELS_DIV = "levels";
                     
 // Mapping between game states and screens
 dt.View.STATE_SCREENS = {};
@@ -60,6 +62,39 @@ dt.View.prototype.initScreens = function() {
 
 dt.View.prototype.initEvents = function() {
   this.game.addObserver(this);
+};
+
+dt.View.prototype.createLevelButtons = function() {
+  var levels = this.game.getLevels();
+  // First create the whole HTML modifications
+  for (var l = 0; l < levels.length; ++l) {
+    this.createLevelButton(l + 1, levels[l]);
+  }
+  // Then add listeners
+  for (l = 0; l < levels.length; ++l) {
+    this.attachLevelButton(l + 1, levels[l]);
+  }
+};
+
+dt.View.prototype.createLevelButton = function(id, level) {
+  var menuDiv = document.getElementById(dt.View.LEVELS_DIV);
+  var buttonStr = ('<a id="level' + id + '" class="button" href="javascript:util.nop();">Level ' +
+                   id + '</a><br>');
+  menuDiv.innerHTML += buttonStr;
+};
+
+dt.View.prototype.attachLevelButton = function(id, level) {
+  var that = this;
+  var link = document.getElementById("level" + id);
+  if (!link) {
+    util.log("Link not available: level" + id);
+    return;
+  } 
+  document.getElementById("level" + id).addEventListener("click",
+                                                         function() {
+                                                           that.game.startRound(id);
+                                                         },
+                                                         false); 
 };
 
 dt.View.prototype.switchTo = function(name) {
