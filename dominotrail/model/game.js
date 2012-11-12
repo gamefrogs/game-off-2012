@@ -110,8 +110,10 @@ dt.Game.prototype.nextRound = function() {
 };
 
 dt.Game.prototype.replayRound = function() {
-  this.destroyRound();
-  this.startRound(this.levelId);
+  /**this.destroyRound();
+  this.startRound(this.levelId);*/
+  this.round.reset();
+  this.changeState(dt.STATE_ROUND_LAYOUT);
 };
 
 dt.Game.prototype.update = function(event) {

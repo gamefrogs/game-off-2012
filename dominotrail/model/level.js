@@ -20,6 +20,10 @@ dt.LevelDef.prototype.isInside = function(pos) {
   return this.grid.isInside(pos);
 };
 
+dt.LevelDef.prototype.isInsideXY = function(x, y) {
+  return this.grid.isInsideXY(x, y);
+};
+
 dt.LevelDef.prototype.getValueXY = function(x, y) {
   return this.grid.getValueXY(x, y);
 };
@@ -167,6 +171,10 @@ dt.Level.prototype.getBackground = function() {
 
 dt.Level.prototype.isInside = function(pos) {
   return this.def.isInside(pos);
+};
+
+dt.Level.prototype.isInsideXY = function(x, y) {
+  return this.def.isInsideXY(x, y);
 };
 
 dt.Level.prototype.getObject = function(pos) {

@@ -1,5 +1,23 @@
 "use strict";
 
+
+// Proxy wraps a level object for runtime properties ---
+dt.Proxy = function(obj) {
+  this.delegate = obj;
+  this.dead = false;
+};
+
+util.delegate(dt.TileObject, dt.Proxy);
+
+dt.Proxy.prototype.getType = function() {
+  return this.delegate.getType();
+};
+
+dt.Proxy.prototype.getSrc = function() {
+  return this.delegate.getSrc();
+};
+
+// Round class represent a level currently in progress (layout or run) ----
 dt.EVENT_ROUND_STATUS_CHANGE = "RoundStatusChange";
 dt.EVENT_ROUND_STEP_CHANGE = "RoundStepChange";
 
@@ -10,12 +28,17 @@ dt.ROUND_END_FAILURE = "EndFailure";
 
 dt.Round = function(def) {
   this.level = new dt.Level(def);
-  this.step = 0;
-  this.live = []; // Array of cell positions that are currently "live", doing something
-  this.status = dt.ROUND_NOT_RUN;
+  this.init();
 };
 
 util.extend(util.Observable, dt.Round);
+
+dt.Round.prototype.init = function() {
+  this.setStep(0);
+  this.live = []; // Array of cell positions that are currently "live", doing something
+  this.setStatus(dt.ROUND_NOT_RUN);
+  this.proxies = new dt.Hexgrid(this.level.getWidth(), this.level.getHeight());
+};
 
 dt.Round.prototype.setStatus = function(status) {
   if (status !== this.status) {
@@ -36,6 +59,10 @@ dt.Round.prototype.start = function() {
   util.log("Starting at", this.live);
 };
 
+dt.Round.prototype.reset = function() {
+  this.init();
+};
+
 dt.Round.prototype.setStep = function(step) {
   if (step !== this.step) {
     this.step = step;
@@ -46,11 +73,23 @@ dt.Round.prototype.setStep = function(step) {
 };
 
 dt.Round.prototype.getObject = function(pos) {
-  if (!this.level.isInside(pos)) {
+  return this.getObjectXY(pos.x, pos.y);
+};
+
+dt.Round.prototype.getObjectXY = function(x, y) {
+  if (!this.level.isInsideXY(x, y)) {
     return undefined;
   }
-  // TODO change the object returned if it has changed in the round (fallen dominos, for instance)
-  return this.level.getObject(pos);
+  var proxy = this.proxies.getValueXY(x, y);
+  if (proxy === undefined) {
+    //proxy = this.level.getObject(pos);
+    var obj = this.level.getObjectXY(x, y);
+    if (obj !== undefined) {
+      proxy = new dt.Proxy(obj);
+      this.proxies.setValueXY(x, y, proxy);
+    }
+  }
+  return proxy;
 };
 
 dt.Round.prototype.cleanupLiveObjects = function(nextLive) {
@@ -59,7 +98,7 @@ dt.Round.prototype.cleanupLiveObjects = function(nextLive) {
   for (var i = 0; i < nextLive.length; ++i) {
     var pos = nextLive[i];
     var obj = this.getObject(pos);
-    if (!obj.dead) {
+    if (!obj.isDead()) {
       this.live.push(pos);
     }
   }
@@ -84,7 +123,7 @@ dt.Round.prototype.runStep = function() {
       var dest = dests[d];
       var nextPos = pos.dir(dest);
       var nextObj = this.getObject(nextPos);
-      if ((nextObj !== undefined) && (!nextObj.dead)) {
+      if ((nextObj !== undefined) && (!nextObj.isDead())) {
         // TODO check that the object is still activable
         nextLive.push(nextPos);
       }
@@ -99,7 +138,7 @@ dt.Round.prototype.isSuccess = function() {
   var goals = this.level.getGoalPositions();
   for (var i = 0; i < goals.length; ++i) {
     var obj = this.getObject(goals[i]);
-    if ((obj === undefined) || (!obj.dead)) {
+    if ((obj === undefined) || (!obj.isDead())) {
       return false;
     }
   }

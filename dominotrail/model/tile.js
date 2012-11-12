@@ -11,6 +11,14 @@ dt.TileObject = function(type, src, start) {
   this.dead = false;
 };
 
+dt.TileObject.prototype.getType = function() {
+  return this.type;
+};
+
+dt.TileObject.prototype.getSrc = function() {
+  return this.src;
+};
+
 dt.TileObject.prototype.hasDestination = function(dest) {
   for (var i = 0; i < this.dest.length; ++i) {
     if (this.dest[i] === dest) {
@@ -48,6 +56,10 @@ dt.TileObject.prototype.getDestinations = function() {
 
 dt.TileObject.prototype.die = function() {
   this.dead = true;
+};
+
+dt.TileObject.prototype.isDead = function() {
+  return this.dead;
 };
 
 dt.TileObject.prototype.canReplace = function() {
