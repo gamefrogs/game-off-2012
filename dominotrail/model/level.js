@@ -116,6 +116,10 @@ dt.LEVEL2_STR =
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
 dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR);
 
+dt.LEVELS = [ dt.LEVELDEF1,
+              dt.LEVELDEF2
+            ];
+
 // Events ------------------
 dt.EVENT_CELL_CHANGE = "CellChange";
 

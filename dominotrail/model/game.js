@@ -22,7 +22,7 @@ dt.Game = function() {
   // Current player profile
   this.profile = null;
   // Loaded level definitions
-  this.levels = null;
+  this.levels = dt.LEVELS;
   // Current game level id
   this.levelId = -1;
   // Current game round
@@ -30,6 +30,10 @@ dt.Game = function() {
 };
 
 util.Observable.makeObservable(dt.Game);
+
+dt.Game.prototype.getLevels = function() {
+  return this.levels;
+};
 
 dt.Game.prototype.changeState = function(nextState) {
   if (nextState !== this.state) {
@@ -53,8 +57,8 @@ dt.Game.prototype.chooseProfile = function(profileId) {
 dt.Game.prototype.startRound = function(levelId) {
   this.levelId = levelId;
 
-  // TODO: use the correct level definition
-  this.round = new dt.Round(levelId === 1 ? dt.LEVELDEF1 : dt.LEVELDEF2);
+  var levelDef = dt.LEVELS[levelId - 1];
+  this.round = new dt.Round(levelDef);
   this.round.addObserver(this);
   this.notify({ src: this,
                 type: dt.EVENT_CREATE_ROUND,
@@ -124,3 +128,4 @@ dt.Game.prototype.update = function(event) {
     util.log("Game received", event);
   }
 }
+
