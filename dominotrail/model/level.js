@@ -1,9 +1,11 @@
 "use strict";
 
 // The definition a level, used to build a playable instance of Level -----------
-dt.LevelDef = function(width, height, str) {
+dt.LevelDef = function(width, height, str, starts, goals) {
   this.grid = new dt.Hexgrid(width, height);
   this.parseLevel(str);
+  this.starts = starts;
+  this.goals = goals;
 };
 
 dt.LevelDef.prototype.getWidth = function() {
@@ -82,7 +84,9 @@ dt.LEVEL1_STR =
   " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
   "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
-dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR);
+dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR,
+                               [{ x: 10, y: 1, dir: dt.Dir.E }],
+                               [{ x: 2, y: 5 }]);
 
 dt.LEVEL2_STR = 
   " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
@@ -114,7 +118,10 @@ dt.LEVEL2_STR =
   " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
   "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
-dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR);
+dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR,
+                               [{ x: 2, y: 2, dir: dt.Dir.NW}],
+                               [{ x: 5, y: 5 },
+                                { x: 5, y: 10 }]);
 
 dt.LEVELS = [ dt.LEVELDEF1,
               dt.LEVELDEF2
@@ -134,11 +141,16 @@ util.Observable.makeObservable(dt.Level);
 
 dt.Level.prototype.initObjects = function() {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
-  // TODO init objects based on level definition
-  var tile = new dt.TileObject(dt.TILE_DOMINO, dt.Dir.W, true);
-  this.setObjectXY(1, 1, tile);
-  var goal = new dt.GoalObject(dt.Dir.NONE)
-  this.setObjectXY(5, 5, goal);
+  for (var i = 0; i < this.def.starts.length; ++i) {
+    var startDef = this.def.starts[i];
+    var tile = new dt.TileObject(dt.TILE_DOMINO, startDef.dir, true);
+    this.setObjectXY(startDef.x, startDef.y, tile);
+  }
+  for (i = 0; i < this.def.goals.length; ++i) {
+    var goalDef = this.def.goals[i];
+    var goal = new dt.GoalObject(dt.Dir.NONE)
+    this.setObjectXY(goalDef.x, goalDef.y, goal);
+  }
 };
 
 dt.Level.prototype.getWidth = function() {
