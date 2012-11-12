@@ -37,7 +37,7 @@ dt.Round.prototype.init = function() {
   this.setStep(0);
   this.live = []; // Array of cell positions that are currently "live", doing something
   this.setStatus(dt.ROUND_NOT_RUN);
-  this.proxies = new dt.Hexgrid(this.level.getWidth(), this.level.getHeight());
+  this.proxies = null;
 };
 
 dt.Round.prototype.setStatus = function(status) {
@@ -55,6 +55,7 @@ dt.Round.prototype.setStatus = function(status) {
 dt.Round.prototype.start = function() {
   this.step = 0;
   this.live = this.level.getStartPositions();
+  this.proxies = new dt.Hexgrid(this.level.getWidth(), this.level.getHeight());
   this.setStatus(dt.ROUND_RUNNING);
   util.log("Starting at", this.live);
 };
@@ -79,6 +80,9 @@ dt.Round.prototype.getObject = function(pos) {
 dt.Round.prototype.getObjectXY = function(x, y) {
   if (!this.level.isInsideXY(x, y)) {
     return undefined;
+  }
+  if (this.status === dt.ROUND_NOT_RUN) {
+    return this.level.getObjectXY(x, y);
   }
   var proxy = this.proxies.getValueXY(x, y);
   if (proxy === undefined) {
