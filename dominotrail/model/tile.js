@@ -19,6 +19,18 @@ dt.TileObject.prototype.getSrc = function() {
   return this.src;
 };
 
+dt.TileObject.prototype.isStart = function() {
+  return this.start;
+};
+
+dt.TileObject.prototype.isGoal=  function() {
+  return this.goal;
+};
+
+dt.TileObject.prototype.isDead = function() {
+  return this.dead;
+};
+
 dt.TileObject.prototype.hasDestination = function(dest) {
   for (var i = 0; i < this.dest.length; ++i) {
     if (this.dest[i] === dest) {

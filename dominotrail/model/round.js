@@ -9,12 +9,12 @@ dt.Proxy = function(obj) {
 
 util.delegate(dt.TileObject, dt.Proxy);
 
-dt.Proxy.prototype.getType = function() {
-  return this.delegate.getType();
+dt.Proxy.prototype.die = function() {
+  this.dead = true;
 };
 
-dt.Proxy.prototype.getSrc = function() {
-  return this.delegate.getSrc();
+dt.Proxy.prototype.isDead = function() {
+  return this.dead;
 };
 
 // Round class represent a level currently in progress (layout or run) ----

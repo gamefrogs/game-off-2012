@@ -154,14 +154,14 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
   if (obj !== undefined) {
     var hc = this.getCellCenter(x, y);
     ctx.save();
-    if (obj.start) {
+    if (obj.isStart()) {
       ctx.strokeStyle = "#00c000";
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
       ctx.stroke();
     }
-    if (obj.goal) {
+    if (obj.isGoal()) {
       ctx.strokeStyle = "#000080";
       ctx.lineWidth = 3;
       ctx.beginPath();
