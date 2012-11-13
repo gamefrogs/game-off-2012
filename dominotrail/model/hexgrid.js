@@ -114,6 +114,269 @@ dt.Pos.prototype.dir = function(dir) {
   return new dt.Pos(this.x + delta.dx, this.y + delta.dy);
 };
 
+dt.Pos.prototype.equals = function(pos) {
+  return (this.x === pos.x) && (this.y === pos.y);
+};
+
+// Relative position represents a path from one cell to another. The absolute position can only
+// be computed once the absolute start position is known
+dt.RelativePos = function(dir, len) {
+  this.segments = [];
+  if ((dir !== undefined) && (len !== undefined)) {
+    this.addSegment(dir, len);
+  }
+};
+
+dt.RelativePos.difference = function(from, to) {
+  var relpos = new dt.RelativePos();
+  var cur = from;
+  while (to.y - cur.y !== 0) {
+    var dir = dt.Dir.NONE;
+    if (to.y - cur.y > 0) { // Going south
+      if (to.x - cur.x > 0) {
+        dir = dt.Dir.SE;
+      } else {
+        dir = dt.Dir.SW;
+      }
+    } else {
+      if (to.x - cur.x > 0) { // Going north
+        dir = dt.Dir.NE;
+      } else {
+        dir = dt.Dir.NW;
+      }
+    }
+    relpos.addSegment(dir, 1);
+    cur = cur.dir(dir);
+  }
+  var dx = to.x - cur.x;
+  if (dx > 0) { // Going east
+    relpos.addSegment(dt.Dir.E, dx);
+  } else if (dx < 0) { // Going west
+    relpos.addSegment(dt.Dir.W, -dx);
+  }
+  relpos.normalize();
+  return relpos;
+};
+
+dt.RelativePos.prototype.normalize = function() {
+  // Force only positive values 
+  for (var i = 0; i < dt.Dir.ALL.length; ++i) {
+    var dir = dt.Dir.ALL[i];
+    var dirlen = this.segments[dir.id] || 0;
+    if (dirlen < 0) {
+      this.segments[dir.id] = 0;
+      this.addSegment(dir.opposite, -dirlen);
+    }
+  }
+ 
+  // Cancel opposites
+  for (var i = 0; i < dt.Dir.ALL.length; ++i) {
+    var dir = dt.Dir.ALL[i];
+    var opp = dir.opposite;
+    var dirlen = this.segments[dir.id] || 0;
+    var opplen = this.segments[opp.id] || 0;
+    if ((dirlen !== 0) && (opplen !== 0)) {
+      var diff = dirlen - opplen;
+      if (diff >= 0) {
+        this.segments[dir.id] = diff;
+        this.segments[opp.id] = 0;
+      } else {
+        this.segments[dir.id] = 0;
+        this.segments[opp.id] = -diff;
+      }
+    }
+  }
+
+  // Merge
+  for (var i = 0; i < dt.Dir.ALL.length; ++i) {
+    var dir = dt.Dir.ALL[i];
+    if (dir === dt.Dir.NONE) {
+      continue;
+    }
+    var next = dir.right.right;
+    var dirlen = this.segments[dir.id] || 0;
+    var nextlen = this.segments[next.id] || 0;
+    if ((dirlen !== 0) && (nextlen !== 0)) {
+      var merge = (dirlen < nextlen) ? dirlen : nextlen;
+      this.addSegment(dir, -merge);
+      this.addSegment(next, -merge);
+      this.addSegment(dir.right, merge);
+    }
+  }
+};
+
+dt.RelativePos.prototype.addSegment = function(dir, len) {
+  if (this.segments[dir.id] === undefined) {
+    this.segments[dir.id] = len;
+  } else {
+    this.segments[dir.id] += len;
+  }
+};
+
+dt.RelativePos.prototype.getAbsolutePos = function(from) {
+  var absPos = from;
+  for (var s = 0; s < this.segments.length; ++s) {
+    var dir = dt.Dir.ALL[s];
+    var segment = this.segments[s];
+    if ((segment !== undefined) && (segment !== 0)) {
+      for (var i = 0; i < segment; ++i) {
+        absPos = absPos.dir(dir);
+      }
+    }
+  }
+  return absPos;
+};
+
+dt.RelativePos.prototype.equals = function(relpos) {
+  for (var s = 0; s < this.segments.length; ++s) {
+    var segment1 = this.segments[s] || 0;
+    var segment2 = relpos.segments[s] || 0;
+    if (segment1 !== segment2) {
+      return false;
+    }
+  }
+  return true;
+};
+
+// Relative position + dir
+dt.RelPosDir = function(relpos, dir) {
+  this.relpos = relpos;
+  this.dir = dir;
+};
+
+dt.RelPosDir.prototype.equals = function(relposdir) {
+  return (this.dir === relposdir.dir) && (this.relpos.equals(relposdir.relpos));
+};
+
+dt.RelPosDir.arrayContains = function(rpds, rpd) {
+  for (var i = 0; i < rpds.length; ++i) {
+    if (rpd.equals(rpds[i])) {
+      return true;
+    }
+  }
+  return false;
+};
+
+dt.RelPosDir.arrayMatch = function(rpd1, rpd2) {
+  for (var i = 0; i < rpd1.length; ++i) {
+    if (!dt.RelPosDir.arrayContains(rpd2, rpd1[i])) {
+      return false;
+    }
+  }
+  return true;
+};
+
+dt.RelPosDir.arrayIntersect = function(rpd1, rpd2) {
+  var inter = [];
+  for (var i = 0; i < rpd1.length; ++i) {
+    if (dt.RelPosDir.arrayContains(rpd2, rpd1[i])) {
+      inter.push(rpd1[i]);
+    }
+  }
+  return inter;
+};
+
+dt.RelPosDir.arrayUnion = function(rpd1, rpd2) {
+  var union = [];
+  for (var i = 0; i < rpd1.length; ++i) {
+    if (!dt.RelPosDir.arrayContains(union, rpd1[i])) {
+      union.push(rpd1[i]);
+    }
+  }
+  for (var j = 0; j < rpd2.length; ++j) {
+    if (!dt.RelPosDir.arrayContains(union, rpd2[j])) {
+      union.push(rpd2[j]);
+    }
+  }
+  return union;
+};
+
+dt.RelPosDir.arrayToAbsolute = function(rpd, from) {
+  var ret = [];
+  for (var i = 0; i < rpd.length; ++i) {
+    ret.push(new dt.AbsPosDir(rpd[i].relpos.getAbsolutePos(from), rpd[i].dir));
+  }
+  return ret;
+};
+
+// Special case
+dt.HERE = new dt.RelativePos();
+dt.HERE.getAbsolutePos = function(from) {
+  return from;
+};
+
+
+// Absolute position + dir
+dt.AbsPosDir = function(abspos, dir) {
+  this.abspos = abspos;
+  this.dir = dir;
+};
+
+dt.AbsPosDir.prototype.equals = function(absposdir) {
+  return (this.dir === absposdir.dir) && (this.abspos.equals(absposdir.abspos));
+};
+
+dt.AbsPosDir.prototype.transpose = function() {
+  var nabspos = this.abspos.dir(this.dir);
+  var ndir = this.dir.opposite;
+  return new dt.AbsPosDir(nabspos, ndir);
+};
+
+dt.AbsPosDir.arrayContains = function(rpds, rpd) {
+  for (var i = 0; i < rpds.length; ++i) {
+    if (rpd.equals(rpds[i])) {
+      return true;
+    }
+  }
+  return false;
+};
+
+dt.AbsPosDir.arrayMatch = function(rpd1, rpd2) {
+  for (var i = 0; i < rpd1.length; ++i) {
+    if (!dt.AbsPosDir.arrayContains(rpd2, rpd1[i])) {
+      return false;
+    }
+  }
+  return true;
+};
+
+dt.AbsPosDir.arrayIntersect = function(rpd1, rpd2) {
+  var inter = [];
+  for (var i = 0; i < rpd1.length; ++i) {
+    if (dt.AbsPosDir.arrayContains(rpd2, rpd1[i])) {
+      inter.push(rpd1[i]);
+    }
+  }
+  return inter;
+};
+
+dt.AbsPosDir.arrayUnion = function(rpd1, rpd2) {
+  var union = [];
+  for (var i = 0; i < rpd1.length; ++i) {
+    if (!dt.AbsPosDir.arrayContains(union, rpd1[i])) {
+      union.push(rpd1[i]);
+    }
+  }
+  for (var j = 0; j < rpd2.length; ++j) {
+    if (!dt.AbsPosDir.arrayContains(union, rpd2[j])) {
+      union.push(rpd2[j]);
+    }
+  }
+  return union;
+};
+
+dt.AbsPosDir.arrayToRelative = function(apds, from) {
+  var rpds = [];
+  for (var i = 0; i < apds.length; ++i) {
+    rpds.push(new dt.RelPosDir(dt.RelativePos.difference(from, apds[i].abspos),
+                               apds[i].dir));
+  }
+  return rpds;
+};
+
+
+
+
 // Hexagonal grid ------------------------
 dt.Hexgrid = function(width, height) {
   this.init(width, height);

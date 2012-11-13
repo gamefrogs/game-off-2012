@@ -147,8 +147,10 @@ dt.Level.prototype.initObjects = function() {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
   for (var i = 0; i < this.def.starts.length; ++i) {
     var startDef = this.def.starts[i];
-    var tile = new dt.TileObject(dt.TILE_DOMINO, startDef.dir, true);
-    this.setObjectXY(startDef.x, startDef.y, tile);
+    //var tile = new dt.TileObject(dt.TILE_DOMINO, startDef.dir, true);
+    //this.setObjectXY(startDef.x, startDef.y, tile);
+    var piece = dt.StraightStartPiece.create(startDef.dir);
+    this.setObject(startDef, piece);
   }
   for (i = 0; i < this.def.goals.length; ++i) {
     var goalDef = this.def.goals[i];
@@ -204,9 +206,20 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
       var npos = pos.dir(dir);
       if (this.isInside(npos)) {
         var nobj = this.getObject(npos);
-        if ((nobj !== undefined) && nobj.isPossibleDestination(dir.opposite)) {
-          // TODO also check the 'dest' of the object
-          dirs.push(dir);
+        if (nobj !== undefined) {
+          if ((nobj instanceof dt.TileObject) && nobj.isPossibleDestination(dir.opposite)) {
+            // TODO also check the 'dest' of the object
+            dirs.push(dir);
+            
+          } else if (nobj instanceof dt.BasePiece) {
+            var outs = nobj.getOutputs();
+            for (var o = 0; o < outs.length; ++o) {
+              var relposdir = outs[o];
+              if (dt.HERE.equals(relposdir.relpos)) {
+                dirs.push(relposdir.dir.opposite);
+              }
+            }
+          }
         }
       }
     }
@@ -215,6 +228,10 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
 };
 
 dt.Level.prototype.canAddDomino = function(pos) {
+  return this.getObject(pos) === undefined;
+};
+
+dt.Level.prototype.canAddDomino00 = function(pos) {
   var obj = this.getObject(pos);
   if ((obj !== undefined) && (!obj.canReplace())) {
     return false;
@@ -224,6 +241,15 @@ dt.Level.prototype.canAddDomino = function(pos) {
 };
 
 dt.Level.prototype.addDomino = function(pos) {
+  var srcdirs = this.findIncomingDirs(pos);
+  if (srcdirs.length > 0) {
+    var srcdir = srcdirs[0];
+    var domino = dt.StraightDominoPiece.create(srcdir);
+    this.setObject(pos, domino);
+  }
+};
+
+dt.Level.prototype.addDomino00 = function(pos) {
   var srcdirs = this.findIncomingDirs(pos);
 
   if (srcdirs.length > 0) {
