@@ -88,9 +88,11 @@ dt.Game.prototype.runRound = function() {
   
   var that = this;
   var stepFunc = function() {
-    var stillLive = that.round.runStep();
+    var stillLive = that.round.runWholeStep();
     if (stillLive) {
       window.setTimeout(stepFunc, 1000);
+    } else {
+      that.round.end();
     }
   };
   stepFunc();

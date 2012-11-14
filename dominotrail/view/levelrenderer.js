@@ -93,22 +93,6 @@ dt.LevelRenderer.prototype.render = function() {
   }
 };
 
-dt.LevelRenderer.prototype.showLiveCells = function() {
-  var ctx = this.ctx;
-  var live = this.round.live;
-  for (var i = 0; i < live.length; ++i) {
-    var pos = live[i];
-    var hc = this.getCellCenter(pos.x, pos.y);
-    ctx.save();
-    ctx.fillStyle = "#008080";
-    ctx.globalAlpha = 0.5;
-    ctx.beginPath();
-    ctx.arc(hc.x, hc.y, this.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
-    ctx.fill();
-    ctx.restore();
-  }
-};
-
 dt.squaredist = function(x0, y0, x1, y1) {
   return ((x1 - x0) * (x1 - x0)) + ((y1 - y0) * (y1 - y0));
 };
@@ -150,72 +134,84 @@ dt.FULL_CIRCLE = 2 * Math.PI;
 
 dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
   var ctx = this.ctx;
-  var obj = this.round.getObjectXY(x, y);
+  var obj = this.level.getObjectXY(x, y);
   if (obj !== undefined) {
     var hc = this.getCellCenter(x, y);
-    ctx.save();
-    if (obj.isStart()) {
-      ctx.strokeStyle = "#00c000";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
-      ctx.stroke();
-    }
-    if (obj.isGoal()) {
-      ctx.strokeStyle = "#000080";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
-      ctx.stroke();
-    }
-    ctx.restore();
-      
-      
-    if (obj.getType() === dt.TILE_DOMINO) {
+    if (obj instanceof dt.TileObject) {
       ctx.save();
-      ctx.translate(hc.x, hc.y);
-      ctx.scale(this.RADIUS / 30, this.RADIUS / 30); // Domino size is based on 30 pixels
-      ctx.save();
-      ctx.rotate(dt.LevelRenderer.ROTATION[obj.getSrc().id]);
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(-5, -9, 6, 19);
-      ctx.fillRect(-20, -9, 6, 19);
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(1, -9, 5, 19);
-      ctx.fillRect(-14, -9, 5, 19);
+      if (obj.isStart()) {
+        ctx.strokeStyle = "#00c000";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
+        ctx.stroke();
+      }
+      if (obj.isGoal()) {
+        ctx.strokeStyle = "#000080";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(hc.x, hc.y, this.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
+        ctx.stroke();
+      }
       ctx.restore();
-
-      var dests = obj.getDestinations();
-      for (var d = 0; d < dests.length; ++d) {
+      
+      
+      if (obj.getType() === dt.TILE_DOMINO) {
         ctx.save();
-        ctx.rotate(dt.LevelRenderer.ROTATION[dests[d].opposite.id]);
+        ctx.translate(hc.x, hc.y);
+        ctx.scale(this.RADIUS / 30, this.RADIUS / 30); // Domino size is based on 30 pixels
+        ctx.save();
+        ctx.rotate(dt.LevelRenderer.ROTATION[obj.getSrc().id]);
         ctx.fillStyle = "#000000";
-        ctx.fillRect(10, -9, 6, 19);
+        ctx.fillRect(-5, -9, 6, 19);
+        ctx.fillRect(-20, -9, 6, 19);
         ctx.fillStyle = "#ffffff";
-        ctx.fillRect(16, -9, 5, 19);
+        ctx.fillRect(1, -9, 5, 19);
+        ctx.fillRect(-14, -9, 5, 19);
+        ctx.restore();
+        
+        var dests = obj.getDestinations();
+        for (var d = 0; d < dests.length; ++d) {
+          ctx.save();
+          ctx.rotate(dt.LevelRenderer.ROTATION[dests[d].opposite.id]);
+          ctx.fillStyle = "#000000";
+          ctx.fillRect(10, -9, 6, 19);
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(16, -9, 5, 19);
+          ctx.restore();
+        }
+        
+        ctx.restore();
+        
+      } else {
+        ctx.font = "20px Verdana";
+        ctx.fillStyle = "#000000";
+        ctx.textBaseline = "middle";
+        ctx.fillText("?", hc.x - 5, hc.y);
+      }
+      
+      if (obj.isDead()) {
+        ctx.save();
+        ctx.strokeStyle = "#808080";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (var angle = -Math.PI; angle <= Math.PI; angle += Math.PI / 6) {
+          ctx.moveTo(hc.x, hc.y);
+          ctx.lineTo(hc.x + this.RADIUS * Math.cos(angle), hc.y + this.RADIUS * Math.sin(angle));
+        }
+        ctx.stroke();
         ctx.restore();
       }
 
+      
+    } else if (obj instanceof dt.BasePiece) {
+      ctx.save();
+      ctx.translate(hc.x, hc.y);
+      obj.draw(ctx, 0);
       ctx.restore();
       
     } else {
-      ctx.font = "20px Verdana";
-      ctx.fillStyle = "#000000";
-      ctx.textBaseline = "middle";
-      ctx.fillText("?", hc.x - 5, hc.y);
-    }
-
-    if (obj.isDead()) {
-      ctx.save();
-      ctx.strokeStyle = "#808080";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      for (var angle = -Math.PI; angle <= Math.PI; angle += Math.PI / 6) {
-        ctx.moveTo(hc.x, hc.y);
-        ctx.lineTo(hc.x + this.RADIUS * Math.cos(angle), hc.y + this.RADIUS * Math.sin(angle));
-      }
-      ctx.stroke();
-      ctx.restore();
+      util.log("WAT?");
     }
   }
 };
@@ -247,9 +243,6 @@ dt.LevelRenderer.prototype.getHexPosition = function(mx, my) {
 dt.LevelRenderer.prototype.update = function(event) {
   util.log("Renderer update", event);
   this.render();
-  if (event.type === dt.EVENT_ROUND_STEP_CHANGE) {
-    this.showLiveCells();
-  }
 };
 
 dt.LevelRenderer.prototype.mouseHandler = function(event) {
