@@ -35,7 +35,7 @@ dt.Controller.prototype.initEvents = function() {
     that.game.quitRound();
   });
   dt.Controller.attachButton("round_run", function(event) {
-    that.game.runRound();
+    that.runRound();
   });
 
   // Attach buttons from the "end of round" popup
@@ -50,6 +50,10 @@ dt.Controller.prototype.initEvents = function() {
   });
   
   this.view.addObserver(this);
+};
+
+dt.Controller.prototype.runRound = function() {
+  this.game.runRound();
 };
 
 dt.Controller.attachButton = function(id, func) {

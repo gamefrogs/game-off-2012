@@ -77,7 +77,7 @@ dt.LevelRenderer.prototype.getBackground = function(value) {
   return dt.LevelRenderer.BACKGROUND_COLOR[value];
 };
 
-dt.LevelRenderer.prototype.render = function() {
+dt.LevelRenderer.prototype.render = function(percent) {
   var ctx = this.ctx;
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -88,7 +88,7 @@ dt.LevelRenderer.prototype.render = function() {
       var fill = this.getBackground(value);
       this.renderCellBackground(x, y, fill, "#c0c0c0");
 
-      this.renderCellContent(x, y);
+      this.renderCellContent(x, y, percent || 0);
     }
   }
 };
@@ -132,7 +132,7 @@ dt.LevelRenderer.prototype.renderCellBackground = function(x, y, fill, stroke, w
 
 dt.FULL_CIRCLE = 2 * Math.PI;
 
-dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
+dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
   var ctx = this.ctx;
   var obj = this.level.getObjectXY(x, y);
   if (obj !== undefined) {
@@ -141,7 +141,7 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y) {
     ctx.save();
     ctx.translate(hc.x, hc.y);
     if (obj instanceof dt.BasePiece) {
-      obj.draw(ctx, 0);
+      obj.draw(ctx, percent || 0);
       
     } else {
       ctx.font = "30px Verdana";

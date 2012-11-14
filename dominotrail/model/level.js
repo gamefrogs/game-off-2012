@@ -90,7 +90,7 @@ dt.LEVEL1_STR =
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
 dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR,
                                [{ x: 10, y: 1, dir: dt.Dir.E }],
-                               [{ x: 2, y: 5 }]);
+                               [{ x: 2, y: 1 }]);
 
 dt.LEVEL2_STR = 
   " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
@@ -205,15 +205,11 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
       if (this.isInside(npos)) {
         var nobj = this.getObject(npos);
         if (nobj !== undefined) {
-          if ((nobj instanceof dt.TileObject) && nobj.isPossibleDestination(dir.opposite)) {
-            // TODO also check the 'dest' of the object
-            dirs.push(dir);
-            
-          } else if (nobj instanceof dt.BasePiece) {
+          if (nobj instanceof dt.BasePiece) {
             var outs = nobj.getOutputs();
             for (var o = 0; o < outs.length; ++o) {
               var relposdir = outs[o];
-              if (dt.HERE.equals(relposdir.relpos)) {
+              if (dt.HERE.equals(relposdir.relpos) && (relposdir.dir === dir.opposite)) {
                 dirs.push(relposdir.dir.opposite);
               }
             }

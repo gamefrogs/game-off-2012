@@ -92,24 +92,11 @@ dt.StraightDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.fillRect(1, -9, 5, 19);
   ctx.fillRect(16, -9, 5, 19);
 
-  if (this.fallen) {
-    ctx.strokeStyle = "#808080";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    for (var angle = -Math.PI; angle <= Math.PI; angle += Math.PI / 6) {
-      ctx.moveTo(0, 0);
-      ctx.lineTo(dt.RADIUS * Math.cos(angle), dt.RADIUS * Math.sin(angle));
-    }
-    ctx.stroke();
-  }
-
-  if (this.active) {
-    ctx.fillStyle = "#008080";
-    ctx.globalAlpha = 0.5;
-    ctx.beginPath();
-    ctx.arc(hc.x, hc.y, this.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
-    ctx.fill();
-  }
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
   
   ctx.restore();
 };
@@ -210,9 +197,21 @@ dt.AnyEndPiece.prototype.getInputs = function() {
   return dt.AnyEndPiece.ALL_DIRS;
 };
 
+dt.AnyEndPiece.prototype.getOutputs = function() {
+  return dt.AnyEndPiece.ALL_DIRS;
+};
+
 dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {
   if ((!this.fallen) && (inputs.length > 0)) {
     this.active = true;
+  }
+};
+
+dt.AnyEndPiece.prototype.collectOutputs = function() {
+  if (this.active) {
+    return dt.AnyEndPiece.ALL_DIRS;
+  } else {
+    return [];
   }
 };
 
@@ -260,14 +259,6 @@ dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
     ctx.stroke();
   }
 
-  if (this.active) {
-    ctx.fillStyle = "#008080";
-    ctx.globalAlpha = 0.5;
-    ctx.beginPath();
-    ctx.arc(hc.x, hc.y, this.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
-    ctx.fill();
-  }
-  
 };
 
 
