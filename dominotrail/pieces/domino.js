@@ -156,6 +156,121 @@ dt.StraightStartPiece.prototype.draw = function(ctx, percent) {
   ctx.restore();
 };
 
+// StraightEnd
+dt.StraightEndPiece = function() {
+};
+dt.StraightEndPiece.prototype = new dt.StraightDominoPiece();
+
+dt.StraightEndPiece.create = function(dir, params) {
+  var piece = new dt.StraightEndPiece();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.StraightEndPiece.prototype.init = function(dir, params) {
+  dt.StraightDominoPiece.prototype.init.call(this, dir, params);
+};
+
+dt.StraightEndPiece.prototype.draw = function(ctx, percent) {
+  dt.StraightDominoPiece.prototype.draw.call(this, ctx, percent);
+  
+  ctx.save();
+  ctx.strokeStyle = "#000080";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, dt.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
+  ctx.stroke();
+  ctx.restore();
+};
+
+// AnyEnd is a goal piece that accepts input from any direction
+dt.AnyEndPiece = function() {
+};
+dt.AnyEndPiece.prototype = new dt.BasePiece();
+
+dt.AnyEndPiece.create = function(dir, params) {
+  var piece = new dt.AnyEndPiece();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.AnyEndPiece.ALL_DIRS = [ new dt.RelPosDir(dt.HERE, dt.Dir.E),
+                            new dt.RelPosDir(dt.HERE, dt.Dir.SE),
+                            new dt.RelPosDir(dt.HERE, dt.Dir.SW),
+                            new dt.RelPosDir(dt.HERE, dt.Dir.W),
+                            new dt.RelPosDir(dt.HERE, dt.Dir.NW),
+                            new dt.RelPosDir(dt.HERE, dt.Dir.NE) ];
+
+dt.AnyEndPiece.prototype.init = function(dir, params) {
+  dt.BasePiece.prototype.init.call(this, dir, params);
+  this.reset();
+};
+
+dt.AnyEndPiece.prototype.getInputs = function() {
+  return dt.AnyEndPiece.ALL_DIRS;
+};
+
+dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {
+  if ((!this.fallen) && (inputs.length > 0)) {
+    this.active = true;
+  }
+};
+
+dt.AnyEndPiece.prototype.endStep = function(step) {
+  if (this.active) {
+    this.active = false;
+    this.fallen = true;
+  }
+};
+
+dt.AnyEndPiece.prototype.isActive = function() {
+  return this.active;
+};
+
+dt.AnyEndPiece.prototype.isDead = function() {
+  return this.fallen;
+};
+
+dt.AnyEndPiece.prototype.reset = function() {
+  this.active = false;
+  this.fallen = false;
+};
+
+dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.strokeStyle = "#000080";
+  ctx.fillStyle = "#000080";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, dt.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0, 0, dt.RADIUS * 0.5, 0, dt.FULL_CIRCLE, false);
+  ctx.fill();
+  ctx.restore();
+  
+  if (this.fallen) {
+    ctx.strokeStyle = "#808080";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (var angle = -Math.PI; angle <= Math.PI; angle += Math.PI / 6) {
+      ctx.moveTo(0, 0);
+      ctx.lineTo(dt.RADIUS * Math.cos(angle), dt.RADIUS * Math.sin(angle));
+    }
+    ctx.stroke();
+  }
+
+  if (this.active) {
+    ctx.fillStyle = "#008080";
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.arc(hc.x, hc.y, this.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
+    ctx.fill();
+  }
+  
+};
+
+
 // TurnRight: exits just right of the opposite of the input side
 dt.TurnRightDominoPiece = function() {
 };

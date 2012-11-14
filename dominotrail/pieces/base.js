@@ -63,7 +63,7 @@ dt.BasePiece.prototype.getInputs = function() {
 };
 
 // Must return the list of (relative position + direction) that produce output
-dt.BasePiece.prototype.getOuputs = function() {
+dt.BasePiece.prototype.getOutputs = function() {
   return [];
 };
 
@@ -116,4 +116,12 @@ dt.BasePiece.prototype.reset = function() {
 
 // Asks the piece to draw itself at a given percentage of progress (inside the current step)
 dt.BasePiece.prototype.draw = function(ctx, percent) {
+};
+
+
+////
+// When a piece occupies several cells, ghost pieces pointing to the main piece are put into
+// all the 'other' cells (those that are not the main cell)
+dt.GhostPiece = function(piece) {
+  this.piece = piece;
 };

@@ -125,7 +125,7 @@ dt.LEVEL2_STR =
 dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR,
                                [{ x: 2, y: 2, dir: dt.Dir.NW}],
                                [{ x: 5, y: 5 },
-                                { x: 5, y: 10 }]);
+                                { x: 6, y: 10 }]);
 
 dt.LEVELS = [ dt.LEVELDEF1,
               dt.LEVELDEF2
@@ -147,15 +147,13 @@ dt.Level.prototype.initObjects = function() {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
   for (var i = 0; i < this.def.starts.length; ++i) {
     var startDef = this.def.starts[i];
-    //var tile = new dt.TileObject(dt.TILE_DOMINO, startDef.dir, true);
-    //this.setObjectXY(startDef.x, startDef.y, tile);
     var piece = dt.StraightStartPiece.create(startDef.dir);
     this.setObject(startDef, piece);
   }
   for (i = 0; i < this.def.goals.length; ++i) {
     var goalDef = this.def.goals[i];
-    var goal = new dt.GoalObject(dt.Dir.NONE)
-    this.setObjectXY(goalDef.x, goalDef.y, goal);
+    var piece = dt.AnyEndPiece.create(dt.Dir.NONE);
+    this.setObject(goalDef, piece);
   }
 };
 
