@@ -19,10 +19,63 @@ dt.DeadEndDominoPiece.prototype.getInputs = function() {
 dt.DeadEndDominoPiece.prototype.receiveInputs = function(inputs) {
 };
 
+// Some common behaviour of all Domino pieces
+dt.BaseDominoPiece = function() {
+};
+dt.BaseDominoPiece.prototype = new dt.BasePiece();
+
+
+dt.BaseDominoPiece.prototype.init = function(dir, params) {
+  dt.BasePiece.prototype.init.call(this, dir);
+  this.reset();
+};
+
+dt.BaseDominoPiece.prototype.getInputs = function() {
+  return this.ins;
+};
+
+dt.BaseDominoPiece.prototype.getOutputs = function() {
+  return this.outs;
+};
+
+dt.BaseDominoPiece.prototype.isActive = function() {
+  return this.active;
+};
+
+dt.BaseDominoPiece.prototype.isDead = function() {
+  return this.fallen;
+};
+
+dt.BaseDominoPiece.prototype.receiveInputs = function(inputs) {
+  if (!this.fallen) {
+    this.active = dt.RelPosDir.arrayMatch(this.ins, inputs);
+  }
+};
+
+dt.BaseDominoPiece.prototype.collectOutputs = function() {
+  if (this.active) {
+    return this.outs;
+  } else {
+    return [];
+  }
+};
+
+dt.BaseDominoPiece.prototype.endStep = function(step) {
+  if (this.active) {
+    this.active = false;
+    this.fallen = true;
+  }
+};
+
+dt.BaseDominoPiece.prototype.reset = function() {
+  this.active = false;
+  this.fallen = false;
+};
+
 // Straight: exits on the opposite of the input side
 dt.StraightDominoPiece = function() {
 };
-dt.StraightDominoPiece.prototype = new dt.BasePiece();
+dt.StraightDominoPiece.prototype = new dt.BaseDominoPiece();
 
 
 dt.StraightDominoPiece.create = function(dir, params) {
@@ -32,52 +85,9 @@ dt.StraightDominoPiece.create = function(dir, params) {
 };
 
 dt.StraightDominoPiece.prototype.init = function(dir, params) {
-  dt.BasePiece.prototype.init.call(this, dir);
+  dt.BaseDominoPiece.prototype.init.call(this, dir);
   this.ins = [new dt.RelPosDir(dt.HERE, dir)];
   this.outs = [new dt.RelPosDir(dt.HERE, dir.opposite)];
-  this.reset();
-};
-
-dt.StraightDominoPiece.prototype.getInputs = function() {
-  return this.ins;
-};
-
-dt.StraightDominoPiece.prototype.getOutputs = function() {
-  return this.outs;
-};
-
-dt.StraightDominoPiece.prototype.isActive = function() {
-  return this.active;
-};
-
-dt.StraightDominoPiece.prototype.isDead = function() {
-  return this.fallen;
-};
-
-dt.StraightDominoPiece.prototype.receiveInputs = function(inputs) {
-  if (!this.fallen) {
-    this.active = dt.RelPosDir.arrayMatch(this.ins, inputs);
-  }
-};
-
-dt.StraightDominoPiece.prototype.collectOutputs = function() {
-  if (this.active) {
-    return this.outs;
-  } else {
-    return [];
-  }
-};
-
-dt.StraightDominoPiece.prototype.endStep = function(step) {
-  if (this.active) {
-    this.active = false;
-    this.fallen = true;
-  }
-};
-
-dt.StraightDominoPiece.prototype.reset = function() {
-  this.active = false;
-  this.fallen = false;
 };
 
 dt.StraightDominoPiece.prototype.draw = function(ctx, percent) {
@@ -173,7 +183,7 @@ dt.StraightEndPiece.prototype.draw = function(ctx, percent) {
 // AnyEnd is a goal piece that accepts input from any direction
 dt.AnyEndPiece = function() {
 };
-dt.AnyEndPiece.prototype = new dt.BasePiece();
+dt.AnyEndPiece.prototype = new dt.BaseDominoPiece();
 
 dt.AnyEndPiece.create = function(dir, params) {
   var piece = new dt.AnyEndPiece();
@@ -189,50 +199,15 @@ dt.AnyEndPiece.ALL_DIRS = [ new dt.RelPosDir(dt.HERE, dt.Dir.E),
                             new dt.RelPosDir(dt.HERE, dt.Dir.NE) ];
 
 dt.AnyEndPiece.prototype.init = function(dir, params) {
-  dt.BasePiece.prototype.init.call(this, dir, params);
-  this.reset();
-};
-
-dt.AnyEndPiece.prototype.getInputs = function() {
-  return dt.AnyEndPiece.ALL_DIRS;
-};
-
-dt.AnyEndPiece.prototype.getOutputs = function() {
-  return dt.AnyEndPiece.ALL_DIRS;
+  dt.BaseDominoPiece.prototype.init.call(this, dir, params);
+  this.ins = dt.AnyEndPiece.ALL_DIRS;
+  this.outs = dt.AnyEndPiece.ALL_DIRS;
 };
 
 dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {
   if ((!this.fallen) && (inputs.length > 0)) {
     this.active = true;
   }
-};
-
-dt.AnyEndPiece.prototype.collectOutputs = function() {
-  if (this.active) {
-    return dt.AnyEndPiece.ALL_DIRS;
-  } else {
-    return [];
-  }
-};
-
-dt.AnyEndPiece.prototype.endStep = function(step) {
-  if (this.active) {
-    this.active = false;
-    this.fallen = true;
-  }
-};
-
-dt.AnyEndPiece.prototype.isActive = function() {
-  return this.active;
-};
-
-dt.AnyEndPiece.prototype.isDead = function() {
-  return this.fallen;
-};
-
-dt.AnyEndPiece.prototype.reset = function() {
-  this.active = false;
-  this.fallen = false;
 };
 
 dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
@@ -265,7 +240,7 @@ dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
 // TurnRight: exits just right of the opposite of the input side
 dt.TurnRightDominoPiece = function() {
 };
-dt.TurnRightDominoPiece.prototype = new dt.BasePiece();
+dt.TurnRightDominoPiece.prototype = new dt.BaseDominoPiece();
 
 dt.TurnRightDominoPiece.create = function(dir, params) {
   var piece = new dt.TurnRightDominoPiece();
@@ -274,53 +249,9 @@ dt.TurnRightDominoPiece.create = function(dir, params) {
 };
 
 dt.TurnRightDominoPiece.prototype.init = function(dir, params) {
-  dt.BasePiece.prototype.init.call(this, dir);
+  dt.BaseDominoPiece.prototype.init.call(this, dir, params);
   this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
   this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.right)];
-  this.reset();
-};
-
-
-dt.TurnRightDominoPiece.prototype.getInputs = function() {
-  return this.ins;
-};
-
-dt.TurnRightDominoPiece.prototype.getOutputs = function() {
-  return this.outs;
-};
-
-dt.TurnRightDominoPiece.prototype.isActive = function() {
-  return this.active;
-};
-
-dt.TurnRightDominoPiece.prototype.isDead = function() {
-  return this.fallen;
-};
-
-dt.TurnRightDominoPiece.prototype.receiveInputs = function(inputs) {
-  if (!this.fallen) {
-    this.active = dt.RelPosDir.arrayMatch(this.ins, inputs);
-  }
-};
-
-dt.TurnRightDominoPiece.prototype.collectOutputs = function() {
-  if (this.active) {
-    return this.outs;
-  } else {
-    return [];
-  }
-};
-
-dt.TurnRightDominoPiece.prototype.endStep = function(step) {
-  if (this.active) {
-    this.active = false;
-    this.fallen = true;
-  }
-};
-
-dt.TurnRightDominoPiece.prototype.reset = function() {
-  this.active = false;
-  this.fallen = false;
 };
 
 dt.TurnRightDominoPiece.prototype.draw = function(ctx, percent) {
@@ -352,29 +283,50 @@ dt.TurnRightDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.restore();
 };
 
-// TurnLeft: exits just left of the opposite of the input side
+// Turnleft: exits just left of the opposite of the input side
 dt.TurnLeftDominoPiece = function() {
 };
-
-util.extend(dt.BasePiece, dt.TurnLeftDominoPiece);
+dt.TurnLeftDominoPiece.prototype = new dt.BaseDominoPiece();
 
 dt.TurnLeftDominoPiece.create = function(dir, params) {
   var piece = new dt.TurnLeftDominoPiece();
-  dt.BasePiece.init.call(piece, dir);
+  piece.init(dir, params);
   return piece;
 };
 
-dt.TurnLeftDominoPiece.prototype.getOtherCells = function() {
-  return [];
+dt.TurnLeftDominoPiece.prototype.init = function(dir, params) {
+  dt.BaseDominoPiece.prototype.init.call(this, dir, params);
+  this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.left)];
 };
 
-dt.TurnLeftDominoPiece.prototype.getInputs = function() {
-  return [{pos: dt.HERE, dir: this.dir}];
-};
+dt.TurnLeftDominoPiece.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-20, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-14, -9, 5, 19);
 
-dt.TurnLeftDominoPiece.prototype.getOutputs = function() {
-  return [{pos: dt.HERE, dir: this.dir.opposite.left}];
-};
+  ctx.rotate(-Math.PI / 6);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-5, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(1, -9, 5, 19);
 
+  ctx.rotate(-Math.PI / 6);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  
+  ctx.restore();
+};
 
 // TODO add double and triple forks
