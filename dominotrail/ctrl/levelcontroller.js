@@ -3,7 +3,8 @@
 dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
 
-dt.PIECE_BUTTONS = ["piece_domino", "piece_bridge", "piece_turn_right", "piece_turn_left"];
+dt.PIECE_BUTTONS = ["piece_domino", "piece_bridge", "piece_turn_right", "piece_turn_left",
+                    "piece_fork"];
 dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
 
 dt.LevelController = function(round, renderer) {
@@ -42,6 +43,10 @@ dt.LevelController.prototype.initListeners = function() {
   this.addListener("piece_turn_left", "click", function(event) {
     that.highlightFrom("piece_turn_left", dt.PIECE_BUTTONS);
     that.choosePieceType(dt.TurnLeftDominoPiece);
+  });
+  this.addListener("piece_fork", "click", function(event) {
+    that.highlightFrom("piece_fork", dt.PIECE_BUTTONS);
+    that.choosePieceType(dt.ForkDominoPiece);
   });
 
   this.addListener("dir_E", "click", function(event) {
