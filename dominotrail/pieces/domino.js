@@ -222,14 +222,20 @@ dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
   ctx.arc(0, 0, dt.RADIUS * 0.5, 0, dt.FULL_CIRCLE, false);
   ctx.fill();
   ctx.restore();
-  
+
+  var ratio = 0;
   if (this.fallen) {
+    ratio = 1;
+  } else if (this.active) {
+    ratio = percent / 100;
+  }
+  if (ratio !== 0) {
     ctx.strokeStyle = "#808080";
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (var angle = -Math.PI; angle <= Math.PI; angle += Math.PI / 6) {
       ctx.moveTo(0, 0);
-      ctx.lineTo(dt.RADIUS * Math.cos(angle), dt.RADIUS * Math.sin(angle));
+      ctx.lineTo(ratio * dt.RADIUS * Math.cos(angle), ratio * dt.RADIUS * Math.sin(angle));
     }
     ctx.stroke();
   }
