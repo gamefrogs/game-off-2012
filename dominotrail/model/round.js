@@ -152,11 +152,11 @@ dt.Round.prototype.isFinished = function() {
 };
 
 dt.Round.prototype.runWholeStep = function() {
-  if (false) { // TODO find end condition
-    this.end();
-    return false;
-  }
+  this.runStepFirstHalf();
+  return this.runStepSecondHalf();
+};
 
+dt.Round.prototype.runStepFirstHalf = function() {
   this.setStep(this.step + 1);
   util.log("Running step " + this.step);
   
@@ -165,9 +165,9 @@ dt.Round.prototype.runWholeStep = function() {
   this.sendInputs();
 
   this.runStep();
+};
 
-  /// Draw from percent = 0 to percent = 100
-
+dt.Round.prototype.runStepSecondHalf = function() {
   this.collectOutputs();
   
   this.endStep();
@@ -176,16 +176,14 @@ dt.Round.prototype.runWholeStep = function() {
 };
 
 dt.Round.prototype.isSuccess = function() {
-  return false;
-  /*
-  var goals = this.level.getGoalPositions();
+  var goals = this.level.getGoalPieces();
   for (var i = 0; i < goals.length; ++i) {
-    var obj = this.getObject(goals[i]);
-    if ((obj === undefined) || (!obj.isDead())) {
+    var goal = goals[i];
+    if (!goal.isGoalReached()) {
       return false;
     }
   }
-  return true;*/
+  return true;
 };
 
 dt.Round.prototype.end = function() {

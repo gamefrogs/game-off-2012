@@ -74,15 +74,33 @@ h1 {
   background-color: #80c080;
   display: none;
 }
-#btnPlay{
-margin-top:20%;
-margin-left:45%;
- width: 100px;
- height: 40px;
+#btnPlay {
+  margin-top:20%;
+  margin-left:45%;
+  width: 100px;
+  height: 40px;
   background-image:url('resources/btnPlay1.png');
 }
 #btnPlay:hover{
   background-image:url('resources/btnPlay2.png');
+}
+
+.sbutton {
+  border: 1px solid grey;
+  padding: 1px;
+  color: black;
+  background-color: white;
+  cursor: default;
+}
+
+.sbuttonselected {
+  color: white;
+  background-color: grey;
+}
+
+.sbutton:hover {
+  color: white;
+  background-color: black;
 }
 
     </style>
@@ -92,7 +110,7 @@ margin-left:45%;
     <script src="model/hexgrid.js"></script>
     <script src="pieces/base.js"></script>
     <script src="pieces/domino.js"></script>
-    <script src="model/tile.js"></script>
+    <script src="pieces/bridge.js"></script>
     <script src="model/level.js"></script>
     <script src="model/round.js"></script>
     <script src="model/game.js"></script>
@@ -130,7 +148,8 @@ margin-left:45%;
         <div id="levels">
         </div>
         <hr>
-        <a id="menu_back" class="button" href="javascript:util.nop();">Change profile</a>
+        <a id="menu_back" class="button" href="javascript:util.nop();"
+           style="display: none">Change profile</a>
       </div>
 
 
@@ -138,7 +157,15 @@ margin-left:45%;
       <!-- Level round screen -->
       <div id="round" class="screen">
         <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 200px; overflow: hidden; background-color: pink">
-          Tools
+          Pieces<br>
+          <div id="piece_buttons" style="width: 200px"></div>
+          Direction<br>
+          <span id="dir_E" class="sbutton">E</span>
+          <span id="dir_SE" class="sbutton">SE</span>
+          <span id="dir_SW" class="sbutton">SW</span>
+          <span id="dir_W" class="sbutton">W</span>
+          <span id="dir_NW" class="sbutton">NW</span>
+          <span id="dir_NE" class="sbutton">NE</span>
           <hr>
           <a id="round_run" class="button" href="javascript:util.nop();">Run</a>
           <a id="round_quit" class="button" href="javascript:util.nop();">Quit level</a>

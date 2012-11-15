@@ -90,7 +90,7 @@ dt.LEVEL1_STR =
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
 dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR,
                                [{ x: 10, y: 1, dir: dt.Dir.E }],
-                               [{ x: 2, y: 5 }]);
+                               [{ x: 2, y: 1 }]);
 
 dt.LEVEL2_STR = 
   " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
@@ -125,7 +125,7 @@ dt.LEVEL2_STR =
 dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR,
                                [{ x: 2, y: 2, dir: dt.Dir.NW}],
                                [{ x: 5, y: 5 },
-                                { x: 5, y: 10 }]);
+                                { x: 6, y: 10 }]);
 
 dt.LEVELS = [ dt.LEVELDEF1,
               dt.LEVELDEF2
@@ -147,15 +147,13 @@ dt.Level.prototype.initObjects = function() {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
   for (var i = 0; i < this.def.starts.length; ++i) {
     var startDef = this.def.starts[i];
-    //var tile = new dt.TileObject(dt.TILE_DOMINO, startDef.dir, true);
-    //this.setObjectXY(startDef.x, startDef.y, tile);
     var piece = dt.StraightStartPiece.create(startDef.dir);
     this.setObject(startDef, piece);
   }
   for (i = 0; i < this.def.goals.length; ++i) {
     var goalDef = this.def.goals[i];
-    var goal = new dt.GoalObject(dt.Dir.NONE)
-    this.setObjectXY(goalDef.x, goalDef.y, goal);
+    var piece = dt.AnyEndPiece.create(dt.Dir.NONE);
+    this.setObject(goalDef, piece);
   }
 };
 
@@ -207,15 +205,11 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
       if (this.isInside(npos)) {
         var nobj = this.getObject(npos);
         if (nobj !== undefined) {
-          if ((nobj instanceof dt.TileObject) && nobj.isPossibleDestination(dir.opposite)) {
-            // TODO also check the 'dest' of the object
-            dirs.push(dir);
-            
-          } else if (nobj instanceof dt.BasePiece) {
+          if (nobj instanceof dt.BasePiece) {
             var outs = nobj.getOutputs();
             for (var o = 0; o < outs.length; ++o) {
               var relposdir = outs[o];
-              if (dt.HERE.equals(relposdir.relpos)) {
+              if (dt.HERE.equals(relposdir.relpos) && (relposdir.dir === dir.opposite)) {
                 dirs.push(relposdir.dir.opposite);
               }
             }
@@ -228,16 +222,26 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
 };
 
 dt.Level.prototype.canAddDomino = function(pos) {
-  return this.getObject(pos) === undefined;
+  if (this.getObject(pos) === undefined) {
+    var srcdirs = this.findIncomingDirs(pos);
+    return srcdirs.length > 0;
+  }
 };
 
-dt.Level.prototype.canAddDomino00 = function(pos) {
-  var obj = this.getObject(pos);
-  if ((obj !== undefined) && (!obj.canReplace())) {
+dt.Level.prototype.canAddPiece = function(pos, piece) {
+  // For each cell occupied by the piece, check that it is inside the board and available
+  if (this.getObject(pos) !== undefined) {
     return false;
   }
-  var srcdirs = this.findIncomingDirs(pos);
-  return (srcdirs.length > 0);
+  var otherCells = piece.getOtherCells();
+  for (var i = 0; i < otherCells.length; ++i) {
+    var otherPos = otherCells[i].getAbsolutePos(pos);
+    if (!(this.isInside(otherPos) && (this.getObject(otherPos) === undefined))) {
+      return false;
+    }
+  }
+  
+  return true;
 };
 
 dt.Level.prototype.addDomino = function(pos) {
@@ -246,6 +250,16 @@ dt.Level.prototype.addDomino = function(pos) {
     var srcdir = srcdirs[0];
     var domino = dt.StraightDominoPiece.create(srcdir);
     this.setObject(pos, domino);
+  }
+};
+
+dt.Level.prototype.addPiece = function(pos, piece) {
+  this.setObject(pos, piece);
+  var otherCells = piece.getOtherCells();
+  for (var i = 0; i < otherCells.length; ++i) {
+    var ghost = new dt.GhostPiece(piece);
+    var otherPos = otherCells[i].getAbsolutePos(pos);
+    this.setObject(otherPos, ghost);
   }
 };
 
@@ -287,11 +301,21 @@ dt.Level.prototype.getPositions = function(prop) {
   return pos
 };
 
-dt.Level.prototype.getStartPositions = function() {
-  return this.getPositions("start");
+// Find pieces responding 'true' to a method call. method is the name of the method
+dt.Level.prototype.getPieces = function(method) {
+  var pos = [];
+  for (var y = 0; y < this.getHeight(); ++y) {
+    for (var x = 0; x < this.getWidth(); ++x) {
+      var obj = this.getObjectXY(x, y);
+      if ((obj !== undefined) && (obj instanceof dt.BasePiece) && obj[method].call(obj)) {
+        pos.push(obj);
+      }
+    }
+  }
+  return pos
 };
 
-dt.Level.prototype.getGoalPositions = function() {
-  return this.getPositions("goal");
+dt.Level.prototype.getGoalPieces = function() {
+  return this.getPieces("isGoal");
 };
 

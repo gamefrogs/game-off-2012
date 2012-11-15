@@ -85,17 +85,6 @@ dt.Game.prototype.runRound = function() {
   this.changeState(dt.STATE_ROUND_RUN);
 
   this.round.start();
-  
-  var that = this;
-  var stepFunc = function() {
-    var stillLive = that.round.runWholeStep();
-    if (stillLive) {
-      window.setTimeout(stepFunc, 1000);
-    } else {
-      that.round.end();
-    }
-  };
-  stepFunc();
 };
 
 dt.Game.prototype.endRound = function(success) {
