@@ -3,8 +3,14 @@
 dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
 
-dt.PIECE_BUTTONS = ["piece_domino", "piece_bridge", "piece_turn_right", "piece_turn_left",
-                    "piece_fork", "piece_tri_fork"];
+dt.PIECE_BUTTONS = [];
+
+dt.USABLE_PIECES = [{type: dt.BridgePiece,          name: "Bridge"},
+                    {type: dt.TurnRightDominoPiece, name: "R.&nbsp;Turn"},
+                    {type: dt.TurnLeftDominoPiece,  name: "L.&nbsp;Turn"},
+                    {type: dt.ForkDominoPiece,      name: "Fork"},
+                    {type: dt.TriForkDominoPiece,   name: "3&nbsp;Fork"}
+                   ];
 dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
 
 dt.LevelController = function(round, renderer) {
@@ -21,39 +27,46 @@ dt.LevelController = function(round, renderer) {
 
   this.highlightFrom("dir_E", dt.DIR_BUTTONS);
   this.chooseDir(dt.Dir.E);
-  this.highlightFrom("piece_bridge", dt.PIECE_BUTTONS);
-  this.choosePieceType(dt.BridgePiece);
+  this.highlightFrom("piece_0", dt.PIECE_BUTTONS);
+  this.choosePieceType(dt.USABLE_PIECES[0].type);
+};
+
+dt.LevelController.prototype.createPieceButton = function(id, label) {
+  var panel = document.getElementById("piece_buttons");
+  panel.innerHTML += '<span id="' + id + '" class="sbutton">' + label + '</span><br>';
+};
+
+dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
+  var that = this;
+  return function(event) {
+    that.highlightFrom(id, dt.PIECE_BUTTONS);
+    that.choosePieceType(pieceType);
+  }
 };
 
 dt.LevelController.prototype.initListeners = function() {
   var that = this;
   this.eventListeners = [];
+  dt.PIECE_BUTTONS.push("piece_domino");
+  // Create all buttons in HTML before attaching listeners
+  this.createPieceButton("piece_domino", "Domino");
+  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+    var id = "piece_" + i;
+    dt.PIECE_BUTTONS.push(id);
+    this.createPieceButton(id, dt.USABLE_PIECES[i].name);
+  }
+
   this.addListener("piece_domino", "click", function(event) {
     that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
     that.chooseDomino();
   });
-  this.addListener("piece_bridge", "click", function(event) {
-    that.highlightFrom("piece_bridge", dt.PIECE_BUTTONS);
-    that.choosePieceType(dt.BridgePiece);
-  });
-  this.addListener("piece_turn_right", "click", function(event) {
-    that.highlightFrom("piece_turn_right", dt.PIECE_BUTTONS);
-    that.choosePieceType(dt.TurnRightDominoPiece);
-  });
-  this.addListener("piece_turn_left", "click", function(event) {
-    that.highlightFrom("piece_turn_left", dt.PIECE_BUTTONS);
-    that.choosePieceType(dt.TurnLeftDominoPiece);
-  });
-  this.addListener("piece_fork", "click", function(event) {
-    that.highlightFrom("piece_fork", dt.PIECE_BUTTONS);
-    that.choosePieceType(dt.ForkDominoPiece);
-  });
+  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+    var id = "piece_" + i;
+    this.addListener(id, "click",
+                     this.makePieceListener(id, dt.USABLE_PIECES[i].type));
+  }
 
-  this.addListener("piece_tri_fork", "click", function(event) {
-    that.highlightFrom("piece_tri_fork", dt.PIECE_BUTTONS);
-    that.choosePieceType(dt.TriForkDominoPiece);
-  });
-
+  // Direction buttons
   this.addListener("dir_E", "click", function(event) {
     that.highlightFrom("dir_E", dt.DIR_BUTTONS);
     that.chooseDir(dt.Dir.E);
