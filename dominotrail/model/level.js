@@ -301,11 +301,21 @@ dt.Level.prototype.getPositions = function(prop) {
   return pos
 };
 
-dt.Level.prototype.getStartPositions = function() {
-  return this.getPositions("start");
+// Find pieces responding 'true' to a method call. method is the name of the method
+dt.Level.prototype.getPieces = function(method) {
+  var pos = [];
+  for (var y = 0; y < this.getHeight(); ++y) {
+    for (var x = 0; x < this.getWidth(); ++x) {
+      var obj = this.getObjectXY(x, y);
+      if ((obj !== undefined) && (obj instanceof dt.BasePiece) && obj[method].call(obj)) {
+        pos.push(obj);
+      }
+    }
+  }
+  return pos
 };
 
-dt.Level.prototype.getGoalPositions = function() {
-  return this.getPositions("goal");
+dt.Level.prototype.getGoalPieces = function() {
+  return this.getPieces("isGoal");
 };
 

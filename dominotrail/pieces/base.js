@@ -50,6 +50,16 @@ dt.BasePiece.prototype.param = function(params, name, defaultValue) {
 // 1. Static part used when laying out the level
 //-----------------------------------------------
 
+// Asks a piece if it's a goal of the level
+dt.BasePiece.prototype.isGoal = function() {
+  return false;
+};
+
+// Asks the piece, when it's a goal, if it has been reached
+dt.BasePiece.prototype.isGoalReached = function() {
+  return false;
+}
+
 // Must return an array of dt.RelativePos that are part of this piece, except the main position
 // dt.HERE is implicit
 // Pieces that fit in one cell return an empty array

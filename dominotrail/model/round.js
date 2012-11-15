@@ -176,16 +176,14 @@ dt.Round.prototype.runStepSecondHalf = function() {
 };
 
 dt.Round.prototype.isSuccess = function() {
-  return false;
-  /*
-  var goals = this.level.getGoalPositions();
+  var goals = this.level.getGoalPieces();
   for (var i = 0; i < goals.length; ++i) {
-    var obj = this.getObject(goals[i]);
-    if ((obj === undefined) || (!obj.isDead())) {
+    var goal = goals[i];
+    if (!goal.isGoalReached()) {
       return false;
     }
   }
-  return true;*/
+  return true;
 };
 
 dt.Round.prototype.end = function() {

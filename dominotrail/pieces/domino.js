@@ -204,6 +204,14 @@ dt.AnyEndPiece.prototype.init = function(dir, params) {
   this.outs = dt.AnyEndPiece.ALL_DIRS;
 };
 
+dt.AnyEndPiece.prototype.isGoal = function() {
+  return true;
+};
+
+dt.AnyEndPiece.prototype.isGoalReached = function() {
+  return this.fallen;
+};
+
 dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {
   if ((!this.fallen) && (inputs.length > 0)) {
     this.active = true;
