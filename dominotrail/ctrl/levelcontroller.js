@@ -3,7 +3,7 @@
 dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
 
-dt.PIECE_BUTTONS = ["piece_domino", "piece_bridge"];
+dt.PIECE_BUTTONS = ["piece_domino", "piece_bridge", "piece_turn_right"];
 dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
 
 dt.LevelController = function(round, renderer) {
@@ -15,15 +15,13 @@ dt.LevelController = function(round, renderer) {
 
   this.initListeners();
   
-  this.mode = dt.MODE_PIECE; 
-  this.pieceType = dt.BridgePiece;
-  this.dir = dt.Dir.E;
+  this.mode = dt.MODE_DOMINO; 
   this.params = {};
 
-  this.highlightFrom("piece_bridge", dt.PIECE_BUTTONS);
-  this.chooseBridge();
   this.highlightFrom("dir_E", dt.DIR_BUTTONS);
   this.chooseDir(dt.Dir.E);
+  this.highlightFrom("piece_bridge", dt.PIECE_BUTTONS);
+  this.choosePieceType(dt.BridgePiece);
 };
 
 dt.LevelController.prototype.initListeners = function() {
@@ -35,7 +33,11 @@ dt.LevelController.prototype.initListeners = function() {
   });
   this.addListener("piece_bridge", "click", function(event) {
     that.highlightFrom("piece_bridge", dt.PIECE_BUTTONS);
-    that.chooseBridge();
+    that.choosePieceType(dt.BridgePiece);
+  });
+  this.addListener("piece_turn_right", "click", function(event) {
+    that.highlightFrom("piece_turn_right", dt.PIECE_BUTTONS);
+    that.choosePieceType(dt.TurnRightDominoPiece);
   });
 
   this.addListener("dir_E", "click", function(event) {
@@ -101,8 +103,10 @@ dt.LevelController.prototype.chooseDomino = function() {
   this.mode = dt.MODE_DOMINO;
 };
 
-dt.LevelController.prototype.chooseBridge = function() {
+dt.LevelController.prototype.choosePieceType = function(pieceType) {
   this.mode = dt.MODE_PIECE;
+  this.pieceType = pieceType;
+  this.preparePiece();
 };
 
 dt.LevelController.prototype.chooseDir = function(dir) {
@@ -111,7 +115,9 @@ dt.LevelController.prototype.chooseDir = function(dir) {
 };
 
 dt.LevelController.prototype.preparePiece = function() {
-  this.piece = this.pieceType.create(this.dir, this.params);
+  if (this.mode === dt.MODE_PIECE) {
+    this.piece = this.pieceType.create(this.dir, this.params);
+  }
 };
 
 dt.LevelController.prototype.update = function(event) {

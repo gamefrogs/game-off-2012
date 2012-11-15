@@ -265,25 +265,91 @@ dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
 // TurnRight: exits just right of the opposite of the input side
 dt.TurnRightDominoPiece = function() {
 };
-
-util.extend(dt.BasePiece, dt.TurnRightDominoPiece);
+dt.TurnRightDominoPiece.prototype = new dt.BasePiece();
 
 dt.TurnRightDominoPiece.create = function(dir, params) {
   var piece = new dt.TurnRightDominoPiece();
-  dt.BasePiece.init.call(piece, dir);
+  piece.init(dir, params);
   return piece;
 };
 
-dt.TurnRightDominoPiece.prototype.getOtherCells = function() {
-  return [];
+dt.TurnRightDominoPiece.prototype.init = function(dir, params) {
+  dt.BasePiece.prototype.init.call(this, dir);
+  this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.right)];
+  this.reset();
 };
 
+
 dt.TurnRightDominoPiece.prototype.getInputs = function() {
-  return [{pos: dt.HERE, dir: this.dir}];
+  return this.ins;
 };
 
 dt.TurnRightDominoPiece.prototype.getOutputs = function() {
-  return [{pos: dt.HERE, dir: this.dir.opposite.right}];
+  return this.outs;
+};
+
+dt.TurnRightDominoPiece.prototype.isActive = function() {
+  return this.active;
+};
+
+dt.TurnRightDominoPiece.prototype.isDead = function() {
+  return this.fallen;
+};
+
+dt.TurnRightDominoPiece.prototype.receiveInputs = function(inputs) {
+  if (!this.fallen) {
+    this.active = dt.RelPosDir.arrayMatch(this.ins, inputs);
+  }
+};
+
+dt.TurnRightDominoPiece.prototype.collectOutputs = function() {
+  if (this.active) {
+    return this.outs;
+  } else {
+    return [];
+  }
+};
+
+dt.TurnRightDominoPiece.prototype.endStep = function(step) {
+  if (this.active) {
+    this.active = false;
+    this.fallen = true;
+  }
+};
+
+dt.TurnRightDominoPiece.prototype.reset = function() {
+  this.active = false;
+  this.fallen = false;
+};
+
+dt.TurnRightDominoPiece.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-20, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-14, -9, 5, 19);
+
+  ctx.rotate(Math.PI / 6);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-5, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(1, -9, 5, 19);
+
+  ctx.rotate(Math.PI / 6);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  
+  ctx.restore();
 };
 
 // TurnLeft: exits just left of the opposite of the input side
