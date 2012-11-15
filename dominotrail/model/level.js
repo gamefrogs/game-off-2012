@@ -222,16 +222,26 @@ dt.Level.prototype.findIncomingDirs = function(pos) {
 };
 
 dt.Level.prototype.canAddDomino = function(pos) {
-  return this.getObject(pos) === undefined;
+  if (this.getObject(pos) === undefined) {
+    var srcdirs = this.findIncomingDirs(pos);
+    return srcdirs.length > 0;
+  }
 };
 
-dt.Level.prototype.canAddDomino00 = function(pos) {
-  var obj = this.getObject(pos);
-  if ((obj !== undefined) && (!obj.canReplace())) {
+dt.Level.prototype.canAddPiece = function(pos, piece) {
+  // For each cell occupied by the piece, check that it is inside the board and available
+  if (this.getObject(pos) !== undefined) {
     return false;
   }
-  var srcdirs = this.findIncomingDirs(pos);
-  return (srcdirs.length > 0);
+  var otherCells = piece.getOtherCells();
+  for (var i = 0; i < otherCells.length; ++i) {
+    var otherPos = otherCells[i].getAbsolutePos(pos);
+    if (!(this.isInside(otherPos) && (this.getObject(otherPos) === undefined))) {
+      return false;
+    }
+  }
+  
+  return true;
 };
 
 dt.Level.prototype.addDomino = function(pos) {
@@ -240,6 +250,16 @@ dt.Level.prototype.addDomino = function(pos) {
     var srcdir = srcdirs[0];
     var domino = dt.StraightDominoPiece.create(srcdir);
     this.setObject(pos, domino);
+  }
+};
+
+dt.Level.prototype.addPiece = function(pos, piece) {
+  this.setObject(pos, piece);
+  var otherCells = piece.getOtherCells();
+  for (var i = 0; i < otherCells.length; ++i) {
+    var ghost = new dt.GhostPiece(piece);
+    var otherPos = otherCells[i].getAbsolutePos(pos);
+    this.setObject(otherPos, ghost);
   }
 };
 

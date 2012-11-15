@@ -1,11 +1,21 @@
 "use strict";
 
+dt.MODE_DOMINO = "ModeDomino";
+dt.MODE_PIECE = "ModePiece";
+
 dt.LevelController = function(round, renderer) {
   this.round = round;
   this.level = round.level;
   this.renderer = renderer;
   this.renderer.addObserver(this);
   this.round.addObserver(this);
+  
+  this.mode = dt.MODE_PIECE; 
+  this.pieceType = dt.BridgePiece;
+  this.dir = dt.Dir.E;
+  this.params = {};
+
+  this.piece = this.pieceType.create(this.dir, this.params);
 };
 
 dt.LevelController.prototype.destroy = function() {
@@ -16,8 +26,16 @@ dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
     if ((event.type === dt.EVENT_CELL_DOWN) && (event.button === dt.BUTTON_LEFT)) {
       // TODO check that we are still in the "layout" mode, not running
-      if (this.level.canAddDomino(event.pos)) {
-        this.level.addDomino(event.pos);
+      if (this.mode === dt.MODE_DOMINO) {
+        if (this.level.canAddDomino(event.pos)) {
+          this.level.addDomino(event.pos);
+        }
+        
+      } else {
+        if (this.level.canAddPiece(event.pos, this.piece)) {
+          this.level.addPiece(event.pos, this.piece);
+          this.piece = this.pieceType.create(this.dir, this.params);
+        }
       }
     } else {
       util.log("LevelController received ", event);
@@ -53,7 +71,6 @@ dt.LevelController.prototype.runRound = function() {
       anim = -1;
       
     } else {
-      util.log("Tick");
       anim += ANIM_STEP;
     }
     that.renderer.render(anim);

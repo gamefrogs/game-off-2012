@@ -147,7 +147,7 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
       ctx.font = "30px Verdana";
       ctx.fillStyle = "#000000";
       ctx.textBaseline = "middle";
-      ctx.fillText("?", hc.x - 5, hc.y);
+      ctx.fillText("?", -5, 0);
     }
     ctx.restore();
   }
