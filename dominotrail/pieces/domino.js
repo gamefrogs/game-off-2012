@@ -329,7 +329,7 @@ dt.TurnLeftDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.restore();
 };
 
-// TODO add double and triple forks
+// Balanced double fork
 dt.ForkDominoPiece = function() {
 };
 dt.ForkDominoPiece.prototype = new dt.BaseDominoPiece();
@@ -357,6 +357,65 @@ dt.ForkDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.fillRect(-14, -9, 5, 19);
   ctx.fillRect(1, -9, 5, 19);
 
+  ctx.rotate(-Math.PI / 3);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+
+  ctx.rotate(2 * Math.PI / 3);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+  ctx.restore();
+
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  ctx.restore();
+};
+
+// TODO add right and left double fork
+
+// Triple Fork
+dt.TriForkDominoPiece = function() {
+};
+dt.TriForkDominoPiece.prototype = new dt.BaseDominoPiece();
+
+dt.TriForkDominoPiece.create = function(dir, params) {
+  var piece = new dt.TriForkDominoPiece();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.TriForkDominoPiece.prototype.init = function(dir, params) {
+  dt.BaseDominoPiece.prototype.init.call(this, dir, params);
+  this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite.right)];
+};
+
+dt.TriForkDominoPiece.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-20, -9, 6, 19);
+  ctx.fillRect(-5, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-14, -9, 5, 19);
+  ctx.fillRect(1, -9, 5, 19);
+
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+  
   ctx.rotate(-Math.PI / 3);
   ctx.fillStyle = "#000000";
   ctx.fillRect(10, -9, 6, 19);
