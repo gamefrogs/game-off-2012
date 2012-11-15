@@ -3,23 +3,115 @@
 dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
 
+dt.PIECE_BUTTONS = ["piece_domino", "piece_bridge"];
+dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
+
 dt.LevelController = function(round, renderer) {
   this.round = round;
   this.level = round.level;
   this.renderer = renderer;
   this.renderer.addObserver(this);
   this.round.addObserver(this);
+
+  this.initListeners();
   
   this.mode = dt.MODE_PIECE; 
   this.pieceType = dt.BridgePiece;
   this.dir = dt.Dir.E;
   this.params = {};
 
-  this.piece = this.pieceType.create(this.dir, this.params);
+  this.highlightFrom("piece_bridge", dt.PIECE_BUTTONS);
+  this.chooseBridge();
+  this.highlightFrom("dir_E", dt.DIR_BUTTONS);
+  this.chooseDir(dt.Dir.E);
+};
+
+dt.LevelController.prototype.initListeners = function() {
+  var that = this;
+  this.eventListeners = [];
+  this.addListener("piece_domino", "click", function(event) {
+    that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
+    that.chooseDomino();
+  });
+  this.addListener("piece_bridge", "click", function(event) {
+    that.highlightFrom("piece_bridge", dt.PIECE_BUTTONS);
+    that.chooseBridge();
+  });
+
+  this.addListener("dir_E", "click", function(event) {
+    that.highlightFrom("dir_E", dt.DIR_BUTTONS);
+    that.chooseDir(dt.Dir.E);
+  });
+  this.addListener("dir_SE", "click", function(event) {
+    that.highlightFrom("dir_SE", dt.DIR_BUTTONS);
+    that.chooseDir(dt.Dir.SE);
+  });
+  this.addListener("dir_SW", "click", function(event) {
+    that.highlightFrom("dir_SW", dt.DIR_BUTTONS);
+    that.chooseDir(dt.Dir.SW);
+  });
+  this.addListener("dir_W", "click", function(event) {
+    that.highlightFrom("dir_W", dt.DIR_BUTTONS);
+    that.chooseDir(dt.Dir.W);
+  });
+  this.addListener("dir_NW", "click", function(event) {
+    that.highlightFrom("dir_NW", dt.DIR_BUTTONS);
+    that.chooseDir(dt.Dir.NW);
+  });
+  this.addListener("dir_NE", "click", function(event) {
+    that.highlightFrom("dir_NE", dt.DIR_BUTTONS);
+    that.chooseDir(dt.Dir.NE);
+  });
+};
+
+dt.LevelController.prototype.addListener = function(id, event, func) {
+  var element = document.getElementById(id);
+  var listenerRecord = { element: element, event: event, func: func };
+  element.addEventListener(event, func, false);
+  this.eventListeners.push(listenerRecord);
+};
+
+dt.LevelController.prototype.exitListeners = function() {
+  for (var i = 0; i < this.eventListeners.length; ++i) {
+    var listenerRecord = this.eventListeners[i];
+    listenerRecord.element.removeEventListener(listenerRecord.event, listenerRecord.func, false);
+  }
+  this.eventListeners = undefined;
 };
 
 dt.LevelController.prototype.destroy = function() {
+  this.exitListeners();
+  this.round.removeObserver(this);
   this.renderer.removeObserver(this);
+};
+
+dt.LevelController.prototype.highlightFrom = function(id, all) {
+  for (var i = 0; i < all.length; ++i) {
+    var buttonId = all[i];
+    var buttonElem = document.getElementById(buttonId);
+    if (buttonId === id) {
+      buttonElem.className = "sbutton sbuttonselected";
+    } else {
+      buttonElem.className = "sbutton";
+    }
+  }
+};
+
+dt.LevelController.prototype.chooseDomino = function() {
+  this.mode = dt.MODE_DOMINO;
+};
+
+dt.LevelController.prototype.chooseBridge = function() {
+  this.mode = dt.MODE_PIECE;
+};
+
+dt.LevelController.prototype.chooseDir = function(dir) {
+  this.dir = dir;
+  this.preparePiece();
+};
+
+dt.LevelController.prototype.preparePiece = function() {
+  this.piece = this.pieceType.create(this.dir, this.params);
 };
 
 dt.LevelController.prototype.update = function(event) {
@@ -34,7 +126,7 @@ dt.LevelController.prototype.update = function(event) {
       } else {
         if (this.level.canAddPiece(event.pos, this.piece)) {
           this.level.addPiece(event.pos, this.piece);
-          this.piece = this.pieceType.create(this.dir, this.params);
+          this.preparePiece();
         }
       }
     } else {
