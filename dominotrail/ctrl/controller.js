@@ -11,7 +11,7 @@ dt.Controller = function(view, game) {
 dt.Controller.prototype.initEvents = function() {
   var that = this;
   dt.Controller.attachButton("play", function(event) {
-    that.game.changeState(dt.STATE_PROFILE_SELECT);
+    that.game.changeState(dt.STATE_MENU);
   });
 
   // Attach buttons from the "Profiles" page
