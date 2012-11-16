@@ -36,6 +36,11 @@ dt.LevelController.prototype.createPieceButton = function(id, label) {
   panel.innerHTML += '<span id="' + id + '" class="sbutton">' + label + '</span><br>';
 };
 
+dt.LevelController.prototype.destroyPieceButtons = function() {
+  var panel = document.getElementById("piece_buttons");
+  panel.innerHTML = "";
+};
+
 dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
   var that = this;
   return function(event) {
@@ -110,6 +115,7 @@ dt.LevelController.prototype.exitListeners = function() {
 
 dt.LevelController.prototype.destroy = function() {
   this.exitListeners();
+  this.destroyPieceButtons();
   this.round.removeObserver(this);
   this.renderer.removeObserver(this);
 };
