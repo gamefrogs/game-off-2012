@@ -238,6 +238,17 @@ dt.RelativePos.prototype.equals = function(relpos) {
   return true;
 };
 
+dt.RelativePos.prototype.invert = function() {
+  var inverse = new dt.RelativePos();
+  for (var s = 0; s < this.segments.length; ++s) {
+    var segment = this.segments[s];
+    if (segment !== undefined) {
+      inverse.addSegment(dt.Dir.ALL[s].opposite, segment);
+    }
+  }
+  return inverse;
+};
+
 // Relative position + dir
 dt.RelPosDir = function(relpos, dir) {
   this.relpos = relpos;

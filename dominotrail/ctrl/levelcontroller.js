@@ -2,6 +2,7 @@
 
 dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
+dt.MODE_ERASER = "ModeEraser";
 
 dt.PIECE_BUTTONS = [];
 
@@ -54,6 +55,7 @@ dt.LevelController.prototype.initListeners = function() {
   this.eventListeners = [];
   dt.PIECE_BUTTONS.push("piece_domino");
   // Create all buttons in HTML before attaching listeners
+  this.createPieceButton("piece_eraser", "Erase");
   this.createPieceButton("piece_domino", "Domino");
   for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
     var id = "piece_" + i;
@@ -64,6 +66,10 @@ dt.LevelController.prototype.initListeners = function() {
   this.addListener("piece_domino", "click", function(event) {
     that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
     that.chooseDomino();
+  });
+  this.addListener("piece_eraser", "click", function(event) {
+    that.highlightFrom("piece_eraser", dt.PIECE_BUTTONS);
+    that.chooseEraser();
   });
   for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
     var id = "piece_" + i;
@@ -136,6 +142,10 @@ dt.LevelController.prototype.chooseDomino = function() {
   this.mode = dt.MODE_DOMINO;
 };
 
+dt.LevelController.prototype.chooseEraser = function() {
+  this.mode = dt.MODE_ERASER;
+};
+
 dt.LevelController.prototype.choosePieceType = function(pieceType) {
   this.mode = dt.MODE_PIECE;
   this.pieceType = pieceType;
@@ -153,21 +163,37 @@ dt.LevelController.prototype.preparePiece = function() {
   }
 };
 
+dt.LevelController.prototype.handleCellClick = function(pos) {
+  switch (this.mode) {
+  case dt.MODE_DOMINO:
+    if (this.level.canAddDomino(pos)) {
+      this.level.addDomino(pos);
+    }
+    break;
+    
+  case dt.MODE_PIECE:    
+    if (this.level.canAddPiece(pos, this.piece)) {
+      this.level.addPiece(pos, this.piece);
+      this.preparePiece();
+    }
+    break;
+
+  case dt.MODE_ERASER:
+    if (this.level.canRemovePiece(pos)) {
+      this.level.removePiece(pos);
+    }
+    break;
+
+  default:
+    util.log("Unknown mode: " + this.mode);
+  }
+};
+
 dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
     if ((event.type === dt.EVENT_CELL_DOWN) && (event.button === dt.BUTTON_LEFT)) {
       // TODO check that we are still in the "layout" mode, not running
-      if (this.mode === dt.MODE_DOMINO) {
-        if (this.level.canAddDomino(event.pos)) {
-          this.level.addDomino(event.pos);
-        }
-        
-      } else {
-        if (this.level.canAddPiece(event.pos, this.piece)) {
-          this.level.addPiece(event.pos, this.piece);
-          this.preparePiece();
-        }
-      }
+      this.handleCellClick(event.pos);
     } else {
       util.log("LevelController received ", event);
     }

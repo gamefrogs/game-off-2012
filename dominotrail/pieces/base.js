@@ -132,6 +132,7 @@ dt.BasePiece.prototype.draw = function(ctx, percent) {
 ////
 // When a piece occupies several cells, ghost pieces pointing to the main piece are put into
 // all the 'other' cells (those that are not the main cell)
-dt.GhostPiece = function(piece) {
+dt.GhostPiece = function(piece, relpos) {
   this.piece = piece;
+  this.relpos = relpos;
 };

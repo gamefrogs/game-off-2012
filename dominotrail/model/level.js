@@ -196,6 +196,10 @@ dt.Level.prototype.setObjectXY = function(x, y, obj) {
   this.objects.setValue(new dt.Pos(x, y), obj);
 };
 
+dt.Level.prototype.removeObject = function(pos) {
+  this.setObject(pos, undefined);
+};
+
 dt.Level.prototype.findIncomingDirs = function(pos) {
   var dirs = [];
   for (var k = 0; k < dt.Dir.ALL.length; ++k) {
@@ -244,6 +248,17 @@ dt.Level.prototype.canAddPiece = function(pos, piece) {
   return true;
 };
 
+dt.Level.prototype.canRemovePiece = function(pos) {
+  var piece = this.getObject(pos);
+  if (piece === undefined) {
+    return false;
+    
+  } else {
+    // TODO Check that the piece is not "locked"
+    return true;
+  }
+};
+
 dt.Level.prototype.addDomino = function(pos) {
   var srcdirs = this.findIncomingDirs(pos);
   if (srcdirs.length > 0) {
@@ -257,10 +272,24 @@ dt.Level.prototype.addPiece = function(pos, piece) {
   this.setObject(pos, piece);
   var otherCells = piece.getOtherCells();
   for (var i = 0; i < otherCells.length; ++i) {
-    var ghost = new dt.GhostPiece(piece);
-    var otherPos = otherCells[i].getAbsolutePos(pos);
+    var relpos = otherCells[i];
+      var ghost = new dt.GhostPiece(piece, relpos);
+    var otherPos = relpos.getAbsolutePos(pos);
     this.setObject(otherPos, ghost);
   }
+};
+
+dt.Level.prototype.removePiece = function(pos) {
+  var pieceOrGhost = this.getObject(pos);
+  var isGhost = (pieceOrGhost instanceof dt.GhostPiece);
+  var piece = isGhost ? pieceOrGhost.piece : pieceOrGhost;
+  var realPos = isGhost ? pieceOrGhost.relpos.invert().getAbsolutePos(pos) : pos;
+  var otherCells = piece.getOtherCells();
+  for (var i = 0; i < otherCells.length; ++i) {
+    var otherPos = otherCells[i].getAbsolutePos(realPos);
+    this.removeObject(otherPos);
+  }
+  this.removeObject(realPos);
 };
 
 dt.Level.prototype.addDomino00 = function(pos) {
