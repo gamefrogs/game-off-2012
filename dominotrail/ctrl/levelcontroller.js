@@ -10,6 +10,8 @@ dt.USABLE_PIECES = [{type: dt.BridgePiece,          name: "Bridge"},
                     {type: dt.TurnRightDominoPiece, name: "R.&nbsp;Turn"},
                     {type: dt.TurnLeftDominoPiece,  name: "L.&nbsp;Turn"},
                     {type: dt.ForkDominoPiece,      name: "Fork"},
+		    {type: dt.RForkDominoPiece,     name: "R.Fork"},
+		    {type: dt.LForkDominoPiece,     name: "L.Fork"},
                     {type: dt.TriForkDominoPiece,   name: "3&nbsp;Fork"}
                    ];
 dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
