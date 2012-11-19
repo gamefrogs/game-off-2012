@@ -191,6 +191,12 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
   }
 };
 
+dt.LevelController.prototype.handleCellRightClick = function(pos) {
+  if (this.mode === dt.MODE_PIECE) {
+    this.chooseDir(this.dir.right);
+  }
+};
+
 dt.LevelController.prototype.handleCellOver = function(pos) {
   if (this.level.isInside(pos)) {
     if ((this.mode === dt.MODE_PIECE) && (this.level.canAddPiece(pos, this.piece))) {
@@ -216,9 +222,15 @@ dt.LevelController.prototype.handleCellOver = function(pos) {
 
 dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
-    if ((event.type === dt.EVENT_CELL_DOWN) && (event.button === dt.BUTTON_LEFT)) {
-      // TODO check that we are still in the "layout" mode, not running
-      this.handleCellClick(event.pos);
+    if (event.type === dt.EVENT_CELL_DOWN) {
+      if (event.button === dt.BUTTON_LEFT) {
+        // TODO check that we are still in the "layout" mode, not running
+        this.handleCellClick(event.pos);
+      } else if (event.button === dt.BUTTON_RIGHT) {
+        this.handleCellRightClick(event.pos);
+      } else { 
+        util.log("LevelController received other click ", event);
+      }
       
     } else if (event.type === dt.EVENT_CELL_OVER) {
       this.handleCellOver(event.pos);
