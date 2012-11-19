@@ -36,6 +36,7 @@ dt.BasePiece.create = function(dir, params) {
 // Initializes the instance, like a constructor. Call the base class init().
 dt.BasePiece.prototype.init = function(dir, params) {
   this.dir = dir;
+  this.locked = false;
 };
 
 dt.BasePiece.prototype.param = function(params, name, defaultValue) {

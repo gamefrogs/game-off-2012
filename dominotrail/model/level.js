@@ -135,24 +135,26 @@ dt.LEVELS = [ dt.LEVELDEF1,
 dt.EVENT_CELL_CHANGE = "CellChange";
 
 // A runtime playable level, modifiable by the player -----------
-dt.Level = function(def) {
+dt.Level = function(def, designMode) {
   this.def = def;
 
-  this.initObjects();
+  this.initObjects(designMode);
 };
 
 util.Observable.makeObservable(dt.Level);
 
-dt.Level.prototype.initObjects = function() {
+dt.Level.prototype.initObjects = function(designMode) {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
   for (var i = 0; i < this.def.starts.length; ++i) {
     var startDef = this.def.starts[i];
     var piece = dt.StraightStartPiece.create(startDef.dir);
+    piece.locked = !designMode;
     this.setObject(startDef, piece);
   }
   for (i = 0; i < this.def.goals.length; ++i) {
     var goalDef = this.def.goals[i];
     var piece = dt.AnyEndPiece.create(dt.Dir.NONE);
+    piece.locked = !designMode;
     this.setObject(goalDef, piece);
   }
 };
@@ -254,8 +256,7 @@ dt.Level.prototype.canRemovePiece = function(pos) {
     return false;
     
   } else {
-    // TODO Check that the piece is not "locked"
-    return true;
+    return !piece.locked;
   }
 };
 
