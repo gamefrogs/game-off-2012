@@ -1,7 +1,9 @@
 "use strict";
 
+dt.EVENT_CELL_OVER = "CellOver";
 dt.EVENT_CELL_DOWN = "CellDown";
 dt.EVENT_CELL_UP = "CellUp";
+dt.EVENT_CELL_OUT = "CellOut";
 
 dt.BUTTON_LEFT = "ButtonLeft";
 dt.BUTTON_RIGHT = "ButtonRight";
@@ -91,6 +93,16 @@ dt.LevelRenderer.prototype.render = function(percent) {
       this.renderCellContent(x, y, percent || 0);
     }
   }
+};
+
+dt.LevelRenderer.prototype.renderOverlay = function(pos, piece) {
+  var hc = this.getCellCenter(pos.x, pos.y);
+  var ctx = this.ctx;
+  ctx.save();
+  ctx.globalAlpha = 0.4;
+  ctx.translate(hc.x, hc.y);
+  piece.draw(ctx, 0);
+  ctx.restore();
 };
 
 dt.squaredist = function(x0, y0, x1, y1) {
@@ -186,6 +198,8 @@ dt.LevelRenderer.prototype.mouseHandler = function(event) {
   this.render();
 
   if (event.type === "mouseout") {
+    this.notify({ src: this,
+                  type: dt.EVENT_CELL_OUT });
     return;
   }
   
@@ -193,24 +207,12 @@ dt.LevelRenderer.prototype.mouseHandler = function(event) {
   var my = event.clientY + util.windowScrollY() - this.y0;
 
   var hcc = this.getHexPosition(mx, my);
-  if (this.level.isInside(hcc)) {
-    var canAdd = this.level.canAddDomino(hcc);
-    var borderColor = (canAdd ? "#000000" : "#ff0000");
-    this.renderCellBackground(hcc.x, hcc.y, undefined, borderColor, 2);
-    if (!canAdd) {
-      var ctx = this.ctx;
-      var hc = this.getCellCenter(hcc.x, hcc.y);
-      ctx.save();
-      ctx.globalAlpha = 0.5;
-      ctx.fillStyle = "#ff0000";
-      ctx.beginPath();
-      ctx.arc(hc.x, hc.y, this.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
-      ctx.fill();
-      ctx.restore();
-    }
-  }
 
-  if (event.type === "mousedown") {
+  if (event.type === "mousemove") {
+    this.notify({ src: this,
+                  type: dt.EVENT_CELL_OVER,
+                  pos: hcc });
+  } else if (event.type === "mousedown") {
     this.notify({ src: this,
                   type: dt.EVENT_CELL_DOWN,
                   button: dt.BUTTON_MAPPING[event.button],

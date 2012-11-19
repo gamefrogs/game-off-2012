@@ -191,11 +191,38 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
   }
 };
 
+dt.LevelController.prototype.handleCellOver = function(pos) {
+  if (this.level.isInside(pos)) {
+    if ((this.mode === dt.MODE_PIECE) && (this.level.canAddPiece(pos, this.piece))) {
+      this.renderer.renderOverlay(pos, this.piece)
+      return;
+    }
+    var canAdd = this.level.canAddDomino(pos);
+    var borderColor = (canAdd ? "#000000" : "#ff0000");
+    this.renderer.renderCellBackground(pos.x, pos.y, undefined, borderColor, 2);
+    if (!canAdd) {
+      var ctx = this.renderer.ctx;
+      var hc = this.renderer.getCellCenter(pos.x, pos.y);
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = "#ff0000";
+      ctx.beginPath();
+      ctx.arc(hc.x, hc.y, dt.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+};
+
 dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
     if ((event.type === dt.EVENT_CELL_DOWN) && (event.button === dt.BUTTON_LEFT)) {
       // TODO check that we are still in the "layout" mode, not running
       this.handleCellClick(event.pos);
+      
+    } else if (event.type === dt.EVENT_CELL_OVER) {
+      this.handleCellOver(event.pos);
+      
     } else {
       util.log("LevelController received ", event);
     }
