@@ -343,6 +343,107 @@ dt.TurnLeftDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.restore();
 };
 
+// Balanced right double fork
+dt.RForkDominoPiece = function() {
+};
+dt.RForkDominoPiece.prototype = new dt.BaseDominoPiece();
+
+dt.RForkDominoPiece.create = function(dir, params) {
+  var piece = new dt.RForkDominoPiece();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.RForkDominoPiece.prototype.init = function(dir, params) {
+  dt.BaseDominoPiece.prototype.init.call(this, dir, params);
+  this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite.right)];
+};
+
+dt.RForkDominoPiece.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-20, -9, 6, 19);
+  ctx.fillRect(-5, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-14, -9, 5, 19);
+  ctx.fillRect(1, -9, 5, 19);
+
+ 
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+
+  ctx.rotate( Math.PI / 3);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+  ctx.restore();
+
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  ctx.restore();
+};
+// Balanced left double fork
+dt.LForkDominoPiece = function() {
+};
+dt.LForkDominoPiece.prototype = new dt.BaseDominoPiece();
+
+dt.LForkDominoPiece.create = function(dir, params) {
+  var piece = new dt.LForkDominoPiece();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.LForkDominoPiece.prototype.init = function(dir, params) {
+  dt.BaseDominoPiece.prototype.init.call(this, dir, params);
+  this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite)];
+};
+
+dt.LForkDominoPiece.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-20, -9, 6, 19);
+  ctx.fillRect(-5, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-14, -9, 5, 19);
+  ctx.fillRect(1, -9, 5, 19);
+
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+
+  ctx.rotate(-Math.PI / 3);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(10, -9, 6, 19);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(16, -9, 5, 19);
+  ctx.restore();
+
+  ctx.save();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  ctx.restore();
+};
+
 // Balanced double fork
 dt.ForkDominoPiece = function() {
 };

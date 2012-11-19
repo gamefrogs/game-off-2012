@@ -36,6 +36,7 @@ dt.BasePiece.create = function(dir, params) {
 // Initializes the instance, like a constructor. Call the base class init().
 dt.BasePiece.prototype.init = function(dir, params) {
   this.dir = dir;
+  this.locked = false;
 };
 
 dt.BasePiece.prototype.param = function(params, name, defaultValue) {
@@ -132,6 +133,7 @@ dt.BasePiece.prototype.draw = function(ctx, percent) {
 ////
 // When a piece occupies several cells, ghost pieces pointing to the main piece are put into
 // all the 'other' cells (those that are not the main cell)
-dt.GhostPiece = function(piece) {
+dt.GhostPiece = function(piece, relpos) {
   this.piece = piece;
+  this.relpos = relpos;
 };

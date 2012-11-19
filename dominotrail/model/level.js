@@ -135,24 +135,26 @@ dt.LEVELS = [ dt.LEVELDEF1,
 dt.EVENT_CELL_CHANGE = "CellChange";
 
 // A runtime playable level, modifiable by the player -----------
-dt.Level = function(def) {
+dt.Level = function(def, designMode) {
   this.def = def;
 
-  this.initObjects();
+  this.initObjects(designMode);
 };
 
 util.Observable.makeObservable(dt.Level);
 
-dt.Level.prototype.initObjects = function() {
+dt.Level.prototype.initObjects = function(designMode) {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
   for (var i = 0; i < this.def.starts.length; ++i) {
     var startDef = this.def.starts[i];
     var piece = dt.StraightStartPiece.create(startDef.dir);
+    piece.locked = !designMode;
     this.setObject(startDef, piece);
   }
   for (i = 0; i < this.def.goals.length; ++i) {
     var goalDef = this.def.goals[i];
     var piece = dt.AnyEndPiece.create(dt.Dir.NONE);
+    piece.locked = !designMode;
     this.setObject(goalDef, piece);
   }
 };
@@ -194,6 +196,10 @@ dt.Level.prototype.setObject = function(pos, obj) {
 
 dt.Level.prototype.setObjectXY = function(x, y, obj) {
   this.objects.setValue(new dt.Pos(x, y), obj);
+};
+
+dt.Level.prototype.removeObject = function(pos) {
+  this.setObject(pos, undefined);
 };
 
 dt.Level.prototype.findIncomingDirs = function(pos) {
@@ -244,6 +250,16 @@ dt.Level.prototype.canAddPiece = function(pos, piece) {
   return true;
 };
 
+dt.Level.prototype.canRemovePiece = function(pos) {
+  var piece = this.getObject(pos);
+  if (piece === undefined) {
+    return false;
+    
+  } else {
+    return !piece.locked;
+  }
+};
+
 dt.Level.prototype.addDomino = function(pos) {
   var srcdirs = this.findIncomingDirs(pos);
   if (srcdirs.length > 0) {
@@ -257,10 +273,24 @@ dt.Level.prototype.addPiece = function(pos, piece) {
   this.setObject(pos, piece);
   var otherCells = piece.getOtherCells();
   for (var i = 0; i < otherCells.length; ++i) {
-    var ghost = new dt.GhostPiece(piece);
-    var otherPos = otherCells[i].getAbsolutePos(pos);
+    var relpos = otherCells[i];
+      var ghost = new dt.GhostPiece(piece, relpos);
+    var otherPos = relpos.getAbsolutePos(pos);
     this.setObject(otherPos, ghost);
   }
+};
+
+dt.Level.prototype.removePiece = function(pos) {
+  var pieceOrGhost = this.getObject(pos);
+  var isGhost = (pieceOrGhost instanceof dt.GhostPiece);
+  var piece = isGhost ? pieceOrGhost.piece : pieceOrGhost;
+  var realPos = isGhost ? pieceOrGhost.relpos.invert().getAbsolutePos(pos) : pos;
+  var otherCells = piece.getOtherCells();
+  for (var i = 0; i < otherCells.length; ++i) {
+    var otherPos = otherCells[i].getAbsolutePos(realPos);
+    this.removeObject(otherPos);
+  }
+  this.removeObject(realPos);
 };
 
 dt.Level.prototype.addDomino00 = function(pos) {

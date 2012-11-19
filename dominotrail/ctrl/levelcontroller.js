@@ -2,6 +2,7 @@
 
 dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
+dt.MODE_ERASER = "ModeEraser";
 
 dt.PIECE_BUTTONS = [];
 
@@ -9,6 +10,8 @@ dt.USABLE_PIECES = [{type: dt.BridgePiece,          name: "Bridge"},
                     {type: dt.TurnRightDominoPiece, name: "R.&nbsp;Turn"},
                     {type: dt.TurnLeftDominoPiece,  name: "L.&nbsp;Turn"},
                     {type: dt.ForkDominoPiece,      name: "Fork"},
+		    {type: dt.RForkDominoPiece,     name: "R.Fork"},
+		    {type: dt.LForkDominoPiece,     name: "L.Fork"},
                     {type: dt.TriForkDominoPiece,   name: "3&nbsp;Fork"}
                    ];
 dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
@@ -36,6 +39,11 @@ dt.LevelController.prototype.createPieceButton = function(id, label) {
   panel.innerHTML += '<span id="' + id + '" class="sbutton">' + label + '</span><br>';
 };
 
+dt.LevelController.prototype.destroyPieceButtons = function() {
+  var panel = document.getElementById("piece_buttons");
+  panel.innerHTML = "";
+};
+
 dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
   var that = this;
   return function(event) {
@@ -49,6 +57,7 @@ dt.LevelController.prototype.initListeners = function() {
   this.eventListeners = [];
   dt.PIECE_BUTTONS.push("piece_domino");
   // Create all buttons in HTML before attaching listeners
+  this.createPieceButton("piece_eraser", "Erase");
   this.createPieceButton("piece_domino", "Domino");
   for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
     var id = "piece_" + i;
@@ -59,6 +68,10 @@ dt.LevelController.prototype.initListeners = function() {
   this.addListener("piece_domino", "click", function(event) {
     that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
     that.chooseDomino();
+  });
+  this.addListener("piece_eraser", "click", function(event) {
+    that.highlightFrom("piece_eraser", dt.PIECE_BUTTONS);
+    that.chooseEraser();
   });
   for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
     var id = "piece_" + i;
@@ -110,6 +123,7 @@ dt.LevelController.prototype.exitListeners = function() {
 
 dt.LevelController.prototype.destroy = function() {
   this.exitListeners();
+  this.destroyPieceButtons();
   this.round.removeObserver(this);
   this.renderer.removeObserver(this);
 };
@@ -130,6 +144,10 @@ dt.LevelController.prototype.chooseDomino = function() {
   this.mode = dt.MODE_DOMINO;
 };
 
+dt.LevelController.prototype.chooseEraser = function() {
+  this.mode = dt.MODE_ERASER;
+};
+
 dt.LevelController.prototype.choosePieceType = function(pieceType) {
   this.mode = dt.MODE_PIECE;
   this.pieceType = pieceType;
@@ -147,21 +165,76 @@ dt.LevelController.prototype.preparePiece = function() {
   }
 };
 
+dt.LevelController.prototype.handleCellClick = function(pos) {
+  switch (this.mode) {
+  case dt.MODE_DOMINO:
+    if (this.level.canAddDomino(pos)) {
+      this.level.addDomino(pos);
+    }
+    break;
+    
+  case dt.MODE_PIECE:    
+    if (this.level.canAddPiece(pos, this.piece)) {
+      this.level.addPiece(pos, this.piece);
+      this.preparePiece();
+    }
+    break;
+
+  case dt.MODE_ERASER:
+    if (this.level.canRemovePiece(pos)) {
+      this.level.removePiece(pos);
+    }
+    break;
+
+  default:
+    util.log("Unknown mode: " + this.mode);
+  }
+};
+
+dt.LevelController.prototype.handleCellRightClick = function(pos) {
+  if (this.mode === dt.MODE_PIECE) {
+    this.chooseDir(this.dir.right);
+  }
+};
+
+dt.LevelController.prototype.handleCellOver = function(pos) {
+  if (this.level.isInside(pos)) {
+    if ((this.mode === dt.MODE_PIECE) && (this.level.canAddPiece(pos, this.piece))) {
+      this.renderer.renderOverlay(pos, this.piece)
+      return;
+    }
+    var canAdd = this.level.canAddDomino(pos);
+    var borderColor = (canAdd ? "#000000" : "#ff0000");
+    this.renderer.renderCellBackground(pos.x, pos.y, undefined, borderColor, 2);
+    if (!canAdd) {
+      var ctx = this.renderer.ctx;
+      var hc = this.renderer.getCellCenter(pos.x, pos.y);
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = "#ff0000";
+      ctx.beginPath();
+      ctx.arc(hc.x, hc.y, dt.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+};
+
 dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
-    if ((event.type === dt.EVENT_CELL_DOWN) && (event.button === dt.BUTTON_LEFT)) {
-      // TODO check that we are still in the "layout" mode, not running
-      if (this.mode === dt.MODE_DOMINO) {
-        if (this.level.canAddDomino(event.pos)) {
-          this.level.addDomino(event.pos);
-        }
-        
-      } else {
-        if (this.level.canAddPiece(event.pos, this.piece)) {
-          this.level.addPiece(event.pos, this.piece);
-          this.preparePiece();
-        }
+    if (event.type === dt.EVENT_CELL_DOWN) {
+      if (event.button === dt.BUTTON_LEFT) {
+        // TODO check that we are still in the "layout" mode, not running
+        this.handleCellClick(event.pos);
+      } else if (event.button === dt.BUTTON_RIGHT) {
+        this.handleCellRightClick(event.pos);
+      } else { 
+        util.log("LevelController received other click ", event);
       }
+      
+    } else if (event.type === dt.EVENT_CELL_OVER) {
+      this.handleCellOver(event.pos);
+      
     } else {
       util.log("LevelController received ", event);
     }
