@@ -196,12 +196,9 @@ dt.LevelRenderer.prototype.getHexPosition = function(mx, my) {
 
 dt.LevelRenderer.prototype.update = function(event) {
   util.log("Renderer update", event);
-  this.render();
 };
 
 dt.LevelRenderer.prototype.mouseHandler = function(event) {
-  this.render();
-
   if (event.type === "mouseout") {
     this.notify({ src: this,
                   type: dt.EVENT_CELL_OUT });
