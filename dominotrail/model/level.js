@@ -89,8 +89,8 @@ dt.LEVEL1_STR =
   "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
 dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR,
-                               [{ x: 10, y: 1, dir: dt.Dir.E }],
-                               [{ x: 2, y: 1 }]);
+                               [{ x: 10, y: 1, type: dt.StraightStartPiece, dir: dt.Dir.E }],
+                               [{ x: 2, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.E }]);
 
 dt.LEVEL2_STR = 
   " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
@@ -123,9 +123,9 @@ dt.LEVEL2_STR =
   "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
 dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR,
-                               [{ x: 2, y: 2, dir: dt.Dir.NW}],
-                               [{ x: 5, y: 5 },
-                                { x: 6, y: 10 }]);
+                               [{ x: 2, y: 2, type: dt.StraightStartPiece, dir: dt.Dir.NW}],
+                               [{ x: 5, y: 5,  type: dt.AnyEndPiece, dir: dt.Dir.NONE },
+                                { x: 6, y: 10, type: dt.AnyEndPiece, dir: dt.Dir.NONE }]);
 
 dt.LEVELS = [ dt.LEVELDEF1,
               dt.LEVELDEF2
@@ -147,13 +147,13 @@ dt.Level.prototype.initObjects = function(designMode) {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
   for (var i = 0; i < this.def.starts.length; ++i) {
     var startDef = this.def.starts[i];
-    var piece = dt.StraightStartPiece.create(startDef.dir);
+    var piece = startDef.type.create(startDef.dir);
     piece.locked = !designMode;
     this.setObject(startDef, piece);
   }
   for (i = 0; i < this.def.goals.length; ++i) {
     var goalDef = this.def.goals[i];
-    var piece = dt.AnyEndPiece.create(dt.Dir.NONE);
+    var piece = goalDef.type.create(goalDef.dir);
     piece.locked = !designMode;
     this.setObject(goalDef, piece);
   }
