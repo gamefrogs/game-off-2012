@@ -47,20 +47,20 @@ dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
 dt.LevelController.prototype.initListeners = function() {
   var that = this;
   this.eventListeners = [];
-  dt.PIECE_BUTTONS.push("piece_domino");
+  //dt.PIECE_BUTTONS.push("piece_domino");
   // Create all buttons in HTML before attaching listeners
   this.createPieceButton("piece_eraser", "Erase");
-  this.createPieceButton("piece_domino", "Domino");
+  //this.createPieceButton("piece_domino", "Domino");
   for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
     var id = "piece_" + i;
     dt.PIECE_BUTTONS.push(id);
     this.createPieceButton(id, dt.USABLE_PIECES[i].name);
   }
 
-  this.addListener("piece_domino", "click", function(event) {
-    that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
-    that.chooseDomino();
-  });
+  //this.addListener("piece_domino", "click", function(event) {
+  //  that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
+  //  that.chooseDomino();
+  //});
   this.addListener("piece_eraser", "click", function(event) {
     that.highlightFrom("piece_eraser", dt.PIECE_BUTTONS);
     that.chooseEraser();
