@@ -6,16 +6,6 @@ dt.MODE_ERASER = "ModeEraser";
 
 dt.PIECE_BUTTONS = [];
 
-dt.USABLE_PIECES = [{type: dt.BridgePiece,          name: "Bridge"},
-                    {type: dt.TurnRightDominoPiece, name: "R.&nbsp;Turn"},
-                    {type: dt.TurnLeftDominoPiece,  name: "L.&nbsp;Turn"},
-                    {type: dt.ForkDominoPiece,      name: "Fork"},
-		    {type: dt.RForkDominoPiece,     name: "R.Fork"},
-		    {type: dt.LForkDominoPiece,     name: "L.Fork"},
-                    {type: dt.TriForkDominoPiece,   name: "3&nbsp;Fork"},
-                    {type: dt.AnyEndPiece,          name: "End"},
-                    {type: dt.StraightStartPiece,   name: "Start"}
-                   ];
 dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
 
 dt.LevelController = function(round, renderer) {

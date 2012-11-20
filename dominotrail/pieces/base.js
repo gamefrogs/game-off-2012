@@ -16,6 +16,14 @@ dt.DCY = dt.RADIUS * 1.5;
 dt.HX = (dt.RADIUS - 2) * Math.sqrt(3) / 2;
 dt.HY = (dt.RADIUS - 2) / 2;
 
+
+dt.USABLE_PIECES = [];
+
+dt.registerPiece = function(type, name) {
+  dt.USABLE_PIECES.push({type: type, name: name});
+};
+
+
 //==================================================================
 //
 // Here start the interface that should be extended by real pieces.
