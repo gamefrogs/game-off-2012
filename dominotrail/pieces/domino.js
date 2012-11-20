@@ -106,7 +106,7 @@ dt.StraightDominoPiece.prototype.draw = function(ctx, percent) {
                this.active ? (percent / 100) :
                0);
   ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  ctx.fillRect(-dt.HX, -dt.RADIUS / 3, dt.HX * 2 * ratio, 2 * dt.RADIUS / 3);
   
   ctx.restore();
 };

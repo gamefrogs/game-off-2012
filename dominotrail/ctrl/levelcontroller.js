@@ -12,7 +12,9 @@ dt.USABLE_PIECES = [{type: dt.BridgePiece,          name: "Bridge"},
                     {type: dt.ForkDominoPiece,      name: "Fork"},
 		    {type: dt.RForkDominoPiece,     name: "R.Fork"},
 		    {type: dt.LForkDominoPiece,     name: "L.Fork"},
-                    {type: dt.TriForkDominoPiece,   name: "3&nbsp;Fork"}
+                    {type: dt.TriForkDominoPiece,   name: "3&nbsp;Fork"},
+                    {type: dt.AnyEndPiece,          name: "End"},
+                    {type: dt.StraightStartPiece,   name: "Start"}
                    ];
 dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
 
@@ -267,7 +269,8 @@ dt.LevelController.prototype.runRound = function() {
     } else if (anim >= 100) {
       stillLive = that.round.runStepSecondHalf();
       anim = -1;
-      
+      that.round.runStepFirstHalf();
+      anim = 0;
     } else {
       anim += ANIM_STEP;
     }
