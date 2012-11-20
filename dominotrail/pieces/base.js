@@ -37,6 +37,8 @@ dt.BasePiece.create = function(dir, params) {
 dt.BasePiece.prototype.init = function(dir, params) {
   this.dir = dir;
   this.locked = false;
+  this.goal = false;
+  this.reached = false;
 };
 
 dt.BasePiece.prototype.param = function(params, name, defaultValue) {
@@ -53,12 +55,12 @@ dt.BasePiece.prototype.param = function(params, name, defaultValue) {
 
 // Asks a piece if it's a goal of the level
 dt.BasePiece.prototype.isGoal = function() {
-  return false;
+  return this.goal;
 };
 
 // Asks the piece, when it's a goal, if it has been reached
 dt.BasePiece.prototype.isGoalReached = function() {
-  return false;
+  return this.reached;
 }
 
 // Must return an array of dt.RelativePos that are part of this piece, except the main position

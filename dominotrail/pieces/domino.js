@@ -64,12 +64,14 @@ dt.BaseDominoPiece.prototype.endStep = function(step) {
   if (this.active) {
     this.active = false;
     this.fallen = true;
+    this.reached = true;
   }
 };
 
 dt.BaseDominoPiece.prototype.reset = function() {
   this.active = false;
   this.fallen = false;
+  this.reached = false;
 };
 
 // Straight: exits on the opposite of the input side
@@ -166,6 +168,7 @@ dt.StraightEndPiece.create = function(dir, params) {
 
 dt.StraightEndPiece.prototype.init = function(dir, params) {
   dt.StraightDominoPiece.prototype.init.call(this, dir, params);
+  this.goal = true;
 };
 
 dt.StraightEndPiece.prototype.draw = function(ctx, percent) {
@@ -202,14 +205,7 @@ dt.AnyEndPiece.prototype.init = function(dir, params) {
   dt.BaseDominoPiece.prototype.init.call(this, dir, params);
   this.ins = dt.AnyEndPiece.ALL_DIRS;
   this.outs = dt.AnyEndPiece.ALL_DIRS;
-};
-
-dt.AnyEndPiece.prototype.isGoal = function() {
-  return true;
-};
-
-dt.AnyEndPiece.prototype.isGoalReached = function() {
-  return this.fallen;
+  this.goal = true;
 };
 
 dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {

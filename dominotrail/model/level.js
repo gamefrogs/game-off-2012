@@ -1,11 +1,10 @@
 "use strict";
 
 // The definition a level, used to build a playable instance of Level -----------
-dt.LevelDef = function(width, height, str, starts, goals) {
+dt.LevelDef = function(width, height, str, pieces) {
   this.grid = new dt.Hexgrid(width, height);
   this.parseLevel(str);
-  this.starts = starts;
-  this.goals = goals;
+  this.pieces = pieces;
 };
 
 dt.LevelDef.prototype.getWidth = function() {
@@ -88,9 +87,10 @@ dt.LEVEL1_STR =
   " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
   "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
-dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR,
-                               [{ x: 10, y: 1, type: dt.StraightStartPiece, dir: dt.Dir.E }],
-                               [{ x: 2, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.E }]);
+dt.LEVELDEF1 =
+  new dt.LevelDef(12, 14, dt.LEVEL1_STR,
+                  [{ x: 10, y: 1, type: dt.StraightStartPiece, dir: dt.Dir.E },
+                   { x: 2, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true }]);
 
 dt.LEVEL2_STR = 
   " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
@@ -122,10 +122,11 @@ dt.LEVEL2_STR =
   " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
   "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
   "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
-dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR,
-                               [{ x: 2, y: 2, type: dt.StraightStartPiece, dir: dt.Dir.NW}],
-                               [{ x: 5, y: 5,  type: dt.AnyEndPiece, dir: dt.Dir.NONE },
-                                { x: 6, y: 10, type: dt.AnyEndPiece, dir: dt.Dir.NONE }]);
+dt.LEVELDEF2 =
+  new dt.LevelDef(12, 14, dt.LEVEL2_STR,
+                  [{ x: 2, y: 2, type: dt.StraightStartPiece, dir: dt.Dir.NW},
+                   { x: 5, y: 5,  type: dt.AnyEndPiece, dir: dt.Dir.NONE, goal: true },
+                   { x: 6, y: 10, type: dt.AnyEndPiece, dir: dt.Dir.NONE, goal: true }]);
 
 dt.LEVELS = [ dt.LEVELDEF1,
               dt.LEVELDEF2
@@ -145,17 +146,14 @@ util.Observable.makeObservable(dt.Level);
 
 dt.Level.prototype.initObjects = function(designMode) {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
-  for (var i = 0; i < this.def.starts.length; ++i) {
-    var startDef = this.def.starts[i];
-    var piece = startDef.type.create(startDef.dir);
+  for (var i = 0; i < this.def.pieces.length; ++i) {
+    var pieceDef = this.def.pieces[i];
+    var piece = pieceDef.type.create(pieceDef.dir);
     piece.locked = !designMode;
-    this.setObject(startDef, piece);
-  }
-  for (i = 0; i < this.def.goals.length; ++i) {
-    var goalDef = this.def.goals[i];
-    var piece = goalDef.type.create(goalDef.dir);
-    piece.locked = !designMode;
-    this.setObject(goalDef, piece);
+    if (pieceDef.goal) {
+      piece.goal = true;
+    }
+    this.setObject(pieceDef, piece);
   }
 };
 
