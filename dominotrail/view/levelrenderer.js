@@ -57,6 +57,11 @@ dt.LevelRenderer.prototype.destroy = function() {
 };
 
 dt.LevelRenderer.prototype.initListeners = function() {
+  if (this.mouseListener !== undefined) {
+    // Listeners already initialized: don't create new ones [issue #10]
+    return;
+  }
+  
   var that = this;
   this.mouseListener = function(event) {
     that.mouseHandler(event);
