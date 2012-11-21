@@ -31,7 +31,8 @@ dt.LEVEL1_STR =
 dt.LEVELDEF1 =
   new dt.LevelDef("First level", 12, 14, dt.LEVEL1_STR,
                   [{ x: 10, y: 1, type: dt.StraightStartPiece, dir: dt.Dir.E },
-                   { x: 2, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true }]);
+                   { x: 2, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true }],
+                  [{ type: dt.StraightDominoPiece, limit: 7 }]);
 
 // Register level
 dt.LEVELS.push(dt.LEVELDEF1);

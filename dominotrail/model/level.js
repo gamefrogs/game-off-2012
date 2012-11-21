@@ -1,11 +1,12 @@
 "use strict";
 
 // The definition a level, used to build a playable instance of Level -----------
-dt.LevelDef = function(title, width, height, str, pieces) {
+dt.LevelDef = function(title, width, height, str, pieces, limits) {
   this.title = title;
   this.grid = new dt.Hexgrid(width, height);
   this.parseLevel(str);
   this.pieces = pieces;
+  this.limits = limits;
 };
 
 dt.LevelDef.prototype.getWidth = function() {
@@ -68,6 +69,7 @@ dt.Level = function(def, designMode) {
   this.def = def;
 
   this.initObjects(designMode);
+  this.initLimits(designMode);
 };
 
 util.Observable.makeObservable(dt.Level);
@@ -82,6 +84,23 @@ dt.Level.prototype.initObjects = function(designMode) {
       piece.goal = true;
     }
     this.setObject(pieceDef, piece);
+  }
+};
+
+dt.Level.prototype.initLimits = function(designMode) {
+  // In designMode, don't implement limits
+  this.limits = [];
+  if (!designMode) {
+    for (var i = 0; i < this.def.limits.length; ++i) {
+      var limit = this.def.limits[i];
+      this.limits.push({ type: limit.type, limit: limit.limit });
+    }
+    for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+      var pieceType = dt.USABLE_PIECES[i].type;
+      if (this.getLimitForPiece(pieceType) === undefined) {
+        this.limits.push({ type: pieceType, limit: (pieceType.defaultLimit || 0) });
+      }
+    }
   }
 };
 
@@ -275,3 +294,24 @@ dt.Level.prototype.getGoalPieces = function() {
   return this.getPieces("isGoal");
 };
 
+// The following two functions are not good for performance, but enough for now
+dt.Level.prototype.getLimitForPiece = function(type) {
+  for (var i = 0; i < this.limits.length; ++i) {
+    var limit = this.limits[i];
+    if (limit.type === type) {
+      return limit.limit;
+    }
+  }
+  return undefined;
+};
+
+dt.Level.prototype.changeLimitForPiece = function(type, delta) {
+  for (var i = 0; i < this.limits.length; ++i) {
+    var limit = this.limits[i];
+    if (limit.type === type) {
+      limit.limit += delta;
+      return limit.limit;
+    }
+  }
+  return undefined;
+};
