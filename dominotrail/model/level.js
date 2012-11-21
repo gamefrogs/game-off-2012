@@ -63,6 +63,7 @@ dt.LEVELS = [];
 
 // Events ------------------
 dt.EVENT_CELL_CHANGE = "CellChange";
+dt.EVENT_LIMIT_CHANGE = "LimitChange";
 
 // A runtime playable level, modifiable by the player -----------
 dt.Level = function(def, designMode) {
@@ -89,16 +90,16 @@ dt.Level.prototype.initObjects = function(designMode) {
 
 dt.Level.prototype.initLimits = function(designMode) {
   // In designMode, don't implement limits
-  this.limits = [];
+  this.limits = {};
   if (!designMode) {
     for (var i = 0; i < this.def.limits.length; ++i) {
       var limit = this.def.limits[i];
-      this.limits.push({ type: limit.type, limit: limit.limit });
+      this.limits[limit.type.prototype.typeName] = limit.limit;
     }
     for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
       var pieceType = dt.USABLE_PIECES[i].type;
       if (this.getLimitForPiece(pieceType) === undefined) {
-        this.limits.push({ type: pieceType, limit: (pieceType.defaultLimit || 0) });
+        this.limits[pieceType.prototype.typeName] = (pieceType.defaultLimit || 0);
       }
     }
   }
@@ -180,6 +181,10 @@ dt.Level.prototype.canAddDomino = function(pos) {
 };
 
 dt.Level.prototype.canAddPiece = function(pos, piece) {
+  // Check the limit
+  if (this.getLimitForTypeName(piece.typeName) <= 0) {
+    return false;
+  }
   // For each cell occupied by the piece, check that it is inside the board and available
   if (this.getObject(pos) !== undefined) {
     return false;
@@ -223,6 +228,7 @@ dt.Level.prototype.addPiece = function(pos, piece) {
     var otherPos = relpos.getAbsolutePos(pos);
     this.setObject(otherPos, ghost);
   }
+  this.changeLimitForPiece(piece.typeName, -1);
 };
 
 dt.Level.prototype.removePiece = function(pos) {
@@ -236,6 +242,7 @@ dt.Level.prototype.removePiece = function(pos) {
     this.removeObject(otherPos);
   }
   this.removeObject(realPos);
+  this.changeLimitForPiece(piece.typeName, 1);
 };
 
 dt.Level.prototype.addDomino00 = function(pos) {
@@ -294,24 +301,25 @@ dt.Level.prototype.getGoalPieces = function() {
   return this.getPieces("isGoal");
 };
 
-// The following two functions are not good for performance, but enough for now
 dt.Level.prototype.getLimitForPiece = function(type) {
-  for (var i = 0; i < this.limits.length; ++i) {
-    var limit = this.limits[i];
-    if (limit.type === type) {
-      return limit.limit;
-    }
-  }
-  return undefined;
+  return this.limits[type.prototype.typeName];
 };
 
-dt.Level.prototype.changeLimitForPiece = function(type, delta) {
-  for (var i = 0; i < this.limits.length; ++i) {
-    var limit = this.limits[i];
-    if (limit.type === type) {
-      limit.limit += delta;
-      return limit.limit;
-    }
+dt.Level.prototype.getLimitForTypeName = function(typeName) {
+  return this.limits[typeName];
+};
+
+dt.Level.prototype.changeLimitForPiece = function(typeName, delta) {
+  if (typeName in this.limits) {
+    var oldLimit = this.limits[typeName];
+    var newLimit = oldLimit + delta;
+    this.limits[typeName] = newLimit;
+    this.notify({src: this,
+                 type: dt.EVENT_LIMIT_CHANGE,
+                 typeName: typeName,
+                 from: oldLimit,
+                 to: newLimit});
+    return newLimit;
   }
   return undefined;
 };

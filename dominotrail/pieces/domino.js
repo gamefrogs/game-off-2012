@@ -1,28 +1,9 @@
 "use strict";
 
-// DeadEnd: does not exit
-dt.DeadEndDominoPiece = function() {
-};
-
-util.extend(dt.BasePiece, dt.DeadEndDominoPiece);
-
-dt.DeadEndDominoPiece.create = function(dir, params) {
-  var piece = new dt.DeadEndDominoPiece();
-  dt.BasePiece.init.call(piece, dir);
-  return piece;
-};
-
-dt.DeadEndDominoPiece.prototype.getInputs = function() {
-  return [{pos: dt.HERE, dir: this.dir}];
-};
-
-dt.DeadEndDominoPiece.prototype.receiveInputs = function(inputs) {
-};
-
 // Some common behaviour of all Domino pieces
 dt.BaseDominoPiece = function() {
 };
-dt.BaseDominoPiece.prototype = new dt.BasePiece();
+dt.BaseDominoPiece.prototype = new dt.BasePiece("dt.BaseDominoPiece");
 
 
 dt.BaseDominoPiece.prototype.init = function(dir, params) {
@@ -77,9 +58,9 @@ dt.BaseDominoPiece.prototype.reset = function() {
 // Straight: exits on the opposite of the input side
 dt.StraightDominoPiece = function() {
 };
-dt.StraightDominoPiece.prototype = new dt.BaseDominoPiece();
+dt.StraightDominoPiece.prototype = new dt.BaseDominoPiece("dt.StraightDominoPiece");
 
-dt.registerPiece(dt.StraightDominoPiece, "Straight");
+dt.registerPiece(dt.StraightDominoPiece, "Straight", "dt.StraightDominoPiece");
 
 dt.StraightDominoPiece.create = function(dir, params) {
   var piece = new dt.StraightDominoPiece();
@@ -118,7 +99,7 @@ dt.StraightDominoPiece.prototype.draw = function(ctx, percent) {
 dt.StraightStartPiece = function() {
 };
 dt.StraightStartPiece.prototype = new dt.StraightDominoPiece();
-dt.registerPiece(dt.StraightStartPiece, "Start");
+dt.registerPiece(dt.StraightStartPiece, "Start", "dt.StraightStartPiece");
 
 dt.StraightStartPiece.create = function(dir, params) {
   var piece = new dt.StraightStartPiece();
@@ -161,7 +142,7 @@ dt.StraightStartPiece.prototype.draw = function(ctx, percent) {
 dt.StraightEndPiece = function() {
 };
 dt.StraightEndPiece.prototype = new dt.StraightDominoPiece();
-dt.registerPiece(dt.StraightEndPiece, "1-End");
+dt.registerPiece(dt.StraightEndPiece, "1-End", "dt.StraightEndPiece");
 
 dt.StraightEndPiece.create = function(dir, params) {
   var piece = new dt.StraightEndPiece();
@@ -190,7 +171,7 @@ dt.StraightEndPiece.prototype.draw = function(ctx, percent) {
 dt.AnyEndPiece = function() {
 };
 dt.AnyEndPiece.prototype = new dt.BaseDominoPiece();
-dt.registerPiece(dt.AnyEndPiece, "x-End");
+dt.registerPiece(dt.AnyEndPiece, "x-End", "dt.AnyEndPiece");
 
 dt.AnyEndPiece.create = function(dir, params) {
   var piece = new dt.AnyEndPiece();
@@ -255,7 +236,7 @@ dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
 dt.TurnRightDominoPiece = function() {
 };
 dt.TurnRightDominoPiece.prototype = new dt.BaseDominoPiece();
-dt.registerPiece(dt.TurnRightDominoPiece, "R&nbsp;Turn");
+dt.registerPiece(dt.TurnRightDominoPiece, "R&nbsp;Turn", "dt.TurnRightDominoPiece");
 
 
 dt.TurnRightDominoPiece.create = function(dir, params) {
@@ -303,7 +284,7 @@ dt.TurnRightDominoPiece.prototype.draw = function(ctx, percent) {
 dt.TurnLeftDominoPiece = function() {
 };
 dt.TurnLeftDominoPiece.prototype = new dt.BaseDominoPiece();
-dt.registerPiece(dt.TurnLeftDominoPiece, "L&nbsp;Turn");
+dt.registerPiece(dt.TurnLeftDominoPiece, "L&nbsp;Turn", "dt.TurnLeftDominoPiece");
 
 dt.TurnLeftDominoPiece.create = function(dir, params) {
   var piece = new dt.TurnLeftDominoPiece();
@@ -350,7 +331,7 @@ dt.TurnLeftDominoPiece.prototype.draw = function(ctx, percent) {
 dt.RForkDominoPiece = function() {
 };
 dt.RForkDominoPiece.prototype = new dt.BaseDominoPiece();
-dt.registerPiece(dt.RForkDominoPiece, "R&nbsp;Fork");
+dt.registerPiece(dt.RForkDominoPiece, "R&nbsp;Fork", "dt.RForkDominoPiece");
 
 dt.RForkDominoPiece.create = function(dir, params) {
   var piece = new dt.RForkDominoPiece();
@@ -402,7 +383,7 @@ dt.RForkDominoPiece.prototype.draw = function(ctx, percent) {
 dt.LForkDominoPiece = function() {
 };
 dt.LForkDominoPiece.prototype = new dt.BaseDominoPiece();
-dt.registerPiece(dt.LForkDominoPiece, "L&nbsp;Fork");
+dt.registerPiece(dt.LForkDominoPiece, "L&nbsp;Fork", "dt.LForkDominoPiece");
 
 dt.LForkDominoPiece.create = function(dir, params) {
   var piece = new dt.LForkDominoPiece();
@@ -453,7 +434,7 @@ dt.LForkDominoPiece.prototype.draw = function(ctx, percent) {
 dt.ForkDominoPiece = function() {
 };
 dt.ForkDominoPiece.prototype = new dt.BaseDominoPiece();
-dt.registerPiece(dt.ForkDominoPiece, "2-Fork");
+dt.registerPiece(dt.ForkDominoPiece, "2-Fork", "dt.ForkDominoPiece");
 
 dt.ForkDominoPiece.create = function(dir, params) {
   var piece = new dt.ForkDominoPiece();
@@ -501,13 +482,11 @@ dt.ForkDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.restore();
 };
 
-// TODO add right and left double fork
-
 // Triple Fork
 dt.TriForkDominoPiece = function() {
 };
 dt.TriForkDominoPiece.prototype = new dt.BaseDominoPiece();
-dt.registerPiece(dt.TriForkDominoPiece, "3-Fork");
+dt.registerPiece(dt.TriForkDominoPiece, "3-Fork", "dt.TriForkDominoPiece");
 dt.TriForkDominoPiece.defaultLimit = Infinity;
 
 dt.TriForkDominoPiece.create = function(dir, params) {

@@ -18,9 +18,12 @@ dt.HY = (dt.RADIUS - 2) / 2;
 
 
 dt.USABLE_PIECES = [];
+dt.PIECE_TYPE_BY_NAME = {};
 
-dt.registerPiece = function(type, name) {
-  dt.USABLE_PIECES.push({type: type, name: name});
+dt.registerPiece = function(type, name, typeName) {
+  dt.USABLE_PIECES.push({type: type, name: name, typeName: typeName});
+  type.prototype.typeName = typeName;
+  dt.PIECE_TYPE_BY_NAME[typeName] = type;
 };
 
 

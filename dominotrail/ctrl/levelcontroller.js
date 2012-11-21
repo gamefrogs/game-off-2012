@@ -1,10 +1,7 @@
 "use strict";
 
-dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
 dt.MODE_ERASER = "ModeEraser";
-
-dt.PIECE_BUTTONS = [];
 
 dt.LevelController = function(round, renderer) {
   this.round = round;
@@ -12,20 +9,28 @@ dt.LevelController = function(round, renderer) {
   this.renderer = renderer;
   this.renderer.addObserver(this);
   this.round.addObserver(this);
+  this.level.addObserver(this);
 
+  this.pieceButtons = [];
+  this.counters = {};
   this.initListeners();
   
   this.mode = dt.MODE_DOMINO; 
   this.params = {};
 
   this.dir = dt.Dir.E;
-  this.highlightFrom("piece_0", dt.PIECE_BUTTONS);
-  this.choosePieceType(dt.USABLE_PIECES[0].type);
+  this.highlightFrom("piece_0", this.pieceButtons);
+  this.choosePieceType(this.getUsablePieces()[0].type);
 };
 
-dt.LevelController.prototype.createPieceButton = function(id, label) {
+dt.LevelController.prototype.createPieceButton = function(id, label, limit, typeName) {
   var panel = document.getElementById("piece_buttons");
-  panel.innerHTML += '<span id="' + id + '" class="sbutton">' + label + '</span><br>';
+  panel.innerHTML += ('<span id="' + id + '" class="sbutton">' + label + '</span>' +
+                      '<span id="limit_' + id + '" class="limit">' + limit + '</span>' +
+                      '<br>');
+  if (typeName !== undefined) {
+    this.counters[typeName] = "limit_" + id;
+  }
 };
 
 dt.LevelController.prototype.destroyPieceButtons = function() {
@@ -36,7 +41,7 @@ dt.LevelController.prototype.destroyPieceButtons = function() {
 dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
   var that = this;
   return function(event) {
-    that.highlightFrom(id, dt.PIECE_BUTTONS);
+    that.highlightFrom(id, that.pieceButtons);
     that.choosePieceType(pieceType);
   }
 };
@@ -56,25 +61,22 @@ dt.LevelController.prototype.getUsablePieces = function() {
 dt.LevelController.prototype.initListeners = function() {
   var that = this;
   this.eventListeners = [];
-  //dt.PIECE_BUTTONS.push("piece_domino");
   // Create all buttons in HTML before attaching listeners
-  this.createPieceButton("piece_eraser", "Erase");
-  //this.createPieceButton("piece_domino", "Domino");
+  this.pieceButtons.push("piece_eraser");
+  this.createPieceButton("piece_eraser", "Erase", Infinity);
 
   var usablePieces = this.getUsablePieces();
   
   for (var i = 0; i < usablePieces.length; ++i) {
+    var piece = usablePieces[i];
     var id = "piece_" + i;
-    dt.PIECE_BUTTONS.push(id);
-    this.createPieceButton(id, usablePieces[i].name);
+    this.pieceButtons.push(id);
+    this.createPieceButton(id, piece.name, this.level.getLimitForPiece(piece.type),
+                          piece.type.prototype.typeName);
   }
 
-  //this.addListener("piece_domino", "click", function(event) {
-  //  that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
-  //  that.chooseDomino();
-  //});
   this.addListener("piece_eraser", "click", function(event) {
-    that.highlightFrom("piece_eraser", dt.PIECE_BUTTONS);
+    that.highlightFrom("piece_eraser", that.pieceButtons);
     that.chooseEraser();
   });
   for (var i = 0; i < usablePieces.length; ++i) {
@@ -102,6 +104,7 @@ dt.LevelController.prototype.exitListeners = function() {
 dt.LevelController.prototype.destroy = function() {
   this.exitListeners();
   this.destroyPieceButtons();
+  this.level.removeObserver(this);
   this.round.removeObserver(this);
   this.renderer.removeObserver(this);
 };
@@ -248,6 +251,7 @@ dt.LevelController.prototype.update = function(event) {
     } else {
       util.log("LevelController received ", event);
     }
+    
   } else if (event.src === this.round) {
     if (event.type === dt.EVENT_ROUND_STATUS_CHANGE) {
       util.log("LevelController received round status change from " + event.from +
@@ -258,7 +262,20 @@ dt.LevelController.prototype.update = function(event) {
     } else {
       util.log("LevelController received ", event);
     }
+    
+  } else if (event.src === this.level) {
+    if (event.type === dt.EVENT_LIMIT_CHANGE) {
+      this.changeCounter(event.typeName, event.to);
+    }
+    
+  } else {
+    util.log("LevelController received ", event);
   }
+};
+
+dt.LevelController.prototype.changeCounter = function(typeName, value) {
+  var counter = document.getElementById(this.counters[typeName]);
+  counter.innerHTML = "" + value;
 };
 
 dt.LevelController.prototype.runRound = function() {
