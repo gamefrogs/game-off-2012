@@ -1,20 +1,7 @@
 "use strict";
 
-dt.MODE_DOMINO = "ModeDomino";
 dt.MODE_PIECE = "ModePiece";
 dt.MODE_ERASER = "ModeEraser";
-
-dt.PIECE_BUTTONS = [];
-
-dt.USABLE_PIECES = [{type: dt.BridgePiece,          name: "Bridge"},
-                    {type: dt.TurnRightDominoPiece, name: "R.&nbsp;Turn"},
-                    {type: dt.TurnLeftDominoPiece,  name: "L.&nbsp;Turn"},
-                    {type: dt.ForkDominoPiece,      name: "Fork"},
-		    {type: dt.RForkDominoPiece,     name: "R.Fork"},
-		    {type: dt.LForkDominoPiece,     name: "L.Fork"},
-                    {type: dt.TriForkDominoPiece,   name: "3&nbsp;Fork"}
-                   ];
-dt.DIR_BUTTONS = ["dir_E", "dir_SE", "dir_SW", "dir_W", "dir_NW", "dir_NE" ];
 
 dt.LevelController = function(round, renderer) {
   this.round = round;
@@ -22,21 +9,28 @@ dt.LevelController = function(round, renderer) {
   this.renderer = renderer;
   this.renderer.addObserver(this);
   this.round.addObserver(this);
+  this.level.addObserver(this);
 
+  this.pieceButtons = [];
+  this.counters = {};
   this.initListeners();
   
   this.mode = dt.MODE_DOMINO; 
   this.params = {};
 
-  this.highlightFrom("dir_E", dt.DIR_BUTTONS);
-  this.chooseDir(dt.Dir.E);
-  this.highlightFrom("piece_0", dt.PIECE_BUTTONS);
-  this.choosePieceType(dt.USABLE_PIECES[0].type);
+  this.dir = dt.Dir.E;
+  this.highlightFrom("piece_0", this.pieceButtons);
+  this.choosePieceType(this.getUsablePieces()[0].type);
 };
 
-dt.LevelController.prototype.createPieceButton = function(id, label) {
+dt.LevelController.prototype.createPieceButton = function(id, label, limit, typeName) {
   var panel = document.getElementById("piece_buttons");
-  panel.innerHTML += '<span id="' + id + '" class="sbutton">' + label + '</span><br>';
+  panel.innerHTML += ('<span id="' + id + '" class="sbutton">' + label + '</span>' +
+                      '<span id="limit_' + id + '" class="limit">' + limit + '</span>' +
+                      '<br>');
+  if (typeName !== undefined) {
+    this.counters[typeName] = "limit_" + id;
+  }
 };
 
 dt.LevelController.prototype.destroyPieceButtons = function() {
@@ -47,63 +41,49 @@ dt.LevelController.prototype.destroyPieceButtons = function() {
 dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
   var that = this;
   return function(event) {
-    that.highlightFrom(id, dt.PIECE_BUTTONS);
+    that.highlightFrom(id, that.pieceButtons);
     that.choosePieceType(pieceType);
   }
+};
+
+dt.LevelController.prototype.getUsablePieces = function() {
+  var pieces = [];
+  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+    var piece = dt.USABLE_PIECES[i];
+    var limit = this.level.getLimitForPiece(piece.type);
+    if (limit > 0) {
+      pieces.push(piece);
+    }
+  }
+  return pieces;
 };
 
 dt.LevelController.prototype.initListeners = function() {
   var that = this;
   this.eventListeners = [];
-  dt.PIECE_BUTTONS.push("piece_domino");
   // Create all buttons in HTML before attaching listeners
-  this.createPieceButton("piece_eraser", "Erase");
-  this.createPieceButton("piece_domino", "Domino");
-  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+  this.pieceButtons.push("piece_eraser");
+  this.createPieceButton("piece_eraser", "Erase", Infinity);
+
+  var usablePieces = this.getUsablePieces();
+  
+  for (var i = 0; i < usablePieces.length; ++i) {
+    var piece = usablePieces[i];
     var id = "piece_" + i;
-    dt.PIECE_BUTTONS.push(id);
-    this.createPieceButton(id, dt.USABLE_PIECES[i].name);
+    this.pieceButtons.push(id);
+    this.createPieceButton(id, piece.name, this.level.getLimitForPiece(piece.type),
+                          piece.type.prototype.typeName);
   }
 
-  this.addListener("piece_domino", "click", function(event) {
-    that.highlightFrom("piece_domino", dt.PIECE_BUTTONS);
-    that.chooseDomino();
-  });
   this.addListener("piece_eraser", "click", function(event) {
-    that.highlightFrom("piece_eraser", dt.PIECE_BUTTONS);
+    that.highlightFrom("piece_eraser", that.pieceButtons);
     that.chooseEraser();
   });
-  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+  for (var i = 0; i < usablePieces.length; ++i) {
     var id = "piece_" + i;
     this.addListener(id, "click",
-                     this.makePieceListener(id, dt.USABLE_PIECES[i].type));
+                     this.makePieceListener(id, usablePieces[i].type));
   }
-
-  // Direction buttons
-  this.addListener("dir_E", "click", function(event) {
-    that.highlightFrom("dir_E", dt.DIR_BUTTONS);
-    that.chooseDir(dt.Dir.E);
-  });
-  this.addListener("dir_SE", "click", function(event) {
-    that.highlightFrom("dir_SE", dt.DIR_BUTTONS);
-    that.chooseDir(dt.Dir.SE);
-  });
-  this.addListener("dir_SW", "click", function(event) {
-    that.highlightFrom("dir_SW", dt.DIR_BUTTONS);
-    that.chooseDir(dt.Dir.SW);
-  });
-  this.addListener("dir_W", "click", function(event) {
-    that.highlightFrom("dir_W", dt.DIR_BUTTONS);
-    that.chooseDir(dt.Dir.W);
-  });
-  this.addListener("dir_NW", "click", function(event) {
-    that.highlightFrom("dir_NW", dt.DIR_BUTTONS);
-    that.chooseDir(dt.Dir.NW);
-  });
-  this.addListener("dir_NE", "click", function(event) {
-    that.highlightFrom("dir_NE", dt.DIR_BUTTONS);
-    that.chooseDir(dt.Dir.NE);
-  });
 };
 
 dt.LevelController.prototype.addListener = function(id, event, func) {
@@ -124,6 +104,7 @@ dt.LevelController.prototype.exitListeners = function() {
 dt.LevelController.prototype.destroy = function() {
   this.exitListeners();
   this.destroyPieceButtons();
+  this.level.removeObserver(this);
   this.round.removeObserver(this);
   this.renderer.removeObserver(this);
 };
@@ -166,6 +147,9 @@ dt.LevelController.prototype.preparePiece = function() {
 };
 
 dt.LevelController.prototype.handleCellClick = function(pos) {
+  if (this.isRoundRunning()) {
+    return;
+  }
   switch (this.mode) {
   case dt.MODE_DOMINO:
     if (this.level.canAddDomino(pos)) {
@@ -191,40 +175,66 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
   }
 };
 
+dt.LevelController.prototype.fullRender = function(pos, percent) {
+  this.renderer.render(percent);
+  if ((pos !== undefined) && (this.round.status === dt.ROUND_NOT_RUN)) {
+    this.renderer.renderOverlay(pos, this.piece);
+  }
+};
+
+dt.LevelController.prototype.isRoundRunning = function() {
+  return this.round.status !== dt.ROUND_NOT_RUN;
+};
+
 dt.LevelController.prototype.handleCellRightClick = function(pos) {
+  if (this.isRoundRunning()) {
+    return;
+  }
   if (this.mode === dt.MODE_PIECE) {
     this.chooseDir(this.dir.right);
+    this.fullRender(pos);
   }
 };
 
 dt.LevelController.prototype.handleCellOver = function(pos) {
-  if (this.level.isInside(pos)) {
-    if ((this.mode === dt.MODE_PIECE) && (this.level.canAddPiece(pos, this.piece))) {
-      this.renderer.renderOverlay(pos, this.piece)
-      return;
-    }
-    var canAdd = this.level.canAddDomino(pos);
-    var borderColor = (canAdd ? "#000000" : "#ff0000");
-    this.renderer.renderCellBackground(pos.x, pos.y, undefined, borderColor, 2);
-    if (!canAdd) {
-      var ctx = this.renderer.ctx;
-      var hc = this.renderer.getCellCenter(pos.x, pos.y);
-      ctx.save();
-      ctx.globalAlpha = 0.5;
-      ctx.fillStyle = "#ff0000";
-      ctx.beginPath();
-      ctx.arc(hc.x, hc.y, dt.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
-      ctx.fill();
-      ctx.restore();
-    }
+  if (this.isRoundRunning()) {
+    return;
   }
+  if (!this.level.isInside(pos)) {
+    return;
+  }
+  if ((this.mode === dt.MODE_PIECE) && (this.level.canAddPiece(pos, this.piece))) {
+    this.fullRender(pos);
+    return;
+  }
+  var canAdd = this.level.canAddDomino(pos);
+  var borderColor = (canAdd ? "#000000" : "#ff0000");
+  this.renderer.render();
+  this.renderer.renderCellBackground(pos.x, pos.y, undefined, borderColor, 2);
+  if (!canAdd) {
+    var ctx = this.renderer.ctx;
+    var hc = this.renderer.getCellCenter(pos.x, pos.y);
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = "#ff0000";
+    ctx.beginPath();
+    ctx.arc(hc.x, hc.y, dt.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
+    ctx.fill();
+    ctx.restore();
+  }
+};
+
+dt.LevelController.prototype.handleCellOut = function(pos) {
+  if (this.isRoundRunning()) {
+    return;
+  }
+  this.fullRender();
 };
 
 dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
     if (event.type === dt.EVENT_CELL_DOWN) {
       if (event.button === dt.BUTTON_LEFT) {
-        // TODO check that we are still in the "layout" mode, not running
         this.handleCellClick(event.pos);
       } else if (event.button === dt.BUTTON_RIGHT) {
         this.handleCellRightClick(event.pos);
@@ -235,9 +245,13 @@ dt.LevelController.prototype.update = function(event) {
     } else if (event.type === dt.EVENT_CELL_OVER) {
       this.handleCellOver(event.pos);
       
+    } else if (event.type === dt.EVENT_CELL_OUT) {
+      this.handleCellOut();
+      
     } else {
       util.log("LevelController received ", event);
     }
+    
   } else if (event.src === this.round) {
     if (event.type === dt.EVENT_ROUND_STATUS_CHANGE) {
       util.log("LevelController received round status change from " + event.from +
@@ -248,7 +262,20 @@ dt.LevelController.prototype.update = function(event) {
     } else {
       util.log("LevelController received ", event);
     }
+    
+  } else if (event.src === this.level) {
+    if (event.type === dt.EVENT_LIMIT_CHANGE) {
+      this.changeCounter(event.typeName, event.to);
+    }
+    
+  } else {
+    util.log("LevelController received ", event);
   }
+};
+
+dt.LevelController.prototype.changeCounter = function(typeName, value) {
+  var counter = document.getElementById(this.counters[typeName]);
+  counter.innerHTML = "" + value;
 };
 
 dt.LevelController.prototype.runRound = function() {
@@ -267,7 +294,8 @@ dt.LevelController.prototype.runRound = function() {
     } else if (anim >= 100) {
       stillLive = that.round.runStepSecondHalf();
       anim = -1;
-      
+      that.round.runStepFirstHalf();
+      anim = 0;
     } else {
       anim += ANIM_STEP;
     }

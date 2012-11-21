@@ -16,6 +16,17 @@ dt.DCY = dt.RADIUS * 1.5;
 dt.HX = (dt.RADIUS - 2) * Math.sqrt(3) / 2;
 dt.HY = (dt.RADIUS - 2) / 2;
 
+
+dt.USABLE_PIECES = [];
+dt.PIECE_TYPE_BY_NAME = {};
+
+dt.registerPiece = function(type, name, typeName) {
+  dt.USABLE_PIECES.push({type: type, name: name, typeName: typeName});
+  type.prototype.typeName = typeName;
+  dt.PIECE_TYPE_BY_NAME[typeName] = type;
+};
+
+
 //==================================================================
 //
 // Here start the interface that should be extended by real pieces.
@@ -37,6 +48,8 @@ dt.BasePiece.create = function(dir, params) {
 dt.BasePiece.prototype.init = function(dir, params) {
   this.dir = dir;
   this.locked = false;
+  this.goal = false;
+  this.reached = false;
 };
 
 dt.BasePiece.prototype.param = function(params, name, defaultValue) {
@@ -53,12 +66,12 @@ dt.BasePiece.prototype.param = function(params, name, defaultValue) {
 
 // Asks a piece if it's a goal of the level
 dt.BasePiece.prototype.isGoal = function() {
-  return false;
+  return this.goal;
 };
 
 // Asks the piece, when it's a goal, if it has been reached
 dt.BasePiece.prototype.isGoalReached = function() {
-  return false;
+  return this.reached;
 }
 
 // Must return an array of dt.RelativePos that are part of this piece, except the main position

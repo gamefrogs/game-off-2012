@@ -57,6 +57,11 @@ dt.LevelRenderer.prototype.destroy = function() {
 };
 
 dt.LevelRenderer.prototype.initListeners = function() {
+  if (this.mouseListener !== undefined) {
+    // Listeners already initialized: don't create new ones [issue #10]
+    return;
+  }
+  
   var that = this;
   this.mouseListener = function(event) {
     that.mouseHandler(event);
@@ -191,12 +196,9 @@ dt.LevelRenderer.prototype.getHexPosition = function(mx, my) {
 
 dt.LevelRenderer.prototype.update = function(event) {
   util.log("Renderer update", event);
-  this.render();
 };
 
 dt.LevelRenderer.prototype.mouseHandler = function(event) {
-  this.render();
-
   if (event.type === "mouseout") {
     this.notify({ src: this,
                   type: dt.EVENT_CELL_OUT });

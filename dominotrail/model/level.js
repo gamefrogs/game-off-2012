@@ -1,11 +1,12 @@
 "use strict";
 
 // The definition a level, used to build a playable instance of Level -----------
-dt.LevelDef = function(width, height, str, starts, goals) {
+dt.LevelDef = function(title, width, height, str, pieces, limits) {
+  this.title = title;
   this.grid = new dt.Hexgrid(width, height);
   this.parseLevel(str);
-  this.starts = starts;
-  this.goals = goals;
+  this.pieces = pieces;
+  this.limits = limits;
 };
 
 dt.LevelDef.prototype.getWidth = function() {
@@ -58,104 +59,49 @@ dt.LevelDef.prototype.parseLevel = function(str) {
   }
 };
 
-dt.LEVEL1_STR = 
-  " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
-  "| 0 . 0 . 0 . 0 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 2 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 2 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 . 2 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 2 . 2 . 2 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 3 . 4 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
-  "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
-dt.LEVELDEF1 = new dt.LevelDef(12, 14, dt.LEVEL1_STR,
-                               [{ x: 10, y: 1, dir: dt.Dir.E }],
-                               [{ x: 2, y: 1 }]);
-
-dt.LEVEL2_STR = 
-  " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     \n" +
-  "| 0 . 0 . 0 . 0 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 2 . 2 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 . 1 . 2 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 . 1 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 2 . 2 . 2 . 2 |  \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "| 2 . 2 . 3 . 4 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |    \n" +
-  " _ . . . . . . . . . . . . . . . . . . . . . . . _   \n" +
-  "  | 2 . 3 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 |  \n" +
-  "   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _     ";
-dt.LEVELDEF2 = new dt.LevelDef(12, 14, dt.LEVEL2_STR,
-                               [{ x: 2, y: 2, dir: dt.Dir.NW}],
-                               [{ x: 5, y: 5 },
-                                { x: 6, y: 10 }]);
-
-dt.LEVELS = [ dt.LEVELDEF1,
-              dt.LEVELDEF2
-            ];
+dt.LEVELS = [];
 
 // Events ------------------
 dt.EVENT_CELL_CHANGE = "CellChange";
+dt.EVENT_LIMIT_CHANGE = "LimitChange";
 
 // A runtime playable level, modifiable by the player -----------
 dt.Level = function(def, designMode) {
   this.def = def;
 
   this.initObjects(designMode);
+  this.initLimits(designMode);
 };
 
 util.Observable.makeObservable(dt.Level);
 
 dt.Level.prototype.initObjects = function(designMode) {
   this.objects = new dt.Hexgrid(this.def.getWidth(), this.def.getHeight());
-  for (var i = 0; i < this.def.starts.length; ++i) {
-    var startDef = this.def.starts[i];
-    var piece = dt.StraightStartPiece.create(startDef.dir);
+  for (var i = 0; i < this.def.pieces.length; ++i) {
+    var pieceDef = this.def.pieces[i];
+    var piece = pieceDef.type.create(pieceDef.dir);
     piece.locked = !designMode;
-    this.setObject(startDef, piece);
+    if (pieceDef.goal) {
+      piece.goal = true;
+    }
+    this.setObject(pieceDef, piece);
   }
-  for (i = 0; i < this.def.goals.length; ++i) {
-    var goalDef = this.def.goals[i];
-    var piece = dt.AnyEndPiece.create(dt.Dir.NONE);
-    piece.locked = !designMode;
-    this.setObject(goalDef, piece);
+};
+
+dt.Level.prototype.initLimits = function(designMode) {
+  // In designMode, don't implement limits
+  this.limits = {};
+  if (!designMode) {
+    for (var i = 0; i < this.def.limits.length; ++i) {
+      var limit = this.def.limits[i];
+      this.limits[limit.type.prototype.typeName] = limit.limit;
+    }
+    for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+      var pieceType = dt.USABLE_PIECES[i].type;
+      if (this.getLimitForPiece(pieceType) === undefined) {
+        this.limits[pieceType.prototype.typeName] = (pieceType.defaultLimit || 0);
+      }
+    }
   }
 };
 
@@ -235,6 +181,10 @@ dt.Level.prototype.canAddDomino = function(pos) {
 };
 
 dt.Level.prototype.canAddPiece = function(pos, piece) {
+  // Check the limit
+  if (this.getLimitForTypeName(piece.typeName) <= 0) {
+    return false;
+  }
   // For each cell occupied by the piece, check that it is inside the board and available
   if (this.getObject(pos) !== undefined) {
     return false;
@@ -278,6 +228,7 @@ dt.Level.prototype.addPiece = function(pos, piece) {
     var otherPos = relpos.getAbsolutePos(pos);
     this.setObject(otherPos, ghost);
   }
+  this.changeLimitForPiece(piece.typeName, -1);
 };
 
 dt.Level.prototype.removePiece = function(pos) {
@@ -291,6 +242,7 @@ dt.Level.prototype.removePiece = function(pos) {
     this.removeObject(otherPos);
   }
   this.removeObject(realPos);
+  this.changeLimitForPiece(piece.typeName, 1);
 };
 
 dt.Level.prototype.addDomino00 = function(pos) {
@@ -349,3 +301,25 @@ dt.Level.prototype.getGoalPieces = function() {
   return this.getPieces("isGoal");
 };
 
+dt.Level.prototype.getLimitForPiece = function(type) {
+  return this.limits[type.prototype.typeName];
+};
+
+dt.Level.prototype.getLimitForTypeName = function(typeName) {
+  return this.limits[typeName];
+};
+
+dt.Level.prototype.changeLimitForPiece = function(typeName, delta) {
+  if (typeName in this.limits) {
+    var oldLimit = this.limits[typeName];
+    var newLimit = oldLimit + delta;
+    this.limits[typeName] = newLimit;
+    this.notify({src: this,
+                 type: dt.EVENT_LIMIT_CHANGE,
+                 typeName: typeName,
+                 from: oldLimit,
+                 to: newLimit});
+    return newLimit;
+  }
+  return undefined;
+};

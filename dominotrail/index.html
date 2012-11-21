@@ -114,6 +114,9 @@ h1 {
     <script src="model/level.js"></script>
     <script src="model/round.js"></script>
     <script src="model/game.js"></script>
+    <!-- Actual levels -->
+    <script src="levels/level01.js"></script>
+    <script src="levels/level02.js"></script>
     <!-- 'View' part of the game -->
     <script src="view/levelrenderer.js"></script>
     <script src="view/screens.js"></script>
@@ -159,13 +162,6 @@ h1 {
         <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 200px; overflow: hidden; background-color: pink">
           Pieces<br>
           <div id="piece_buttons" style="width: 200px"></div>
-          Direction<br>
-          <span id="dir_E" class="sbutton">E</span>
-          <span id="dir_SE" class="sbutton">SE</span>
-          <span id="dir_SW" class="sbutton">SW</span>
-          <span id="dir_W" class="sbutton">W</span>
-          <span id="dir_NW" class="sbutton">NW</span>
-          <span id="dir_NE" class="sbutton">NE</span>
           <hr>
           <a id="round_run" class="button" href="javascript:util.nop();">Run</a>
           <a id="round_quit" class="button" href="javascript:util.nop();">Quit level</a>
