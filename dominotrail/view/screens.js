@@ -154,12 +154,16 @@ dt.View.prototype.update = function(event) {
 
     } else if (event.type === dt.EVENT_CREATE_ROUND) {
       this.renderer = new dt.LevelRenderer(event.round, this.viewport, this.ctx);
-      this.controller = new dt.LevelController(event.round, this.renderer);
+      var selectorCanvas = document.getElementById("piece_selector");
+      this.pieceSelector = new dt.PieceSelector(selectorCanvas, selectorCanvas.getContext("2d"));
+      this.controller = new dt.LevelController(event.round, this.renderer, this.pieceSelector);
 
     } else if (event.type === dt.EVENT_DESTROY_ROUND) {
       this.controller.destroy();
       this.renderer.destroy();
+      this.pieceSelector.destroy();
       this.renderer = null;
+      this.pieceSelector = null;
       
     } else {
       util.log("Received unknown event from game", event);

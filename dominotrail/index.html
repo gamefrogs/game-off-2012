@@ -129,6 +129,7 @@ h1 {
     <script src="levels/leveleditor.js"></script>
     <!-- 'View' part of the game -->
     <script src="view/levelrenderer.js"></script>
+    <script src="view/pieceselector.js"></script>
     <script src="view/screens.js"></script>
     <!-- 'Controller' part of the game -->
     <script src="ctrl/controller.js"></script>
@@ -171,7 +172,9 @@ h1 {
       <div id="round" class="screen">
         <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 200px; overflow: hidden; background-color: pink">
           Pieces<br>
-          <div id="piece_buttons" style="width: 200px"></div>
+          <div id="piece_buttons" style="width: 200px">
+          </div>
+          <canvas id="piece_selector" width="200" height="200"></canvas>
           <hr>
           <a id="round_run" class="button" href="javascript:util.nop();">Run</a>
           <a id="round_quit" class="button" href="javascript:util.nop();">Quit level</a>

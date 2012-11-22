@@ -3,10 +3,11 @@
 dt.MODE_PIECE = "ModePiece";
 dt.MODE_ERASER = "ModeEraser";
 
-dt.LevelController = function(round, renderer) {
+dt.LevelController = function(round, renderer, selector) {
   this.round = round;
   this.level = round.level;
   this.renderer = renderer;
+  this.selector = selector;
   this.renderer.addObserver(this);
   this.round.addObserver(this);
   this.level.addObserver(this);
@@ -73,6 +74,8 @@ dt.LevelController.prototype.initListeners = function() {
     this.pieceButtons.push(id);
     this.createPieceButton(id, piece.name, this.level.getLimitForPiece(piece.type),
                           piece.type.prototype.typeName);
+
+    this.selector.addPiece(piece.type.create(dt.Dir.E));
   }
 
   this.addListener("piece_eraser", "click", function(event) {

@@ -402,6 +402,14 @@ dt.Hexgrid.prototype.init = function(width, height) {
   }
 };
 
+dt.Hexgrid.prototype.getWidth = function() {
+  return this.width;
+};
+
+dt.Hexgrid.prototype.getHeight = function() {
+  return this.height;
+};
+
 dt.Hexgrid.prototype.isInside = function(pos) {
   return ((pos.x >= 0) && (pos.x < this.width) &&
           (pos.y >= 0) && (pos.y < this.height));
