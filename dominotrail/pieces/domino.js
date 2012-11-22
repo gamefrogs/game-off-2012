@@ -59,6 +59,7 @@ dt.BaseDominoPiece.prototype.reset = function() {
 dt.StraightDominoPiece = function() {
 };
 dt.StraightDominoPiece.prototype = new dt.BaseDominoPiece("dt.StraightDominoPiece");
+dt.StraightDominoPiece.defaultLimit = Infinity;
 
 dt.registerPiece(dt.StraightDominoPiece, "Straight", "dt.StraightDominoPiece");
 
@@ -487,7 +488,6 @@ dt.TriForkDominoPiece = function() {
 };
 dt.TriForkDominoPiece.prototype = new dt.BaseDominoPiece();
 dt.registerPiece(dt.TriForkDominoPiece, "3-Fork", "dt.TriForkDominoPiece");
-dt.TriForkDominoPiece.defaultLimit = Infinity;
 
 dt.TriForkDominoPiece.create = function(dir, params) {
   var piece = new dt.TriForkDominoPiece();

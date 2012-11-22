@@ -3,11 +3,13 @@
 dt.MODE_PIECE = "ModePiece";
 dt.MODE_ERASER = "ModeEraser";
 
-dt.LevelController = function(round, renderer) {
+dt.LevelController = function(round, renderer, selector) {
   this.round = round;
   this.level = round.level;
   this.renderer = renderer;
+  this.selector = selector;
   this.renderer.addObserver(this);
+  this.selector.addObserver(this);
   this.round.addObserver(this);
   this.level.addObserver(this);
 
@@ -73,6 +75,8 @@ dt.LevelController.prototype.initListeners = function() {
     this.pieceButtons.push(id);
     this.createPieceButton(id, piece.name, this.level.getLimitForPiece(piece.type),
                           piece.type.prototype.typeName);
+
+    this.selector.addPiece(piece.type.create(dt.Dir.E));
   }
 
   this.addListener("piece_eraser", "click", function(event) {
@@ -121,6 +125,7 @@ dt.LevelController.prototype.destroy = function() {
   this.destroyPieceButtons();
   this.level.removeObserver(this);
   this.round.removeObserver(this);
+  this.selector.removeObserver(this);
   this.renderer.removeObserver(this);
 };
 
@@ -281,6 +286,11 @@ dt.LevelController.prototype.update = function(event) {
   } else if (event.src === this.level) {
     if (event.type === dt.EVENT_LIMIT_CHANGE) {
       this.changeCounter(event.typeName, event.to);
+    }
+
+  } else if (event.src === this.selector) {
+    if (event.type === dt.EVENT_PIECE_SELECTED) {
+      this.choosePieceType(dt.PIECE_TYPE_BY_NAME[event.typeName]);
     }
     
   } else {
