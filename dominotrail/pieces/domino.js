@@ -104,6 +104,7 @@ dt.Wall.prototype.draw = function(ctx, percent) {
 dt.StraightDominoPiece = function() {
 };
 dt.StraightDominoPiece.prototype = new dt.BaseDominoPiece("dt.StraightDominoPiece");
+dt.StraightDominoPiece.defaultLimit = Infinity;
 
 dt.registerPiece(dt.StraightDominoPiece, "Straight", "dt.StraightDominoPiece");
 
@@ -122,21 +123,10 @@ dt.StraightDominoPiece.prototype.init = function(dir, params) {
 dt.StraightDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-20, -9, 6, 19);
-  ctx.fillRect(-5, -9, 6, 19);
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(-14, -9, 5, 19);
-  ctx.fillRect(1, -9, 5, 19);
-  ctx.fillRect(16, -9, 5, 19);
-
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.HX, -dt.RADIUS / 3, dt.HX * 2 * ratio, 2 * dt.RADIUS / 3);
-  
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 2, 0, 0, 1], 1, ratio);
   ctx.restore();
 };
 
@@ -172,14 +162,12 @@ dt.StraightStartPiece.prototype.receiveInputs = function(inputs) {
 };
 
 dt.StraightStartPiece.prototype.draw = function(ctx, percent) {
-  dt.StraightDominoPiece.prototype.draw.call(this, ctx, percent);
-  
   ctx.save();
-  ctx.strokeStyle = "#00c000";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(0, 0, dt.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
-  ctx.stroke();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 2, 0, 0, 0], 2, ratio);
   ctx.restore();
 };
 
@@ -201,14 +189,12 @@ dt.StraightEndPiece.prototype.init = function(dir, params) {
 };
 
 dt.StraightEndPiece.prototype.draw = function(ctx, percent) {
-  dt.StraightDominoPiece.prototype.draw.call(this, ctx, percent);
-  
   ctx.save();
-  ctx.strokeStyle = "#000080";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(0, 0, dt.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
-  ctx.stroke();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1], 3, ratio);
   ctx.restore();
 };
 
@@ -246,34 +232,12 @@ dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {
 
 dt.AnyEndPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
-  ctx.strokeStyle = "#000080";
-  ctx.fillStyle = "#000080";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(0, 0, dt.RADIUS * 0.75, 0, dt.FULL_CIRCLE, false);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(0, 0, dt.RADIUS * 0.5, 0, dt.FULL_CIRCLE, false);
-  ctx.fill();
+  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
+  var ratio = (this.fallen ? 1 :
+               this.active ? (percent / 100) :
+               0);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2], 3, ratio);
   ctx.restore();
-
-  var ratio = 0;
-  if (this.fallen) {
-    ratio = 1;
-  } else if (this.active) {
-    ratio = percent / 100;
-  }
-  if (ratio !== 0) {
-    ctx.strokeStyle = "#808080";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    for (var angle = -Math.PI; angle <= Math.PI; angle += Math.PI / 6) {
-      ctx.moveTo(0, 0);
-      ctx.lineTo(ratio * dt.RADIUS * Math.cos(angle), ratio * dt.RADIUS * Math.sin(angle));
-    }
-    ctx.stroke();
-  }
-
 };
 
 
@@ -299,29 +263,10 @@ dt.TurnRightDominoPiece.prototype.init = function(dir, params) {
 dt.TurnRightDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-20, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(-14, -9, 5, 19);
-
-  ctx.rotate(Math.PI / 6);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-5, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(1, -9, 5, 19);
-
-  ctx.rotate(Math.PI / 6);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
-  
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 0, 2, 0, 1], 1, ratio);
   ctx.restore();
 };
 
@@ -346,29 +291,10 @@ dt.TurnLeftDominoPiece.prototype.init = function(dir, params) {
 dt.TurnLeftDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-20, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(-14, -9, 5, 19);
-
-  ctx.rotate(-Math.PI / 6);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-5, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(1, -9, 5, 19);
-
-  ctx.rotate(-Math.PI / 6);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
-  
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 0, 0, 0, 1], 1, ratio);
   ctx.restore();
 };
 
@@ -394,35 +320,12 @@ dt.RForkDominoPiece.prototype.init = function(dir, params) {
 dt.RForkDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
-
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-20, -9, 6, 19);
-  ctx.fillRect(-5, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(-14, -9, 5, 19);
-  ctx.fillRect(1, -9, 5, 19);
-
- 
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-
-  ctx.rotate( Math.PI / 3);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-  ctx.restore();
-
-  ctx.save();
-  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 2, 2, 0, 1], 1, ratio);
   ctx.restore();
+  
 };
 // Balanced left double fork
 dt.LForkDominoPiece = function() {
@@ -446,33 +349,12 @@ dt.LForkDominoPiece.prototype.init = function(dir, params) {
 dt.LForkDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-20, -9, 6, 19);
-  ctx.fillRect(-5, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(-14, -9, 5, 19);
-  ctx.fillRect(1, -9, 5, 19);
-
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-
-  ctx.rotate(-Math.PI / 3);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-  ctx.restore();
-
-  ctx.save();
-  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 2, 0, 0, 1], 1, ratio);
   ctx.restore();
+  
 };
 
 // Balanced double fork
@@ -497,34 +379,12 @@ dt.ForkDominoPiece.prototype.init = function(dir, params) {
 dt.ForkDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-20, -9, 6, 19);
-  ctx.fillRect(-5, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(-14, -9, 5, 19);
-  ctx.fillRect(1, -9, 5, 19);
-
-  ctx.rotate(-Math.PI / 3);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-
-  ctx.rotate(2 * Math.PI / 3);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-  ctx.restore();
-
-  ctx.save();
-  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 0, 2, 0, 1], 1, ratio);
   ctx.restore();
+  
 };
 
 // Triple Fork
@@ -551,37 +411,10 @@ dt.TriForkDominoPiece.prototype.init = function(dir, params) {
 dt.TriForkDominoPiece.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-20, -9, 6, 19);
-  ctx.fillRect(-5, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(-14, -9, 5, 19);
-  ctx.fillRect(1, -9, 5, 19);
-
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-  
-  ctx.rotate(-Math.PI / 3);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-
-  ctx.rotate(2 * Math.PI / 3);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(10, -9, 6, 19);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(16, -9, 5, 19);
-  ctx.restore();
-
-  ctx.save();
-  ctx.rotate(dt.LevelRenderer.ROTATION[this.ins[0].dir.id]);
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(-dt.RADIUS, -dt.RADIUS / 3, dt.RADIUS * 2 * ratio, 2 * dt.RADIUS / 3);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 2, 2, 0, 1], 1, ratio);
   ctx.restore();
+  
 };
