@@ -12,6 +12,14 @@
   -webkit-user-drag: none;
 }
 
+.source {
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  -o-user-select: text;
+  user-select: text;
+  -webkit-user-drag: text;
+}
+
 body {
   background-color: #f0f0f0;
 }
@@ -167,6 +175,9 @@ h1 {
           <hr>
           <a id="round_run" class="button" href="javascript:util.nop();">Run</a>
           <a id="round_quit" class="button" href="javascript:util.nop();">Quit level</a>
+          <a id="level_save" class="button" style="display: none" href="javascript:util.nop();">Save level</a>
+          <textarea id="level_source" class="source" wrap="off"
+                    style="width: 180px; height: 200px; overflow: scroll"></textarea>
         </div>
         <canvas id="viewport" width="600" height="600"
                 style="position: absolute; top: 0; left: 200px">Sorry, no canvas, no game!</canvas>

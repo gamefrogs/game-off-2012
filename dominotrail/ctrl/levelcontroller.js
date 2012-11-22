@@ -84,6 +84,21 @@ dt.LevelController.prototype.initListeners = function() {
     this.addListener(id, "click",
                      this.makePieceListener(id, usablePieces[i].type));
   }
+
+  // Show or hide the "save" button
+  var save = document.getElementById("level_save");
+  var source = document.getElementById("level_source");
+  if (this.level.designMode) {
+    save.style.display = "inline-block";
+    source.style.display = "inline-block";
+    save.addEventListener("click", function(event) {
+      var src = that.level.generateSource(5, "Test");
+      document.getElementById("level_source").value = src;
+    }, false);
+  } else {
+    save.style.display = "none";
+    source.style.display = "none";
+  }
 };
 
 dt.LevelController.prototype.addListener = function(id, event, func) {

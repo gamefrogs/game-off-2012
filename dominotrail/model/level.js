@@ -68,10 +68,10 @@ dt.EVENT_LIMIT_CHANGE = "LimitChange";
 // A runtime playable level, modifiable by the player -----------
 dt.Level = function(def, designMode) {
   this.def = def;
-  var realDesignMode = designMode || this.def.designMode;
+  this.designMode = (designMode || this.def.designMode);
 
-  this.initObjects(realDesignMode);
-  this.initLimits(realDesignMode);
+  this.initObjects(this.designMode);
+  this.initLimits(this.designMode);
 };
 
 util.Observable.makeObservable(dt.Level);
