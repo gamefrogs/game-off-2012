@@ -68,9 +68,10 @@ dt.EVENT_LIMIT_CHANGE = "LimitChange";
 // A runtime playable level, modifiable by the player -----------
 dt.Level = function(def, designMode) {
   this.def = def;
+  this.designMode = (designMode || this.def.designMode);
 
-  this.initObjects(designMode);
-  this.initLimits(designMode);
+  this.initObjects(this.designMode);
+  this.initLimits(this.designMode);
 };
 
 util.Observable.makeObservable(dt.Level);
@@ -89,18 +90,18 @@ dt.Level.prototype.initObjects = function(designMode) {
 };
 
 dt.Level.prototype.initLimits = function(designMode) {
-  // In designMode, don't implement limits
   this.limits = {};
-  if (!designMode) {
-    for (var i = 0; i < this.def.limits.length; ++i) {
-      var limit = this.def.limits[i];
-      this.limits[limit.type.prototype.typeName] = limit.limit;
-    }
-    for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
-      var pieceType = dt.USABLE_PIECES[i].type;
-      if (this.getLimitForPiece(pieceType) === undefined) {
-        this.limits[pieceType.prototype.typeName] = (pieceType.defaultLimit || 0);
-      }
+  for (var i = 0; i < this.def.limits.length; ++i) {
+    var limit = this.def.limits[i];
+    this.limits[limit.type.prototype.typeName] = limit.limit;
+  }
+  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+    var pieceType = dt.USABLE_PIECES[i].type;
+    if (designMode) {
+      this.limits[pieceType.prototype.typeName] = Infinity;
+      
+    } else if (this.getLimitForPiece(pieceType) === undefined) {
+      this.limits[pieceType.prototype.typeName] = (pieceType.defaultLimit || 0);
     }
   }
 };
@@ -322,4 +323,72 @@ dt.Level.prototype.changeLimitForPiece = function(typeName, delta) {
     return newLimit;
   }
   return undefined;
+};
+
+dt.Level.prototype.generateBackgroundString = function() {
+  var back = this.getBackground();
+  var all = "";
+  var line, x, y;
+  for (y = 0; y < this.getHeight(); ++y) {
+    line = '  " ';
+    // First, the NW and NE walls
+    for (x = 0; x < this.getWidth(); ++x) {
+      line += ". . ";
+    }
+    line += '    \\n" +\n';
+    all += line;
+    // Then the contents of the cells, with E-W walls
+    line = '  "';
+    if (y % 2 === 1) {
+      line += "  ";
+    };
+    for (x = 0; x < this.getWidth(); ++x) {
+      line += ". " + back.getValueXY(x, y) + " ";
+    }
+    line += ". "; // Last wall
+    if (y % 2 === 0) {
+      line += "  ";
+    };
+    line += ' \\n" +\n';
+    all += line;
+  }
+  // Then, the SW and SE walls of the last row
+  line = '  " ';
+  for (x = 0; x < this.getWidth(); ++x) {
+    line += ". . ";
+  }
+  line += '    ";\n';
+  all += line;
+  return all;
+};
+
+dt.Level.prototype.generateSource = function(id, title) {
+  var src = "dt.LEVEL" + id + "_STR = \n";
+  src += this.generateBackgroundString();
+  //
+  src += "dt.LEVELDEF" + id + " =\n";
+  src += '  new dt.LevelDef("' + title + '", ' + this.getWidth() + ", " + this.getHeight() +
+    ", dt.LEVEL" + id + "_STR,\n";
+  
+  // Fixed level pieces
+  src += "                  [\n";
+  for (var y = 0; y < this.getHeight(); ++y) {
+    for (var x = 0; x < this.getWidth(); ++x) {
+      var piece = this.getObjectXY(x, y);
+      if (piece !== undefined) {
+        src += '                   { x: ' + x + ', y: ' + y + ', type: ' + piece.typeName +
+          ', dir: dt.Dir.' + piece.dir.name + ', goal: ' + piece.isGoal() + ' },\n';
+      }
+    }
+  }
+  src += "                  ],\n";
+  // Piece limits
+  src += "                  [\n";
+  // TODO
+  src += "                  ]);\n";
+
+  // Register
+  src += "// Register level\n";
+  src += "dt.LEVELS.push(dt.LEVELDEF" + id + ");\n";
+  return src;
 };

@@ -82,7 +82,7 @@ dt.View.prototype.createLevelButtons = function() {
 dt.View.prototype.createLevelButton = function(id, level) {
   var menuDiv = document.getElementById(dt.View.LEVELS_DIV);
   var buttonStr = ('<a id="level' + id + '" class="button" href="javascript:util.nop();">Level ' +
-                   id + '</a><br>');
+                   id + ': ' + level.title + '</a><br>');
   menuDiv.innerHTML += buttonStr;
 };
 
