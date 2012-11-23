@@ -47,6 +47,10 @@ dt.PieceSelector.prototype.initLevel = function() {
     var piece = usablePieces[i];
     this.addPiece(piece.type.create(dt.Dir.E));
   }
+
+  this.pieces.setValueXY(this.pieces.getWidth() - 1, this.pieces.getHeight() - 1,
+                         dt.Eraser.create(dt.Dir.NONE));
+  this.render;
 };
 
 dt.PieceSelector.prototype.initGridAndPieces = function() {
@@ -93,7 +97,6 @@ dt.PieceSelector.prototype.addPiece = function(piece) {
   var x = this.pieceCount % this.grid.getWidth();
   this.pieceCount += 1;
   this.pieces.setValueXY(x, y, piece);
-  this.render();
 };
 
 dt.PieceSelector.prototype.getCellCenter = function(x, y) {
@@ -101,7 +104,7 @@ dt.PieceSelector.prototype.getCellCenter = function(x, y) {
                     this.OFFSETY + this.DCY * y);
 };
 
-dt.PieceSelector.BACKGROUND_COLOR = ["#45628f", "#55729f", "#6582af", "#7592bf", "#85a2cf"];
+dt.PieceSelector.BACKGROUND_COLOR = ["#55729f", "#6582af", "#7592bf", "#85a2cf", "#95b2df"];
 
 dt.PieceSelector.prototype.getBackground = function(value) {
   return dt.PieceSelector.BACKGROUND_COLOR[value];
@@ -110,7 +113,6 @@ dt.PieceSelector.prototype.getBackground = function(value) {
 dt.PieceSelector.prototype.render = function() {
   var ctx = this.ctx;
   ctx.save();
-  //ctx.fillStyle = "#ffffff";
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   var back = this.grid;
   for (var x = 0; x < back.getWidth(); ++x) {
@@ -136,12 +138,14 @@ dt.PieceSelector.prototype.renderCellContent = function(x, y) {
     ctx.translate(hc.x, hc.y);
     if (obj instanceof dt.BasePiece) {
       obj.draw(ctx, 0);
-      var limit = this.level.getLimitForTypeName(obj.typeName);
-      var txt = (limit === Infinity ? "\u221e" : ("" + limit));
-      ctx.font = "bold 12px Verdana";
-      var metrics = ctx.measureText(txt);
-      ctx.fillStyle = "#ffA000";
-      ctx.fillText(txt, -metrics.width / 2, dt.RADIUS * 0.75);
+      if (!(obj instanceof dt.Eraser)) {
+        var limit = this.level.getLimitForTypeName(obj.typeName);
+        var txt = (limit === Infinity ? "\u221e" : ("" + limit));
+        ctx.font = "bold 12px Verdana";
+        var metrics = ctx.measureText(txt);
+        ctx.fillStyle = "#ffA000";
+        ctx.fillText(txt, -metrics.width / 2, dt.RADIUS * 0.75);
+      }
     }
     ctx.restore();
   }
