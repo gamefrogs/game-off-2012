@@ -109,8 +109,8 @@ dt.PieceSelector.prototype.getBackground = function(value) {
 dt.PieceSelector.prototype.render = function() {
   var ctx = this.ctx;
   ctx.save();
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  //ctx.fillStyle = "#ffffff";
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   var back = this.grid;
   for (var x = 0; x < back.getWidth(); ++x) {
     for (var y = 0; y < back.getHeight(); ++y) {
@@ -136,8 +136,11 @@ dt.PieceSelector.prototype.renderCellContent = function(x, y) {
     if (obj instanceof dt.BasePiece) {
       obj.draw(ctx, 0);
       var limit = this.level.getLimitForTypeName(obj.typeName);
-      ctx.fillStyle = "#ff0000";
-      ctx.fillText("" + limit, 0, 0);
+      var txt = (limit === Infinity ? "\u221e" : ("" + limit));
+      ctx.font = "bold 12px Verdana";
+      var metrics = ctx.measureText(txt);
+      ctx.fillStyle = "#ffA000";
+      ctx.fillText(txt, -metrics.width / 2, dt.RADIUS * 0.75);
     }
     ctx.restore();
   }
@@ -217,6 +220,6 @@ dt.PieceSelector.prototype.mouseHandler = function(event) {
 
 dt.PieceSelector.prototype.update = function(event) {
   if ((event.src === this.level) && (event.type === dt.EVENT_LIMIT_CHANGE)) {
-    util.log("Changed limit: ", event);
+    this.render();
   }
 };
