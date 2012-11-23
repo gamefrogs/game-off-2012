@@ -311,6 +311,9 @@ dt.Level.prototype.getLimitForTypeName = function(typeName) {
 };
 
 dt.Level.prototype.getInitialLimitForPiece = function(type) {
+  if (this.designMode) {
+    return Infinity;
+  }
   for (var i = 0; i < this.def.limits.length; ++i) {
     var limit = this.def.limits[i];
     if (limit.type === type) {
