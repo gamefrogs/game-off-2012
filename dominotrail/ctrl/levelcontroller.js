@@ -72,22 +72,22 @@ dt.LevelController.prototype.initListeners = function() {
   for (var i = 0; i < usablePieces.length; ++i) {
     var piece = usablePieces[i];
     var id = "piece_" + i;
-    this.pieceButtons.push(id);
-    this.createPieceButton(id, piece.name, this.level.getLimitForPiece(piece.type),
-                          piece.type.prototype.typeName);
+    //this.pieceButtons.push(id);
+    //this.createPieceButton(id, piece.name, this.level.getLimitForPiece(piece.type),
+    //                      piece.type.prototype.typeName);
 
-    this.selector.addPiece(piece.type.create(dt.Dir.E));
+    //this.selector.addPiece(piece.type.create(dt.Dir.E));
   }
 
   this.addListener("piece_eraser", "click", function(event) {
     that.highlightFrom("piece_eraser", that.pieceButtons);
     that.chooseEraser();
   });
-  for (var i = 0; i < usablePieces.length; ++i) {
-    var id = "piece_" + i;
-    this.addListener(id, "click",
-                     this.makePieceListener(id, usablePieces[i].type));
-  }
+  //for (var i = 0; i < usablePieces.length; ++i) {
+  //  var id = "piece_" + i;
+  //  this.addListener(id, "click",
+  //                   this.makePieceListener(id, usablePieces[i].type));
+  //}
 
   // Show or hide the "save" button
   var save = document.getElementById("level_save");
@@ -299,8 +299,8 @@ dt.LevelController.prototype.update = function(event) {
 };
 
 dt.LevelController.prototype.changeCounter = function(typeName, value) {
-  var counter = document.getElementById(this.counters[typeName]);
-  counter.innerHTML = "" + value;
+  //var counter = document.getElementById(this.counters[typeName]);
+  //counter.innerHTML = "" + value;
 };
 
 dt.LevelController.prototype.runRound = function() {

@@ -2,14 +2,15 @@
 
 dt.EVENT_PIECE_SELECTED = "PieceSelected";
 
-dt.PieceSelector = function(viewport, ctx) {
+dt.PieceSelector = function(round, viewport, ctx) {
   this.viewport = viewport;
   this.ctx = ctx;
+  this.level = round.level;
 
-  this.grid = new dt.Hexgrid(3, 4);
+  this.grid = new dt.Hexgrid(3, 5);
   this.initGrid();
   this.pieces = new dt.Hexgrid(this.grid.getWidth(), this.grid.getHeight());
-  
+
   // Some drawing constants
   this.RADIUS = 30;
   this.DCX = this.RADIUS * Math.sqrt(3);
@@ -33,9 +34,19 @@ dt.PieceSelector.prototype.init = function() {
   var pos0 = util.getPagePosition(this.viewport);
   this.x0 = pos0.x;
   this.y0 = pos0.y;
-  
+
+  this.initLevel();
   this.initListeners();
   this.render();
+};
+
+dt.PieceSelector.prototype.initLevel = function() {
+  this.level.addObserver(this);
+  var usablePieces = this.getUsablePieces();
+  for (var i = 0; i < usablePieces.length; ++i) {
+    var piece = usablePieces[i];
+    this.addPiece(piece.type.create(dt.Dir.E));
+  }
 };
 
 dt.PieceSelector.prototype.initGrid = function() {
@@ -44,6 +55,18 @@ dt.PieceSelector.prototype.initGrid = function() {
       this.grid.setValueXY(x, y, y);
     }
   }
+};
+
+dt.PieceSelector.prototype.getUsablePieces = function() {
+  var pieces = [];
+  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+    var piece = dt.USABLE_PIECES[i];
+    var limit = this.level.getLimitForPiece(piece.type);
+    if (limit > 0) {
+      pieces.push(piece);
+    }
+  }
+  return pieces;
 };
 
 dt.PieceSelector.prototype.initListeners = function() {
@@ -56,6 +79,7 @@ dt.PieceSelector.prototype.initListeners = function() {
 
 dt.PieceSelector.prototype.destroy = function() {
   this.exitListeners();
+  this.level.removeObserver(this);
 };
 
 dt.PieceSelector.prototype.exitListeners = function() {
@@ -111,10 +135,14 @@ dt.PieceSelector.prototype.renderCellContent = function(x, y) {
     ctx.translate(hc.x, hc.y);
     if (obj instanceof dt.BasePiece) {
       obj.draw(ctx, 0);
+      var limit = this.level.getLimitForTypeName(obj.typeName);
+      ctx.fillStyle = "#ff0000";
+      ctx.fillText("" + limit, 0, 0);
     }
     ctx.restore();
   }
 };
+
 
 dt.PieceSelector.prototype.renderCellBackground = function(x, y, fill, stroke, width) {
   var ctx = this.ctx;
@@ -185,4 +213,10 @@ dt.PieceSelector.prototype.mouseHandler = function(event) {
     }
   }
   
+};
+
+dt.PieceSelector.prototype.update = function(event) {
+  if ((event.src === this.level) && (event.type === dt.EVENT_LIMIT_CHANGE)) {
+    util.log("Changed limit: ", event);
+  }
 };
