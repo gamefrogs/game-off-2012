@@ -172,14 +172,18 @@ h1 {
       
       <!-- Level round screen -->
       <div id="round" class="screen">
-        <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 200px; overflow: hidden; background-color: pink">
-          Pieces<br>
+        <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 200px; overflow: hidden; background-color: white">
+<br>
+<div align="center">
+	<a id="round_run" class="button" href="javascript:util.nop();"><img src="resources/run.png"></img></a>
+          <a id="round_quit" class="button" href="javascript:util.nop();"><img src="resources/quit.png"></img></a></div>
+<hr>          
+Pieces<br>
           <div id="piece_buttons" style="width: 200px">
           </div>
           <canvas id="piece_selector" width="200" height="250"></canvas>
           <hr>
-          <a id="round_run" class="button" href="javascript:util.nop();">Run</a>
-          <a id="round_quit" class="button" href="javascript:util.nop();">Quit level</a>
+          
           <a id="level_save" class="button" style="display: none" href="javascript:util.nop();">Save level</a>
           <textarea id="level_source" class="source" wrap="off"
                     style="width: 180px; height: 200px; overflow: scroll"></textarea>
