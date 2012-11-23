@@ -310,6 +310,16 @@ dt.Level.prototype.getLimitForTypeName = function(typeName) {
   return this.limits[typeName];
 };
 
+dt.Level.prototype.getInitialLimitForPiece = function(type) {
+  for (var i = 0; i < this.def.limits.length; ++i) {
+    var limit = this.def.limits[i];
+    if (limit.type === type) {
+      return limit.limit;
+    }
+  }
+  return type.defaultLimit || 0;
+};
+
 dt.Level.prototype.changeLimitForPiece = function(typeName, delta) {
   if (typeName in this.limits) {
     var oldLimit = this.limits[typeName];

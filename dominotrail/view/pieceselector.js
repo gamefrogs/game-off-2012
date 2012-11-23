@@ -8,7 +8,6 @@ dt.PieceSelector = function(round, viewport, ctx) {
   this.level = round.level;
 
   this.grid = new dt.Hexgrid(3, 5);
-  this.initGrid();
   this.pieces = new dt.Hexgrid(this.grid.getWidth(), this.grid.getHeight());
 
   // Some drawing constants
@@ -24,8 +23,6 @@ dt.PieceSelector = function(round, viewport, ctx) {
   this.OFFSETY = (this.viewport.height - (this.DCY * (this.grid.getHeight() + 1/3))) / 2 +
     this.RADIUS;
 
-  this.pieceCount = 0;
-  this.selectedPos = new dt.Pos(0, 0);
 };
 
 util.extend(util.Observable, dt.PieceSelector);
@@ -35,6 +32,9 @@ dt.PieceSelector.prototype.init = function() {
   this.x0 = pos0.x;
   this.y0 = pos0.y;
 
+  this.initGridAndPieces();
+  this.pieceCount = 0;
+  this.selectedPos = new dt.Pos(0, 0);
   this.initLevel();
   this.initListeners();
   this.render();
@@ -49,10 +49,11 @@ dt.PieceSelector.prototype.initLevel = function() {
   }
 };
 
-dt.PieceSelector.prototype.initGrid = function() {
+dt.PieceSelector.prototype.initGridAndPieces = function() {
   for (var y = 0; y < this.grid.getHeight(); ++y) {
     for (var x = 0; x < this.grid.getWidth(); ++x) {
       this.grid.setValueXY(x, y, y);
+      this.pieces.setValueXY(x, y, undefined);
     }
   }
 };
@@ -61,7 +62,7 @@ dt.PieceSelector.prototype.getUsablePieces = function() {
   var pieces = [];
   for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
     var piece = dt.USABLE_PIECES[i];
-    var limit = this.level.getLimitForPiece(piece.type);
+    var limit = this.level.getInitialLimitForPiece(piece.type);
     if (limit > 0) {
       pieces.push(piece);
     }

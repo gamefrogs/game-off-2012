@@ -347,7 +347,6 @@ dt.TriForkDominoPiece = function() {
 };
 dt.TriForkDominoPiece.prototype = new dt.BaseDominoPiece();
 dt.registerPiece(dt.TriForkDominoPiece, "3-Fork", "dt.TriForkDominoPiece");
-dt.TriForkDominoPiece.defaultLimit = Infinity;
 
 dt.TriForkDominoPiece.create = function(dir, params) {
   var piece = new dt.TriForkDominoPiece();
