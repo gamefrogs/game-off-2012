@@ -28,7 +28,7 @@ dt.BaseDominoPiece.prototype.isDead = function() {
 };
 
 dt.BaseDominoPiece.prototype.receiveInputs = function(inputs) {
-  if (!this.fallen) {
+  if (!this.fallen  && !this.isFreeze()) {
     this.active = dt.RelPosDir.arrayMatch(this.ins, inputs);
   }
 };
@@ -42,7 +42,7 @@ dt.BaseDominoPiece.prototype.collectOutputs = function() {
 };
 
 dt.BaseDominoPiece.prototype.endStep = function(step) {
-  if (this.active) {
+  if (this.active && !this.isFreeze()) {
     this.active = false;
     this.fallen = true;
     this.reached = true;
@@ -111,7 +111,7 @@ dt.StraightStartPiece.prototype.canAutoActivate = function(step) {
 };
 
 dt.StraightStartPiece.prototype.receiveInputs = function(inputs) {
-  if (!this.fallen) {
+  if (!this.fallen && !this.isFreeze()) {
     this.active = true;
   }
 };
@@ -180,7 +180,7 @@ dt.AnyEndPiece.prototype.init = function(dir, params) {
 };
 
 dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {
-  if ((!this.fallen) && (inputs.length > 0)) {
+  if ((!this.fallen) && (inputs.length > 0) && !this.isFreeze() ) {
     this.active = true;
   }
 };

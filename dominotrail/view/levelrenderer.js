@@ -183,7 +183,18 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
     ctx.translate(hc.x, hc.y);
     if (obj instanceof dt.BasePiece) {
       obj.draw(ctx, percent || 0);
+      if( obj.asCompteur() ){
       
+        ctx.globalAlpha = 0.8;
+        if( obj.isFreeze() ){
+            ctx.fillStyle = "#FF0000";
+        }else{
+            ctx.fillStyle = "#00FF00";
+        }
+        ctx.font = "bold 30px Verdana";
+        ctx.textBaseline = "middle";
+        ctx.fillText(obj.getRebour(), -10, 0);
+      }
     } else {
       ctx.font = "30px Verdana";
       ctx.fillStyle = "#000000";
