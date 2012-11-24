@@ -143,6 +143,17 @@ dt.LevelController.prototype.preparePiece = function() {
   }
 };
 
+dt.LevelController.prototype.tryAddPiece = function(pos) {
+  if (this.level.canAddPiece(pos, this.piece)) {
+    this.level.addPiece(pos, this.piece);
+    var outs = this.piece.getOutputs();
+    if (outs.length > 0) {
+      this.dir = outs[0].dir.opposite;
+    }
+    this.preparePiece();
+  }
+};
+
 dt.LevelController.prototype.handleCellClick = function(pos) {
   if (this.isRoundRunning()) {
     return;
@@ -154,11 +165,8 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
     }
     break;
     
-  case dt.MODE_PIECE:    
-    if (this.level.canAddPiece(pos, this.piece)) {
-      this.level.addPiece(pos, this.piece);
-      this.preparePiece();
-    }
+  case dt.MODE_PIECE:
+    this.tryAddPiece(pos);
     break;
 
   case dt.MODE_ERASER:
@@ -260,11 +268,6 @@ dt.LevelController.prototype.update = function(event) {
       util.log("LevelController received ", event);
     }
     
-  } else if (event.src === this.level) {
-    if (event.type === dt.EVENT_LIMIT_CHANGE) {
-      this.changeCounter(event.typeName, event.to);
-    }
-
   } else if (event.src === this.selector) {
     if (event.type === dt.EVENT_PIECE_SELECTED) {
       var pieceType = dt.PIECE_TYPE_BY_NAME[event.typeName];
@@ -278,11 +281,6 @@ dt.LevelController.prototype.update = function(event) {
   } else {
     util.log("LevelController received ", event);
   }
-};
-
-dt.LevelController.prototype.changeCounter = function(typeName, value) {
-  //var counter = document.getElementById(this.counters[typeName]);
-  //counter.innerHTML = "" + value;
 };
 
 dt.LevelController.prototype.runRound = function() {
