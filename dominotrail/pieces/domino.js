@@ -53,6 +53,8 @@ dt.BaseDominoPiece.prototype.reset = function() {
   this.active = false;
   this.fallen = false;
   this.reached = false;
+  this.rebour1 = this.rebour1Sauv;
+  this.rebour2 = this.rebour2Sauv;
 };
 
 // Straight: exits on the opposite of the input side

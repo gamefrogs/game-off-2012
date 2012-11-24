@@ -86,10 +86,10 @@ dt.Level.prototype.initObjects = function(designMode) {
       piece.goal = true;
     }
     if (pieceDef.rebour1){
-        piece.rebour1 = pieceDef.rebour1;
+        piece.setRebour1(pieceDef.rebour1);
     }
     if( pieceDef.rebour2){
-        piece.rebour2 = pieceDef.rebour2;
+        piece.setRebour2(pieceDef.rebour2);
     }
     this.setObject(pieceDef, piece);
   }

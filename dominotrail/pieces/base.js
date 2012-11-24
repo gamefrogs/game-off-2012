@@ -53,8 +53,20 @@ dt.BasePiece.prototype.init = function(dir, params) {
   this.goal = false;
   this.reached = false;
   this.rebour1 = -1;
+  this.rebour1Sauv = -1;
   this.rebour2 = -1;
+  this.rebour2Sauv = -1;
 };
+
+dt.BasePiece.prototype.setRebour1 = function(a){
+    this.rebour1 = a;
+    this.rebour1Sauv=a;
+}
+
+dt.BasePiece.prototype.setRebour2 = function(a){
+    this.rebour2 = a;
+    this.rebour2Sauv=a;
+}
 
 dt.BasePiece.prototype.getRebour = function(){
     if ( this.rebour1!=-1 ){
