@@ -310,6 +310,19 @@ dt.Level.prototype.getLimitForTypeName = function(typeName) {
   return this.limits[typeName];
 };
 
+dt.Level.prototype.getInitialLimitForPiece = function(type) {
+  if (this.designMode) {
+    return Infinity;
+  }
+  for (var i = 0; i < this.def.limits.length; ++i) {
+    var limit = this.def.limits[i];
+    if (limit.type === type) {
+      return limit.limit;
+    }
+  }
+  return type.defaultLimit || 0;
+};
+
 dt.Level.prototype.changeLimitForPiece = function(typeName, delta) {
   if (typeName in this.limits) {
     var oldLimit = this.limits[typeName];
@@ -391,4 +404,13 @@ dt.Level.prototype.generateSource = function(id, title) {
   src += "// Register level\n";
   src += "dt.LEVELS.push(dt.LEVELDEF" + id + ");\n";
   return src;
+};
+
+dt.Level.prototype.canDrawBackground = function() {
+  return (this.def.drawBackground &&
+          (this.def.drawBackground instanceof Function));
+};
+
+dt.Level.prototype.drawBackground = function(ctx) {
+  this.def.drawBackground(ctx);
 };

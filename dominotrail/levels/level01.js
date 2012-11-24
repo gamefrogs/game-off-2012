@@ -34,5 +34,13 @@ dt.LEVELDEF1 =
                    { x: 2, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true }],
                   [{ type: dt.StraightDominoPiece, limit: 7 }]);
 
+// Loads an image from an URL. Can be an absolute URL too.
+dt.loadImageInto("resources/fire.jpg", dt.LEVELDEF1, "img");
+
+dt.LEVELDEF1.drawBackground = function(ctx) {
+  dt.drawImageWithOverlay(ctx, this.img, this.getWidth(), this.getHeight());
+};
+
+
 // Register level
 dt.LEVELS.push(dt.LEVELDEF1);

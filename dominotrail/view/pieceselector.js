@@ -2,14 +2,14 @@
 
 dt.EVENT_PIECE_SELECTED = "PieceSelected";
 
-dt.PieceSelector = function(viewport, ctx) {
+dt.PieceSelector = function(round, viewport, ctx) {
   this.viewport = viewport;
   this.ctx = ctx;
+  this.level = round.level;
 
-  this.grid = new dt.Hexgrid(3, 4);
-  this.initGrid();
+  this.grid = new dt.Hexgrid(3, 5);
   this.pieces = new dt.Hexgrid(this.grid.getWidth(), this.grid.getHeight());
-  
+
   // Some drawing constants
   this.RADIUS = 30;
   this.DCX = this.RADIUS * Math.sqrt(3);
@@ -23,8 +23,6 @@ dt.PieceSelector = function(viewport, ctx) {
   this.OFFSETY = (this.viewport.height - (this.DCY * (this.grid.getHeight() + 1/3))) / 2 +
     this.RADIUS;
 
-  this.pieceCount = 0;
-  this.selectedPos = new dt.Pos(0, 0);
 };
 
 util.extend(util.Observable, dt.PieceSelector);
@@ -33,17 +31,47 @@ dt.PieceSelector.prototype.init = function() {
   var pos0 = util.getPagePosition(this.viewport);
   this.x0 = pos0.x;
   this.y0 = pos0.y;
-  
+
+  this.initGridAndPieces();
+  this.pieceCount = 0;
+  this.selectedPos = new dt.Pos(0, 0);
+  this.initLevel();
   this.initListeners();
   this.render();
 };
 
-dt.PieceSelector.prototype.initGrid = function() {
+dt.PieceSelector.prototype.initLevel = function() {
+  this.level.addObserver(this);
+  var usablePieces = this.getUsablePieces();
+  for (var i = 0; i < usablePieces.length; ++i) {
+    var piece = usablePieces[i];
+    this.addPiece(piece.type.create(dt.Dir.E));
+  }
+
+  this.pieces.setValueXY(this.pieces.getWidth() - 1, this.pieces.getHeight() - 1,
+                         dt.Eraser.create(dt.Dir.NONE));
+  this.render;
+};
+
+dt.PieceSelector.prototype.initGridAndPieces = function() {
   for (var y = 0; y < this.grid.getHeight(); ++y) {
     for (var x = 0; x < this.grid.getWidth(); ++x) {
       this.grid.setValueXY(x, y, y);
+      this.pieces.setValueXY(x, y, undefined);
     }
   }
+};
+
+dt.PieceSelector.prototype.getUsablePieces = function() {
+  var pieces = [];
+  for (var i = 0; i < dt.USABLE_PIECES.length; ++i) {
+    var piece = dt.USABLE_PIECES[i];
+    var limit = this.level.getInitialLimitForPiece(piece.type);
+    if (limit > 0) {
+      pieces.push(piece);
+    }
+  }
+  return pieces;
 };
 
 dt.PieceSelector.prototype.initListeners = function() {
@@ -56,6 +84,7 @@ dt.PieceSelector.prototype.initListeners = function() {
 
 dt.PieceSelector.prototype.destroy = function() {
   this.exitListeners();
+  this.level.removeObserver(this);
 };
 
 dt.PieceSelector.prototype.exitListeners = function() {
@@ -68,7 +97,6 @@ dt.PieceSelector.prototype.addPiece = function(piece) {
   var x = this.pieceCount % this.grid.getWidth();
   this.pieceCount += 1;
   this.pieces.setValueXY(x, y, piece);
-  this.render();
 };
 
 dt.PieceSelector.prototype.getCellCenter = function(x, y) {
@@ -76,7 +104,7 @@ dt.PieceSelector.prototype.getCellCenter = function(x, y) {
                     this.OFFSETY + this.DCY * y);
 };
 
-dt.PieceSelector.BACKGROUND_COLOR = ["#45628f", "#55729f", "#6582af", "#7592bf", "#85a2cf"];
+dt.PieceSelector.BACKGROUND_COLOR = ["#55729f", "#6582af", "#7592bf", "#85a2cf", "#95b2df"];
 
 dt.PieceSelector.prototype.getBackground = function(value) {
   return dt.PieceSelector.BACKGROUND_COLOR[value];
@@ -85,8 +113,7 @@ dt.PieceSelector.prototype.getBackground = function(value) {
 dt.PieceSelector.prototype.render = function() {
   var ctx = this.ctx;
   ctx.save();
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   var back = this.grid;
   for (var x = 0; x < back.getWidth(); ++x) {
     for (var y = 0; y < back.getHeight(); ++y) {
@@ -111,10 +138,19 @@ dt.PieceSelector.prototype.renderCellContent = function(x, y) {
     ctx.translate(hc.x, hc.y);
     if (obj instanceof dt.BasePiece) {
       obj.draw(ctx, 0);
+      if (!(obj instanceof dt.Eraser)) {
+        var limit = this.level.getLimitForTypeName(obj.typeName);
+        var txt = (limit === Infinity ? "\u221e" : ("" + limit));
+        ctx.font = "bold 12px Verdana";
+        var metrics = ctx.measureText(txt);
+        ctx.fillStyle = "#ffA000";
+        ctx.fillText(txt, -metrics.width / 2, dt.RADIUS * 0.75);
+      }
     }
     ctx.restore();
   }
 };
+
 
 dt.PieceSelector.prototype.renderCellBackground = function(x, y, fill, stroke, width) {
   var ctx = this.ctx;
@@ -185,4 +221,10 @@ dt.PieceSelector.prototype.mouseHandler = function(event) {
     }
   }
   
+};
+
+dt.PieceSelector.prototype.update = function(event) {
+  if ((event.src === this.level) && (event.type === dt.EVENT_LIMIT_CHANGE)) {
+    this.render();
+  }
 };

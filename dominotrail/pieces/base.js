@@ -20,8 +20,10 @@ dt.HY = (dt.RADIUS - 2) / 2;
 dt.USABLE_PIECES = [];
 dt.PIECE_TYPE_BY_NAME = {};
 
-dt.registerPiece = function(type, name, typeName) {
-  dt.USABLE_PIECES.push({type: type, name: name, typeName: typeName});
+dt.registerPiece = function(type, name, typeName, hidden) {
+  if (!hidden) {
+    dt.USABLE_PIECES.push({type: type, name: name, typeName: typeName});
+  }
   type.prototype.typeName = typeName;
   dt.PIECE_TYPE_BY_NAME[typeName] = type;
 };
@@ -149,4 +151,50 @@ dt.BasePiece.prototype.draw = function(ctx, percent) {
 dt.GhostPiece = function(piece, relpos) {
   this.piece = piece;
   this.relpos = relpos;
+};
+
+// Mur: no input no output
+dt.Wall = function(){
+};
+dt.Wall.prototype = new dt.BasePiece("dt.Wall");
+dt.registerPiece(dt.Wall,"Wall","dt.Wall");
+
+dt.Wall.create = function(dir, params) {
+  var piece = new dt.Wall();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.Wall.prototype.init = function(dir, params) {
+  dt.BasePiece.prototype.init.call(this, dir);
+};
+
+dt.Wall.prototype.getInputs = function() {
+  return [];
+};
+dt.Wall.prototype.getOutputs = function() {
+  return [];
+};
+
+dt.Wall.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.beginPath();
+  
+  ctx.moveTo(21, 13);
+  ctx.lineTo(21, -13);
+  ctx.lineTo(0, -24);
+  ctx.lineTo(-21, -13);
+  ctx.lineTo(-21, 13);
+  ctx.lineTo(0, 24);
+  ctx.closePath();
+  
+  ctx.fillStyle = "#008080";
+  ctx.fill();
+ 
+  ctx.strokeStyle = "#008080";
+  
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  
+  ctx.restore();
 };

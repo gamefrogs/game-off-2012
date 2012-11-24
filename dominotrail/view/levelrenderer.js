@@ -31,7 +31,7 @@ dt.LevelRenderer = function(round, viewport, ctx, radius) {
 
 util.extend(util.Observable, dt.LevelRenderer);
 
-dt.LevelRenderer.BACKGROUND_COLOR = ["#000000", "#00ffff", "#0000ff", "#008000", "#c09060"];
+dt.LevelRenderer.BACKGROUND_COLOR = ["#95b2df", "#95b2df", "#85a2cf", "#7592bf", "#6582af"];
 
 dt.LevelRenderer.ROTATION = [];
 dt.LevelRenderer.ROTATION[dt.Dir.E.id] = Math.PI;
@@ -84,8 +84,24 @@ dt.LevelRenderer.prototype.getBackground = function(value) {
   return dt.LevelRenderer.BACKGROUND_COLOR[value];
 };
 
-dt.LevelRenderer.prototype.render = function(percent) {
-  var ctx = this.ctx;
+dt.LevelRenderer.prototype.renderBackground = function(ctx) {
+  if (!this.cachedBackground) {
+    var offscreenCanvas = document.createElement("canvas");
+    offscreenCanvas.width = 600;
+    offscreenCanvas.height = 600;
+    var osctx = offscreenCanvas.getContext("2d");
+    if (this.level.canDrawBackground()) {
+      this.level.drawBackground(osctx);
+    } else {
+      this.renderDefaultBackground(osctx);
+    }
+    this.cachedBackground = offscreenCanvas;
+  }
+  ctx.drawImage(this.cachedBackground, 0, 0);
+};
+  
+dt.LevelRenderer.prototype.renderDefaultBackground = function(ctx) {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   var back = this.level.getBackground();
@@ -94,7 +110,15 @@ dt.LevelRenderer.prototype.render = function(percent) {
       var value = back.getValueXY(x, y);
       var fill = this.getBackground(value);
       this.renderCellBackground(x, y, fill, "#c0c0c0");
+    }
+  }
+};
 
+dt.LevelRenderer.prototype.render = function(percent) {
+  this.renderBackground(this.ctx);
+
+  for (var x = 0; x < this.level.getWidth(); ++x) {
+    for (var y = 0; y < this.level.getHeight(); ++y) {
       this.renderCellContent(x, y, percent || 0);
     }
   }
