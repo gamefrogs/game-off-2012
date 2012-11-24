@@ -207,7 +207,7 @@ dt.LevelController.prototype.handleCellOver = function(pos) {
   var canAdd = this.level.canAddDomino(pos);
   var borderColor = (canAdd ? "#000000" : "#ff0000");
   this.renderer.render();
-  this.renderer.renderCellBackground(pos.x, pos.y, undefined, borderColor, 2);
+  this.renderer.renderCellBackground(undefined, pos.x, pos.y, undefined, borderColor, 2);
   if (!canAdd) {
     var ctx = this.renderer.ctx;
     var hc = this.renderer.getCellCenter(pos.x, pos.y);
