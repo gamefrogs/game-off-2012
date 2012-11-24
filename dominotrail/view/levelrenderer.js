@@ -85,11 +85,19 @@ dt.LevelRenderer.prototype.getBackground = function(value) {
 };
 
 dt.LevelRenderer.prototype.renderBackground = function(ctx) {
-  if (this.level.canDrawBackground()) {
-    this.level.drawBackground(ctx);
-  } else {
-    this.renderDefaultBackground(ctx);
+  if (!this.cachedBackground) {
+    var offscreenCanvas = document.createElement("canvas");
+    offscreenCanvas.width = 600;
+    offscreenCanvas.height = 600;
+    var osctx = offscreenCanvas.getContext("2d");
+    if (this.level.canDrawBackground()) {
+      this.level.drawBackground(osctx);
+    } else {
+      this.renderDefaultBackground(osctx);
+    }
+    this.cachedBackground = offscreenCanvas;
   }
+  ctx.drawImage(this.cachedBackground, 0, 0);
 };
   
 dt.LevelRenderer.prototype.renderDefaultBackground = function(ctx) {
