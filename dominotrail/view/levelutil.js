@@ -1,8 +1,34 @@
 "use strict";
 
-dt.drawBackgroundOverlay = function(ctx, width, height) {
+dt.loadImage = function(url, success) {
+  var img = new Image();
+  img.onload = function(ev) { success(img, ev); };
+  img.onerror = function(ev) { util.log("Error loading " + url + ": " + ev); };
+  img.src = url;
+};
+
+dt.loadImageInto = function(url, dest, name) {
+  dt.loadImage(url, function(img, ev) { dest[name] = img; });
+};
+
+dt.drawImageWithOverlay = function(ctx, img, width, height, imgAlpha, overlayAlpha) {
+  var realImgAlpha = (imgAlpha !== undefined ? imgAlpha : 0.7);
+  var realOverlayAlpha = (overlayAlpha !== undefined ? overlayAlpha : 0.2);
   ctx.save();
-  ctx.globalAlpha = 0.2;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, 600, 600);
+  if (img) {
+    ctx.globalAlpha = realImgAlpha;
+    ctx.drawImage(img, 0, 0);
+  }
+  ctx.restore();
+
+  dt.drawBackgroundOverlay(ctx, width, height, realOverlayAlpha);
+};
+
+dt.drawBackgroundOverlay = function(ctx, width, height, overlayAlpha) {
+  ctx.save();
+  ctx.globalAlpha = (overlayAlpha !== undefined ? overlayAlpha : 0.2);
   for (var x = 0; x < width; ++x) {
     for (var y = 0; y < height; ++y) {
       dt.drawCellBackground(ctx, x, y, undefined, "#c0c0c0");
