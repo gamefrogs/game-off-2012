@@ -405,3 +405,12 @@ dt.Level.prototype.generateSource = function(id, title) {
   src += "dt.LEVELS.push(dt.LEVELDEF" + id + ");\n";
   return src;
 };
+
+dt.Level.prototype.canDrawBackground = function() {
+  return (this.def.drawBackground &&
+          (this.def.drawBackground instanceof Function));
+};
+
+dt.Level.prototype.drawBackground = function(ctx) {
+  this.def.drawBackground(ctx);
+};

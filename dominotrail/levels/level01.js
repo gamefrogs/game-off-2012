@@ -34,5 +34,18 @@ dt.LEVELDEF1 =
                    { x: 2, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true }],
                   [{ type: dt.StraightDominoPiece, limit: 7 }]);
 
+dt.LEVELDEF1.drawBackground = function(ctx) {
+  var img = document.getElementById("fire");
+  ctx.save();
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, 600, 600);
+  ctx.globalAlpha = 0.7;
+  ctx.drawImage(img, 0, 0);
+  ctx.restore();
+
+  dt.drawBackgroundOverlay(ctx, this.getWidth(), this.getHeight());
+};
+
+
 // Register level
 dt.LEVELS.push(dt.LEVELDEF1);

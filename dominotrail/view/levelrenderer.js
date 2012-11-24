@@ -84,8 +84,16 @@ dt.LevelRenderer.prototype.getBackground = function(value) {
   return dt.LevelRenderer.BACKGROUND_COLOR[value];
 };
 
-dt.LevelRenderer.prototype.render = function(percent) {
-  var ctx = this.ctx;
+dt.LevelRenderer.prototype.renderBackground = function(ctx) {
+  if (this.level.canDrawBackground()) {
+    this.level.drawBackground(ctx);
+  } else {
+    this.renderDefaultBackground(ctx);
+  }
+};
+  
+dt.LevelRenderer.prototype.renderDefaultBackground = function(ctx) {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   var back = this.level.getBackground();
@@ -94,7 +102,15 @@ dt.LevelRenderer.prototype.render = function(percent) {
       var value = back.getValueXY(x, y);
       var fill = this.getBackground(value);
       this.renderCellBackground(x, y, fill, "#c0c0c0");
+    }
+  }
+};
 
+dt.LevelRenderer.prototype.render = function(percent) {
+  this.renderBackground(this.ctx);
+
+  for (var x = 0; x < this.level.getWidth(); ++x) {
+    for (var y = 0; y < this.level.getHeight(); ++y) {
       this.renderCellContent(x, y, percent || 0);
     }
   }
