@@ -12,7 +12,7 @@
   -webkit-user-drag: none;
 }
 
-.source {
+.allow_select {
   -moz-user-select: text;
   -webkit-user-select: text;
   -o-user-select: text;
@@ -124,6 +124,7 @@ h1 {
     <script src="model/round.js"></script>
     <script src="model/game.js"></script>
     <!-- Actual levels -->
+    <script src="view/levelutil.js"></script>
     <script src="levels/level01.js"></script>
     <script src="levels/level02.js"></script>
     <script src="levels/level03.js"></script>
@@ -179,15 +180,16 @@ h1 {
 	<a id="round_run" class="button" href="javascript:util.nop();"><img src="resources/run.png"></img></a>
           <a id="round_quit" class="button" href="javascript:util.nop();"><img src="resources/quit.png"></img></a></div>
 <hr>          
-Pieces<br>
           <div id="piece_buttons" style="width: 200px">
           </div>
           <canvas id="piece_selector" width="200" height="250"></canvas>
           <hr>
-          
-          <a id="level_save" class="button" style="display: none" href="javascript:util.nop();">Save level</a>
-          <textarea id="level_source" class="source" wrap="off"
-                    style="width: 180px; height: 200px; overflow: scroll"></textarea>
+          <div id="editor_pane" style="display: none">
+            Title: <input type="text" id="level_title" value="New level" class="allow_select"></input>
+            <a id="level_save" class="button" href="javascript:util.nop();">Save level</a>
+            <textarea id="level_source" class="allow_select" wrap="off"
+                      style="width: 180px; height: 200px; overflow: scroll"></textarea>
+          </div>
         </div>
         <canvas id="viewport" width="600" height="600"
                 style="position: absolute; top: 0; left: 200px">Sorry, no canvas, no game!</canvas>
@@ -206,5 +208,6 @@ Pieces<br>
 
       
     </div>
+    Some images courtesy of <a href="http://www.pdphoto.org">PDPhoto.org</a>.
   </body>
 </html>

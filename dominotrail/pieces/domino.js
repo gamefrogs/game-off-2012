@@ -297,8 +297,8 @@ dt.LForkDominoPiece.create = function(dir, params) {
 dt.LForkDominoPiece.prototype.init = function(dir, params) {
   dt.BaseDominoPiece.prototype.init.call(this, dir, params);
   this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
-  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
-               new dt.RelPosDir(dt.HERE, this.dir.opposite)];
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite.left)];
 };
 
 dt.LForkDominoPiece.prototype.draw = function(ctx, percent) {
@@ -357,8 +357,8 @@ dt.TriForkDominoPiece.create = function(dir, params) {
 dt.TriForkDominoPiece.prototype.init = function(dir, params) {
   dt.BaseDominoPiece.prototype.init.call(this, dir, params);
   this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
-  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
-               new dt.RelPosDir(dt.HERE, this.dir.opposite),
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
                new dt.RelPosDir(dt.HERE, this.dir.opposite.right)];
 };
 

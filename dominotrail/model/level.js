@@ -381,7 +381,15 @@ dt.Level.prototype.generateBackgroundString = function() {
   return all;
 };
 
-dt.Level.prototype.generateSource = function(id, title) {
+dt.Level.prototype.findFreeId = function() {
+  var free = false;
+  for (var id = 0; dt["LEVELDEF" + id]; ++id) {
+  }
+  return id;
+};
+
+dt.Level.prototype.generateSource = function(title) {
+  var id = this.findFreeId();
   var src = "dt.LEVEL" + id + "_STR = \n";
   src += this.generateBackgroundString();
   //
@@ -411,3 +419,13 @@ dt.Level.prototype.generateSource = function(id, title) {
   src += "dt.LEVELS.push(dt.LEVELDEF" + id + ");\n";
   return src;
 };
+
+dt.Level.prototype.canDrawBackground = function() {
+  return (this.def.drawBackground &&
+          (this.def.drawBackground instanceof Function));
+};
+
+dt.Level.prototype.drawBackground = function(ctx) {
+  this.def.drawBackground(ctx);
+};
+

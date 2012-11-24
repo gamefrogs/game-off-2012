@@ -56,6 +56,10 @@ dt.Game.prototype.chooseProfile = function(profileId) {
 
 dt.Game.prototype.startRound = function(levelId) {
   this.levelId = levelId;
+  if (this.levelId - 1 === dt.LEVELS.length) {
+    this.changeState(dt.STATE_MENU);
+    return;
+  }
 
   var levelDef = dt.LEVELS[levelId - 1];
   this.round = new dt.Round(levelDef);
