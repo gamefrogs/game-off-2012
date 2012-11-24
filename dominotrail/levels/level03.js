@@ -1,4 +1,4 @@
-dt.LEVEL5_STR = 
+dt.LEVEL3_STR = 
   " . . . . . . . . . . . . . . . . . . . . . . . .     \n" +
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . . . .     \n" +
@@ -28,7 +28,7 @@ dt.LEVEL5_STR =
   " . . . . . . . . . . . . . . . . . . . . . . . .     \n" +
   "  . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .  \n" +
   " . . . . . . . . . . . . . . . . . . . . . . . .     ";
-dt.LEVELDEF5 =
+dt.LEVELDEF3 =
   new dt.LevelDef("Third level", 12, 14, dt.LEVEL5_STR,
                   [
                    { x: 6, y: 2, type: dt.Wall, dir: dt.Dir.E, goal: false },
@@ -49,5 +49,5 @@ dt.LEVELDEF5 =
 		           { type: dt.TurnLeftDominoPiece, limit: 2}
                   ]);
 // Register level
-dt.LEVELS.push(dt.LEVELDEF5);
+dt.LEVELS.push(dt.LEVELDEF3);
 
