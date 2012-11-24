@@ -38,8 +38,8 @@ dt.drawBackgroundOverlay = function(ctx, width, height, overlayAlpha) {
 };
 
 dt.getCellCenter = function(x, y) {
-  return new dt.Pos(dt.DCX * x + dt.INDENT_DCX[y % 2],
-                    dt.DCY * y);
+  return new dt.Pos(dt.DCX * (x + 0.5) + dt.INDENT_DCX[y % 2],
+                    dt.DCY * y + dt.RADIUS);
 };
 
 dt.drawCellBackground = function(ctx, x, y, fill, stroke, width) {

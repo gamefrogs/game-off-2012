@@ -139,8 +139,8 @@ dt.squaredist = function(x0, y0, x1, y1) {
 };
 
 dt.LevelRenderer.prototype.getCellCenter = function(x, y) {
-  return new dt.Pos(this.DCX * x + this.INDENT_DCX[y % 2],
-                    this.DCY * y);
+  return new dt.Pos(this.DCX * (x + 0.5) + this.INDENT_DCX[y % 2],
+                    this.DCY * y + this.RADIUS);
 };
 
 dt.LevelRenderer.prototype.renderCellBackground = function(ictx, x, y, fill, stroke, width) {
