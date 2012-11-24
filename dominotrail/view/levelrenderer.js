@@ -31,7 +31,7 @@ dt.LevelRenderer = function(round, viewport, ctx, radius) {
 
 util.extend(util.Observable, dt.LevelRenderer);
 
-dt.LevelRenderer.BACKGROUND_COLOR = ["#000000", "#00ffff", "#0000ff", "#008000", "#c09060"];
+dt.LevelRenderer.BACKGROUND_COLOR = ["#95b2df", "#95b2df", "#85a2cf", "#7592bf", "#6582af"];
 
 dt.LevelRenderer.ROTATION = [];
 dt.LevelRenderer.ROTATION[dt.Dir.E.id] = Math.PI;

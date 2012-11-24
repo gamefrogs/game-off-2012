@@ -2,7 +2,7 @@
 
 dt.drawBackgroundOverlay = function(ctx, width, height) {
   ctx.save();
-  ctx.globalAlpha = 0.1;
+  ctx.globalAlpha = 0.2;
   for (var x = 0; x < width; ++x) {
     for (var y = 0; y < height; ++y) {
       dt.drawCellBackground(ctx, x, y, undefined, "#c0c0c0");
