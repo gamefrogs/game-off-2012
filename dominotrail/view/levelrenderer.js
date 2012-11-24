@@ -109,7 +109,7 @@ dt.LevelRenderer.prototype.renderDefaultBackground = function(ctx) {
     for (var y = 0; y < back.getHeight(); ++y) {
       var value = back.getValueXY(x, y);
       var fill = this.getBackground(value);
-      this.renderCellBackground(x, y, fill, "#c0c0c0");
+      this.renderCellBackground(ctx, x, y, fill, "#c0c0c0");
     }
   }
 };
@@ -143,8 +143,8 @@ dt.LevelRenderer.prototype.getCellCenter = function(x, y) {
                     this.DCY * y);
 };
 
-dt.LevelRenderer.prototype.renderCellBackground = function(x, y, fill, stroke, width) {
-  var ctx = this.ctx;
+dt.LevelRenderer.prototype.renderCellBackground = function(ictx, x, y, fill, stroke, width) {
+  var ctx = ictx || this.ctx;
   ctx.save();
   ctx.beginPath();
   var center = this.getCellCenter(x, y);
