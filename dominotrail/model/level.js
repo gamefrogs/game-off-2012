@@ -375,7 +375,15 @@ dt.Level.prototype.generateBackgroundString = function() {
   return all;
 };
 
-dt.Level.prototype.generateSource = function(id, title) {
+dt.Level.prototype.findFreeId = function() {
+  var free = false;
+  for (var id = 0; dt["LEVELDEF" + id]; ++id) {
+  }
+  return id;
+};
+
+dt.Level.prototype.generateSource = function(title) {
+  var id = this.findFreeId();
   var src = "dt.LEVEL" + id + "_STR = \n";
   src += this.generateBackgroundString();
   //

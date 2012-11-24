@@ -66,19 +66,19 @@ dt.LevelController.prototype.initListeners = function() {
 
   var usablePieces = this.getUsablePieces();
   
-  // Show or hide the "save" button
+  // Show or hide the "editor" div
+  var editorPane = document.getElementById("editor_pane");
+  var titleInput = document.getElementById("level_title");
   var save = document.getElementById("level_save");
   var source = document.getElementById("level_source");
   if (this.level.designMode) {
-    save.style.display = "inline-block";
-    source.style.display = "inline-block";
+    editorPane.style.display = "inline-block";
     save.addEventListener("click", function(event) {
-      var src = that.level.generateSource(5, "Test");
-      document.getElementById("level_source").value = src;
+      var src = that.level.generateSource(titleInput.value);
+      source.value = src;
     }, false);
   } else {
-    save.style.display = "none";
-    source.style.display = "none";
+    editorPane.style.display = "none";
   }
 };
 
