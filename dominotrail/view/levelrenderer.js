@@ -213,10 +213,26 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
       
         ctx.globalAlpha = 0.8;
         if( obj.isFreeze() ){
+            
+            //forbiden circle
+            ctx.save();
+            ctx.globalAlpha = 0.4;
+            ctx.fillStyle = "#0f0f0f";
+            ctx.beginPath();
+            ctx.arc(0, 0, dt.RADIUS * 0.8, 0, dt.FULL_CIRCLE, false);
+            ctx.moveTo(dt.RADIUS * 0.4, dt.RADIUS * 0.1);
+            ctx.lineTo(dt.RADIUS * 0.4, -dt.RADIUS * 0.1);
+            ctx.lineTo(-dt.RADIUS * 0.4, -dt.RADIUS * 0.1);
+            ctx.lineTo(-dt.RADIUS * 0.4, dt.RADIUS * 0.1);
+            ctx.fill();
+            ctx.restore();
+            
             ctx.fillStyle = "#FF0000";
+            
         }else{
             ctx.fillStyle = "#00FF00";
         }
+        
         ctx.font = "bold 30px Verdana";
         ctx.textBaseline = "middle";
         ctx.fillText(obj.getRebour(), -10, 0);

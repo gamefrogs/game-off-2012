@@ -69,13 +69,21 @@ dt.BasePiece.prototype.setRebour2 = function(a){
 }
 
 dt.BasePiece.prototype.getRebour = function(){
-    if ( this.rebour1!=-1 ){
-        return this.rebour1;
-    }
-    if( this.rebour2!=-1){
+    if ( this.rebour2>0 ){
         return this.rebour2;
     }
-    return -1;
+    if( this.rebour1>0){
+        return this.rebour1;
+    }
+    return 0;
+}
+
+dt.BasePiece.prototype.getBegin = function(){
+    return this.rebour2;
+}
+
+dt.BasePiece.prototype.getEnd = function(){
+    return this.rebour1;
 }
 
 dt.BasePiece.prototype.asCompteur = function(){
@@ -153,13 +161,12 @@ dt.BasePiece.prototype.canAutoActivate = function(step) {
 
 // Notifies the piece that a step is starting
 dt.BasePiece.prototype.startStep = function(step) {
-if (this.rebour1 > 0 ){
-    --this.rebour1;
-}
-if (this.rebour2 > 0 ){
-    --this.rebour2;
-}
-
+    if (this.rebour1 > 0 ){
+        --this.rebour1;
+    }
+    if (this.rebour2 > 0 ){
+        --this.rebour2;
+    }
 };
 
 // Notifies the piece that it just received input from a list of (position + direction)

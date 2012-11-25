@@ -38,7 +38,7 @@ dt.LEVELDEF5 =
                    { x: 6, y: 1, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 9, y: 1, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 1, y: 2, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 4, y: 2, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true, rebour2: 112 },
+                   { x: 4, y: 2, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true, beginAct: 112 },
                    { x: 8, y: 2, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 3, y: 3, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 5, y: 3, type: dt.Wall, dir: dt.Dir.E, goal: false },
