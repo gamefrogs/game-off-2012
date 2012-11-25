@@ -183,6 +183,7 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
   case dt.MODE_ERASER:
     if (this.level.canRemovePiece(pos)) {
       this.level.removePiece(pos);
+      this.fullRender(this.overPos);
     }
     break;
 
