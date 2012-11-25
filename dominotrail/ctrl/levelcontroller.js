@@ -2,6 +2,8 @@
 
 dt.MODE_PIECE = "ModePiece";
 dt.MODE_ERASER = "ModeEraser";
+dt.MODE_GOAL = "ModeGoal";
+dt.MODE_LOCK = "ModeLock";
 
 dt.LevelController = function(round, renderer, selector) {
   this.round = round;
@@ -126,6 +128,14 @@ dt.LevelController.prototype.chooseEraser = function() {
   this.mode = dt.MODE_ERASER;
 };
 
+dt.LevelController.prototype.chooseGoal = function() {
+  this.mode = dt.MODE_GOAL;
+};
+
+dt.LevelController.prototype.chooseLock = function() {
+  this.mode = dt.MODE_LOCK;
+};
+
 dt.LevelController.prototype.choosePieceType = function(pieceType) {
   this.mode = dt.MODE_PIECE;
   this.pieceType = pieceType;
@@ -172,6 +182,20 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
   case dt.MODE_ERASER:
     if (this.level.canRemovePiece(pos)) {
       this.level.removePiece(pos);
+    }
+    break;
+
+  case dt.MODE_GOAL:
+    if (this.level.getObject(pos) instanceof dt.BasePiece) {
+      var piece = this.level.getObject(pos);
+      piece.goal = !piece.isGoal();
+    }
+    break;
+
+  case dt.MODE_LOCK:
+    if (this.level.getObject(pos) instanceof dt.BasePiece) {
+      var piece = this.level.getObject(pos);
+      piece.locked = !piece.isLocked();
     }
     break;
 
@@ -273,6 +297,10 @@ dt.LevelController.prototype.update = function(event) {
       var pieceType = dt.PIECE_TYPE_BY_NAME[event.typeName];
       if (pieceType === dt.Eraser) {
         this.chooseEraser();
+      } else if (pieceType === dt.GoalMode) {
+        this.chooseGoal();
+      } else if (pieceType === dt.LockMode) {
+        this.chooseLock();
       } else {
         this.choosePieceType(pieceType);
       }

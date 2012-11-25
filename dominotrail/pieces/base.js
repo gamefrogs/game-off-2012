@@ -108,7 +108,12 @@ dt.BasePiece.prototype.isGoal = function() {
 // Asks the piece, when it's a goal, if it has been reached
 dt.BasePiece.prototype.isGoalReached = function() {
   return this.reached;
-}
+};
+
+// Asks the piece if it's locked
+dt.BasePiece.prototype.isLocked = function() {
+  return this.locked;
+};
 
 // Must return an array of dt.RelativePos that are part of this piece, except the main position
 // dt.HERE is implicit

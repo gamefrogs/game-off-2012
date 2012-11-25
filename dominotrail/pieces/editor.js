@@ -19,7 +19,14 @@ dt.GoalMode.prototype.init = function(dir, params) {
 dt.GoalMode.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.fillStyle = "#00ff00";
-  ctx.fillRect(-10, -10, 21, 21);
+  ctx.beginPath();
+  ctx.moveTo(-7, 15);
+  ctx.lineTo(-7, -15);
+  ctx.lineTo(8, -7);
+  ctx.lineTo(-5, 0);
+  ctx.lineTo(-5, 15);
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
 };
 
@@ -42,6 +49,12 @@ dt.LockMode.prototype.init = function(dir, params) {
 dt.LockMode.prototype.draw = function(ctx, percent) {
   ctx.save();
   ctx.fillStyle = "#ff00ff";
-  ctx.fillRect(-10, -10, 21, 21);
+  ctx.fillRect(-10, -3, 21, 18);
+
+  ctx.beginPath();
+  ctx.arc(0, -3, 9, 0, Math.PI, true);
+  ctx.strokeStyle = "#ff00ff";
+  ctx.lineWidth = 3;
+  ctx.stroke();
   ctx.restore();
 };
