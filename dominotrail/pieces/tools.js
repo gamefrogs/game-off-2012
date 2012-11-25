@@ -1,5 +1,28 @@
 "use strict";
 
+// Eraser tool
+dt.Eraser = function() {
+};
+dt.Eraser.prototype = new dt.BasePiece();
+dt.registerPiece(dt.Eraser, "Eraser", "dt.Eraser", true);
+
+dt.Eraser.create = function(dir, params) {
+  var piece = new dt.Eraser();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.Eraser.prototype.init = function(dir, params) {
+  dt.BasePiece.prototype.init.call(this, dir, params);
+};
+
+dt.Eraser.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.fillStyle = "#ffff00";
+  ctx.fillRect(-15, -15, 31, 31);
+  ctx.restore();
+};
+
 // Tool used to mark pieces as goals for a level
 dt.GoalMode = function() {
 };
@@ -56,5 +79,34 @@ dt.LockMode.prototype.draw = function(ctx, percent) {
   ctx.strokeStyle = "#ff00ff";
   ctx.lineWidth = 3;
   ctx.stroke();
+  ctx.restore();
+};
+
+// Used to show that something is forbidden
+dt.Forbidden = function() {
+};
+dt.Forbidden.prototype = new dt.BasePiece();
+dt.registerPiece(dt.Forbidden, "Forbidden", "dt.Forbidden", true);
+
+dt.Forbidden.create = function(dir, params) {
+  var piece = new dt.Forbidden();
+  piece.init(dir, params);
+  return piece;
+};
+
+dt.Forbidden.prototype.init = function(dir, params) {
+  dt.BasePiece.prototype.init.call(this, dir, params);
+};
+
+dt.Forbidden.prototype.draw = function(ctx, percent) {
+  ctx.save();
+  ctx.fillStyle = "#ff0000";
+  ctx.beginPath();
+  ctx.arc(0, 0, dt.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
+  ctx.moveTo(dt.RADIUS * 0.4, dt.RADIUS * 0.1);
+  ctx.lineTo(dt.RADIUS * 0.4, -dt.RADIUS * 0.1);
+  ctx.lineTo(-dt.RADIUS * 0.4, -dt.RADIUS * 0.1);
+  ctx.lineTo(-dt.RADIUS * 0.4, dt.RADIUS * 0.1);
+  ctx.fill();
   ctx.restore();
 };

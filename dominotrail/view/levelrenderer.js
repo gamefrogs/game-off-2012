@@ -45,7 +45,7 @@ dt.LevelRenderer.prototype.init = function() {
   var pos0 = util.getPagePosition(this.viewport);
   this.x0 = pos0.x;
   this.y0 = pos0.y;
-  
+
   this.initListeners();
   
   this.render();

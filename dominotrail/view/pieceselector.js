@@ -86,6 +86,11 @@ dt.PieceSelector.prototype.initListeners = function() {
     that.mouseHandler(event);
   };
   this.viewport.addEventListener("mousedown", this.mouseListener, false);
+
+  this.keyListener = function(event) {
+    that.keyHandler(event);
+  };
+  document.body.addEventListener("keydown", this.keyListener, false);
 };
 
 dt.PieceSelector.prototype.destroy = function() {
@@ -96,6 +101,8 @@ dt.PieceSelector.prototype.destroy = function() {
 dt.PieceSelector.prototype.exitListeners = function() {
   this.viewport.removeEventListener("mousedown", this.mouseListener, false);
   this.mouseListener = null;
+  document.body.removeEventListener("keydown", this.keyListener, false);
+  this.keyListener = null;
 };
 
 dt.PieceSelector.prototype.addPiece = function(piece) {
@@ -214,6 +221,14 @@ dt.PieceSelector.prototype.getHexPosition = function(mx, my) {
 };
 
 
+dt.PieceSelector.prototype.selectPiece = function(pos, piece) {
+  this.selectedPos = pos;
+  this.render();
+  this.notify({ src: this,
+                type: dt.EVENT_PIECE_SELECTED,
+                typeName: piece.typeName });
+};
+
 dt.PieceSelector.prototype.mouseHandler = function(event) {
   var mx = event.clientX + util.windowScrollX() - this.x0;
   var my = event.clientY + util.windowScrollY() - this.y0;
@@ -222,18 +237,62 @@ dt.PieceSelector.prototype.mouseHandler = function(event) {
   if (this.grid.isInside(hcc) && event.button === 0) {
     var piece = this.pieces.getValue(hcc);
     if (piece !== undefined) {
-      this.selectedPos = hcc;
-      this.render();
-      this.notify({ src: this,
-                    type: dt.EVENT_PIECE_SELECTED,
-                    typeName: piece.typeName });
+      this.selectPiece(hcc, piece);
     }
   }
-  
+};
+
+dt.PieceSelector.prototype.keyHandler = function(event) {
+  if (event.keyCode === 38) { // Down
+    this.selectNextPiece();
+    event.preventDefault();
+    
+  } else if (event.keyCode === 40) { // Up
+    this.selectPreviousPiece();
+    event.preventDefault();
+    
+  } else if ((event.keyCode === 8) ||  // Backspace
+             (event.keyCode === 46)) { // Delete
+    this.selectEraser();
+    event.preventDefault();
+  }
 };
 
 dt.PieceSelector.prototype.update = function(event) {
   if ((event.src === this.level) && (event.type === dt.EVENT_LIMIT_CHANGE)) {
     this.render();
   }
+};
+
+dt.PieceSelector.prototype.selectNextPiece = function() {
+  this.selectDeltaPiece(1);
+};
+
+dt.PieceSelector.prototype.selectPreviousPiece = function() {
+  this.selectDeltaPiece(-1);
+};
+
+dt.PieceSelector.prototype.selectEraser = function() {
+  var x = this.grid.getWidth() - 1;
+  var y = this.grid.getHeight() - 1;
+  var piece = this.pieces.getValueXY(x, y);
+  this.selectPiece(new dt.Pos(x, y), piece);
+};
+
+dt.PieceSelector.prototype.selectDeltaPiece = function(delta) {
+  var pos = new dt.Pos(this.selectedPos.x, this.selectedPos.y);
+  var piece = undefined;
+
+  while (piece === undefined) {
+    pos.x += delta;
+    if ((pos.x < 0) || (pos.x >= this.grid.getWidth())) {
+      pos.x = (delta > 0) ? 0 : this.grid.getWidth() - 1;
+      pos.y += delta;
+      if ((pos.y < 0) || (pos.y >= this.grid.getHeight())) {
+        pos.y = (delta > 0) ? 0 : this.grid.getHeight() - 1;
+      }
+    }
+    piece = this.pieces.getValue(pos);
+  }
+  this.selectPiece(pos, piece);
 };

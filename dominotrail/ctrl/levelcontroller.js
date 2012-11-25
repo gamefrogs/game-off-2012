@@ -22,6 +22,7 @@ dt.LevelController = function(round, renderer, selector) {
   this.mode = dt.MODE_DOMINO; 
   this.params = {};
 
+  this.overPos = undefined;
   this.dir = dt.Dir.E;
   this.highlightFrom("piece_0", this.pieceButtons);
   this.choosePieceType(this.getUsablePieces()[0].type);
@@ -206,8 +207,15 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
 
 dt.LevelController.prototype.fullRender = function(pos, percent) {
   this.renderer.render(percent);
-  if ((pos !== undefined) && (this.round.status === dt.ROUND_NOT_RUN)) {
-    this.renderer.renderOverlay(pos, this.piece);
+  if (pos !== undefined) {
+    if ((this.round.status === dt.ROUND_NOT_RUN) &&
+        (this.level.canAddPiece(pos, this.piece))) {
+    
+      this.renderer.renderOverlay(pos, this.piece);
+      
+    } else {
+      this.renderer.renderOverlay(pos, dt.Forbidden.create(dt.Dir.NONE));
+    }
   }
 };
 
@@ -230,33 +238,18 @@ dt.LevelController.prototype.handleCellOver = function(pos) {
     return;
   }
   if (!this.level.isInside(pos)) {
+    this.overPos = undefined;
     return;
   }
-  if ((this.mode === dt.MODE_PIECE) && (this.level.canAddPiece(pos, this.piece))) {
-    this.fullRender(pos);
-    return;
-  }
-  var canAdd = this.level.canAddDomino(pos);
-  var borderColor = (canAdd ? "#000000" : "#ff0000");
-  this.renderer.render();
-  this.renderer.renderCellBackground(undefined, pos.x, pos.y, undefined, borderColor, 2);
-  if (!canAdd) {
-    var ctx = this.renderer.ctx;
-    var hc = this.renderer.getCellCenter(pos.x, pos.y);
-    ctx.save();
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = "#ff0000";
-    ctx.beginPath();
-    ctx.arc(hc.x, hc.y, dt.RADIUS * 0.6, 0, dt.FULL_CIRCLE, false);
-    ctx.fill();
-    ctx.restore();
-  }
+  this.overPos = pos;
+  this.fullRender(pos);
 };
 
 dt.LevelController.prototype.handleCellOut = function(pos) {
   if (this.isRoundRunning()) {
     return;
   }
+  this.overPos = undefined;
   this.fullRender();
 };
 
@@ -295,15 +288,16 @@ dt.LevelController.prototype.update = function(event) {
   } else if (event.src === this.selector) {
     if (event.type === dt.EVENT_PIECE_SELECTED) {
       var pieceType = dt.PIECE_TYPE_BY_NAME[event.typeName];
+      this.choosePieceType(pieceType);
       if (pieceType === dt.Eraser) {
         this.chooseEraser();
       } else if (pieceType === dt.GoalMode) {
         this.chooseGoal();
       } else if (pieceType === dt.LockMode) {
         this.chooseLock();
-      } else {
-        this.choosePieceType(pieceType);
       }
+
+      this.fullRender(this.overPos);
     }
     
   } else {
