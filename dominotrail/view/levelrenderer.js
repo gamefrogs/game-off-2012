@@ -45,7 +45,7 @@ dt.LevelRenderer.prototype.init = function() {
   var pos0 = util.getPagePosition(this.viewport);
   this.x0 = pos0.x;
   this.y0 = pos0.y;
-  
+
   this.initListeners();
   
   this.render();
@@ -128,7 +128,7 @@ dt.LevelRenderer.prototype.renderOverlay = function(pos, piece) {
   var hc = this.getCellCenter(pos.x, pos.y);
   var ctx = this.ctx;
   ctx.save();
-  ctx.globalAlpha = 0.4;
+  ctx.globalAlpha = piece.getOverlayAlpha();
   ctx.translate(hc.x, hc.y);
   piece.draw(ctx, 0);
   ctx.restore();

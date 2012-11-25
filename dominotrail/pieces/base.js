@@ -190,6 +190,14 @@ dt.BasePiece.prototype.reset = function() {
 dt.BasePiece.prototype.draw = function(ctx, percent) {
 };
 
+// Default overlay alpha. Some pieces need a different value to be really visible
+dt.BasePiece.prototype.overlayAlpha = 0.4;
+
+// Asks the piece its alpha value when drawn as an overlay
+dt.BasePiece.prototype.getOverlayAlpha = function() {
+  return this.overlayAlpha;
+};
+
 
 ////
 // When a piece occupies several cells, ghost pieces pointing to the main piece are put into

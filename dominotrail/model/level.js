@@ -188,6 +188,19 @@ dt.Level.prototype.canAddDomino = function(pos) {
 };
 
 dt.Level.prototype.canAddPiece = function(pos, piece) {
+  // Eraser first
+  if (piece instanceof dt.Eraser) {
+    return (this.designMode ||
+            ((this.getObject(pos) instanceof dt.BasePiece) &&
+             (!this.getObject(pos).isLocked())));
+
+    // Then lock and goal tools
+  } else if ((piece instanceof dt.LockMode) ||
+             (piece instanceof dt.GoalMode)) {
+    return (this.getObject(pos) instanceof dt.BasePiece);
+  }
+
+  // Finally, check normal pieces
   // Check the limit
   if (this.getLimitForTypeName(piece.typeName) <= 0) {
     return false;
