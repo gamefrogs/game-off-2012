@@ -7,11 +7,11 @@ dt.PieceSelector = function(round, viewport, ctx) {
   this.ctx = ctx;
   this.level = round.level;
 
-  this.grid = new dt.Hexgrid(3, 5);
+  this.grid = new dt.Hexgrid(4, 6);
   this.pieces = new dt.Hexgrid(this.grid.getWidth(), this.grid.getHeight());
 
   // Some drawing constants
-  this.RADIUS = 30;
+  this.RADIUS = 25;
   this.DCX = this.RADIUS * Math.sqrt(3);
   this.INDENT_DCX = [0, this.DCX / 2];
   this.DCY = this.RADIUS * 1.5;
@@ -50,6 +50,12 @@ dt.PieceSelector.prototype.initLevel = function() {
 
   this.pieces.setValueXY(this.pieces.getWidth() - 1, this.pieces.getHeight() - 1,
                          dt.Eraser.create(dt.Dir.NONE));
+  if (this.level.designMode) {
+    this.pieces.setValueXY(this.pieces.getWidth() - 2, this.pieces.getHeight() - 1,
+                           dt.GoalMode.create(dt.Dir.NONE));
+    this.pieces.setValueXY(this.pieces.getWidth() - 3, this.pieces.getHeight() - 1,
+                           dt.LockMode.create(dt.Dir.NONE));
+  }
   this.render;
 };
 
@@ -104,7 +110,8 @@ dt.PieceSelector.prototype.getCellCenter = function(x, y) {
                     this.OFFSETY + this.DCY * y);
 };
 
-dt.PieceSelector.BACKGROUND_COLOR = ["#55729f", "#6582af", "#7592bf", "#85a2cf", "#95b2df"];
+dt.PieceSelector.BACKGROUND_COLOR = ["#55729f", "#6582af", "#7592bf",
+                                     "#85a2cf", "#95b2df", "#a5c2ef"];
 
 dt.PieceSelector.prototype.getBackground = function(value) {
   return dt.PieceSelector.BACKGROUND_COLOR[value];
@@ -137,9 +144,11 @@ dt.PieceSelector.prototype.renderCellContent = function(x, y) {
     ctx.save();
     ctx.translate(hc.x, hc.y);
     if (obj instanceof dt.BasePiece) {
+      ctx.scale(this.RADIUS / dt.RADIUS, this.RADIUS / dt.RADIUS);
       obj.draw(ctx, 0);
-      if (!(obj instanceof dt.Eraser)) {
+      //if (!(obj instanceof dt.Eraser)) {
         var limit = this.level.getLimitForTypeName(obj.typeName);
+      if (limit !== undefined) {
         var txt = (limit === Infinity ? "\u221e" : ("" + limit));
         ctx.font = "bold 12px Verdana";
         var metrics = ctx.measureText(txt);

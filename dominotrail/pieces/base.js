@@ -52,8 +52,42 @@ dt.BasePiece.prototype.init = function(dir, params) {
   this.locked = false;
   this.goal = false;
   this.reached = false;
+  this.rebour1 = -1;
+  this.rebour1Sauv = -1;
+  this.rebour2 = -1;
+  this.rebour2Sauv = -1;
 };
 
+dt.BasePiece.prototype.setRebour1 = function(a){
+    this.rebour1 = a;
+    this.rebour1Sauv=a;
+}
+
+dt.BasePiece.prototype.setRebour2 = function(a){
+    this.rebour2 = a;
+    this.rebour2Sauv=a;
+}
+
+dt.BasePiece.prototype.getRebour = function(){
+    if ( this.rebour1!=-1 ){
+        return this.rebour1;
+    }
+    if( this.rebour2!=-1){
+        return this.rebour2;
+    }
+    return -1;
+}
+
+dt.BasePiece.prototype.asCompteur = function(){
+    return (this.rebour1!=-1 || this.rebour2!=-1 );
+}
+
+dt.BasePiece.prototype.isFreeze = function(){
+    if( this.rebour1 == 0 || this.rebour2>0 ){
+        return true;
+    }
+    return false;
+};
 dt.BasePiece.prototype.param = function(params, name, defaultValue) {
   if (params && (name in params)) {
     return params[name];
@@ -74,7 +108,12 @@ dt.BasePiece.prototype.isGoal = function() {
 // Asks the piece, when it's a goal, if it has been reached
 dt.BasePiece.prototype.isGoalReached = function() {
   return this.reached;
-}
+};
+
+// Asks the piece if it's locked
+dt.BasePiece.prototype.isLocked = function() {
+  return this.locked;
+};
 
 // Must return an array of dt.RelativePos that are part of this piece, except the main position
 // dt.HERE is implicit
@@ -114,6 +153,13 @@ dt.BasePiece.prototype.canAutoActivate = function(step) {
 
 // Notifies the piece that a step is starting
 dt.BasePiece.prototype.startStep = function(step) {
+if (this.rebour1 > 0 ){
+    --this.rebour1;
+}
+if (this.rebour2 > 0 ){
+    --this.rebour2;
+}
+
 };
 
 // Notifies the piece that it just received input from a list of (position + direction)

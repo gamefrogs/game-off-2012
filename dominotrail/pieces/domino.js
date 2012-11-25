@@ -28,7 +28,7 @@ dt.BaseDominoPiece.prototype.isDead = function() {
 };
 
 dt.BaseDominoPiece.prototype.receiveInputs = function(inputs) {
-  if (!this.fallen) {
+  if (!this.fallen  && !this.isFreeze()) {
     this.active = dt.RelPosDir.arrayMatch(this.ins, inputs);
   }
 };
@@ -42,7 +42,7 @@ dt.BaseDominoPiece.prototype.collectOutputs = function() {
 };
 
 dt.BaseDominoPiece.prototype.endStep = function(step) {
-  if (this.active) {
+  if (this.active && !this.isFreeze()) {
     this.active = false;
     this.fallen = true;
     this.reached = true;
@@ -53,6 +53,8 @@ dt.BaseDominoPiece.prototype.reset = function() {
   this.active = false;
   this.fallen = false;
   this.reached = false;
+  this.rebour1 = this.rebour1Sauv;
+  this.rebour2 = this.rebour2Sauv;
 };
 
 // Straight: exits on the opposite of the input side
@@ -111,7 +113,7 @@ dt.StraightStartPiece.prototype.canAutoActivate = function(step) {
 };
 
 dt.StraightStartPiece.prototype.receiveInputs = function(inputs) {
-  if (!this.fallen) {
+  if (!this.fallen && !this.isFreeze()) {
     this.active = true;
   }
 };
@@ -180,7 +182,7 @@ dt.AnyEndPiece.prototype.init = function(dir, params) {
 };
 
 dt.AnyEndPiece.prototype.receiveInputs = function(inputs) {
-  if ((!this.fallen) && (inputs.length > 0)) {
+  if ((!this.fallen) && (inputs.length > 0) && !this.isFreeze() ) {
     this.active = true;
   }
 };
@@ -297,8 +299,8 @@ dt.LForkDominoPiece.create = function(dir, params) {
 dt.LForkDominoPiece.prototype.init = function(dir, params) {
   dt.BaseDominoPiece.prototype.init.call(this, dir, params);
   this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
-  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
-               new dt.RelPosDir(dt.HERE, this.dir.opposite)];
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite.left)];
 };
 
 dt.LForkDominoPiece.prototype.draw = function(ctx, percent) {
@@ -357,8 +359,8 @@ dt.TriForkDominoPiece.create = function(dir, params) {
 dt.TriForkDominoPiece.prototype.init = function(dir, params) {
   dt.BaseDominoPiece.prototype.init.call(this, dir, params);
   this.ins = [new dt.RelPosDir(dt.HERE, this.dir)];
-  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
-               new dt.RelPosDir(dt.HERE, this.dir.opposite),
+  this.outs = [new dt.RelPosDir(dt.HERE, this.dir.opposite),
+               new dt.RelPosDir(dt.HERE, this.dir.opposite.left),
                new dt.RelPosDir(dt.HERE, this.dir.opposite.right)];
 };
 

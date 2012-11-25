@@ -2,6 +2,8 @@
 
 dt.MODE_PIECE = "ModePiece";
 dt.MODE_ERASER = "ModeEraser";
+dt.MODE_GOAL = "ModeGoal";
+dt.MODE_LOCK = "ModeLock";
 
 dt.LevelController = function(round, renderer, selector) {
   this.round = round;
@@ -66,19 +68,19 @@ dt.LevelController.prototype.initListeners = function() {
 
   var usablePieces = this.getUsablePieces();
   
-  // Show or hide the "save" button
+  // Show or hide the "editor" div
+  var editorPane = document.getElementById("editor_pane");
+  var titleInput = document.getElementById("level_title");
   var save = document.getElementById("level_save");
   var source = document.getElementById("level_source");
   if (this.level.designMode) {
-    save.style.display = "inline-block";
-    source.style.display = "inline-block";
+    editorPane.style.display = "inline-block";
     save.addEventListener("click", function(event) {
-      var src = that.level.generateSource(5, "Test");
-      document.getElementById("level_source").value = src;
+      var src = that.level.generateSource(titleInput.value);
+      source.value = src;
     }, false);
   } else {
-    save.style.display = "none";
-    source.style.display = "none";
+    editorPane.style.display = "none";
   }
 };
 
@@ -126,6 +128,14 @@ dt.LevelController.prototype.chooseEraser = function() {
   this.mode = dt.MODE_ERASER;
 };
 
+dt.LevelController.prototype.chooseGoal = function() {
+  this.mode = dt.MODE_GOAL;
+};
+
+dt.LevelController.prototype.chooseLock = function() {
+  this.mode = dt.MODE_LOCK;
+};
+
 dt.LevelController.prototype.choosePieceType = function(pieceType) {
   this.mode = dt.MODE_PIECE;
   this.pieceType = pieceType;
@@ -143,6 +153,17 @@ dt.LevelController.prototype.preparePiece = function() {
   }
 };
 
+dt.LevelController.prototype.tryAddPiece = function(pos) {
+  if (this.level.canAddPiece(pos, this.piece)) {
+    this.level.addPiece(pos, this.piece);
+    var outs = this.piece.getOutputs();
+    if (outs.length > 0) {
+      this.dir = outs[0].dir.opposite;
+    }
+    this.preparePiece();
+  }
+};
+
 dt.LevelController.prototype.handleCellClick = function(pos) {
   if (this.isRoundRunning()) {
     return;
@@ -154,16 +175,27 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
     }
     break;
     
-  case dt.MODE_PIECE:    
-    if (this.level.canAddPiece(pos, this.piece)) {
-      this.level.addPiece(pos, this.piece);
-      this.preparePiece();
-    }
+  case dt.MODE_PIECE:
+    this.tryAddPiece(pos);
     break;
 
   case dt.MODE_ERASER:
     if (this.level.canRemovePiece(pos)) {
       this.level.removePiece(pos);
+    }
+    break;
+
+  case dt.MODE_GOAL:
+    if (this.level.getObject(pos) instanceof dt.BasePiece) {
+      var piece = this.level.getObject(pos);
+      piece.goal = !piece.isGoal();
+    }
+    break;
+
+  case dt.MODE_LOCK:
+    if (this.level.getObject(pos) instanceof dt.BasePiece) {
+      var piece = this.level.getObject(pos);
+      piece.locked = !piece.isLocked();
     }
     break;
 
@@ -260,16 +292,15 @@ dt.LevelController.prototype.update = function(event) {
       util.log("LevelController received ", event);
     }
     
-  } else if (event.src === this.level) {
-    if (event.type === dt.EVENT_LIMIT_CHANGE) {
-      this.changeCounter(event.typeName, event.to);
-    }
-
   } else if (event.src === this.selector) {
     if (event.type === dt.EVENT_PIECE_SELECTED) {
       var pieceType = dt.PIECE_TYPE_BY_NAME[event.typeName];
       if (pieceType === dt.Eraser) {
         this.chooseEraser();
+      } else if (pieceType === dt.GoalMode) {
+        this.chooseGoal();
+      } else if (pieceType === dt.LockMode) {
+        this.chooseLock();
       } else {
         this.choosePieceType(pieceType);
       }
@@ -278,11 +309,6 @@ dt.LevelController.prototype.update = function(event) {
   } else {
     util.log("LevelController received ", event);
   }
-};
-
-dt.LevelController.prototype.changeCounter = function(typeName, value) {
-  //var counter = document.getElementById(this.counters[typeName]);
-  //counter.innerHTML = "" + value;
 };
 
 dt.LevelController.prototype.runRound = function() {

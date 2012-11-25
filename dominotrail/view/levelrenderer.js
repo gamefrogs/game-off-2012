@@ -139,8 +139,8 @@ dt.squaredist = function(x0, y0, x1, y1) {
 };
 
 dt.LevelRenderer.prototype.getCellCenter = function(x, y) {
-  return new dt.Pos(this.DCX * x + this.INDENT_DCX[y % 2],
-                    this.DCY * y);
+  return new dt.Pos(this.DCX * (x + 0.5) + this.INDENT_DCX[y % 2],
+                    this.DCY * y + this.RADIUS);
 };
 
 dt.LevelRenderer.prototype.renderCellBackground = function(ictx, x, y, fill, stroke, width) {
@@ -173,6 +173,23 @@ dt.LevelRenderer.prototype.renderCellBackground = function(ictx, x, y, fill, str
 
 dt.FULL_CIRCLE = 2 * Math.PI;
 
+dt.LevelRenderer.prototype.drawGoal = function(ctx, obj) {
+  var color = obj.isGoalReached() ? "#00ff00" : "#ffa000";
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, 0, this.RADIUS - 2, 0, 2 * Math.PI, false);
+  ctx.stroke();
+};
+
+dt.LevelRenderer.prototype.drawLocked = function(ctx) {
+  ctx.strokeStyle = "#ff00ff";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, 0, this.RADIUS - 6, 0, 2 * Math.PI, false);
+  ctx.stroke();
+};
+
 dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
   var ctx = this.ctx;
   var obj = this.level.getObjectXY(x, y);
@@ -183,7 +200,27 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
     ctx.translate(hc.x, hc.y);
     if (obj instanceof dt.BasePiece) {
       obj.draw(ctx, percent || 0);
+      // Show goal status
+      if (obj.isGoal()) {
+        this.drawGoal(ctx, obj);
+      }
+      if (this.level.designMode && obj.isLocked()) {
+        this.drawLocked(ctx);
+      }
+
+      // Show countdown status
+      if( obj.asCompteur() ){
       
+        ctx.globalAlpha = 0.8;
+        if( obj.isFreeze() ){
+            ctx.fillStyle = "#FF0000";
+        }else{
+            ctx.fillStyle = "#00FF00";
+        }
+        ctx.font = "bold 30px Verdana";
+        ctx.textBaseline = "middle";
+        ctx.fillText(obj.getRebour(), -10, 0);
+      }
     } else {
       ctx.font = "30px Verdana";
       ctx.fillStyle = "#000000";

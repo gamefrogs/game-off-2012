@@ -85,6 +85,12 @@ dt.Level.prototype.initObjects = function(designMode) {
     if (pieceDef.goal) {
       piece.goal = true;
     }
+    if (pieceDef.rebour1){
+        piece.setRebour1(pieceDef.rebour1);
+    }
+    if( pieceDef.rebour2){
+        piece.setRebour2(pieceDef.rebour2);
+    }
     this.setObject(pieceDef, piece);
   }
 };
@@ -207,7 +213,7 @@ dt.Level.prototype.canRemovePiece = function(pos) {
     return false;
     
   } else {
-    return !piece.locked;
+    return this.designMode || !piece.isLocked();
   }
 };
 
@@ -338,6 +344,11 @@ dt.Level.prototype.changeLimitForPiece = function(typeName, delta) {
   return undefined;
 };
 
+dt.Level.prototype.setGoal = function(pos) {
+  var obj = this.getObject(pos);
+  obj.goal = true;
+};
+
 dt.Level.prototype.generateBackgroundString = function() {
   var back = this.getBackground();
   var all = "";
@@ -375,7 +386,29 @@ dt.Level.prototype.generateBackgroundString = function() {
   return all;
 };
 
-dt.Level.prototype.generateSource = function(id, title) {
+dt.Level.prototype.findFreeId = function() {
+  var free = false;
+  for (var id = 0; dt["LEVELDEF" + id]; ++id) {
+  }
+  return id;
+};
+
+dt.Level.prototype.findLimits = function() {
+  var limits = {};
+  for (var y = 0; y < this.getHeight(); ++y) {
+    for (var x = 0; x < this.getWidth(); ++x) {
+      var piece = this.getObjectXY(x, y);
+      if ((piece !== undefined) && (!piece.isLocked())) {
+        var limit = limits[piece.typeName] || 0;
+        limits[piece.typeName] = limit + 1;
+      }
+    }
+  }
+  return limits;
+};
+
+dt.Level.prototype.generateSource = function(title) {
+  var id = this.findFreeId();
   var src = "dt.LEVEL" + id + "_STR = \n";
   src += this.generateBackgroundString();
   //
@@ -388,7 +421,7 @@ dt.Level.prototype.generateSource = function(id, title) {
   for (var y = 0; y < this.getHeight(); ++y) {
     for (var x = 0; x < this.getWidth(); ++x) {
       var piece = this.getObjectXY(x, y);
-      if (piece !== undefined) {
+      if ((piece !== undefined) && (piece.isLocked())) {
         src += '                   { x: ' + x + ', y: ' + y + ', type: ' + piece.typeName +
           ', dir: dt.Dir.' + piece.dir.name + ', goal: ' + piece.isGoal() + ' },\n';
       }
@@ -396,8 +429,11 @@ dt.Level.prototype.generateSource = function(id, title) {
   }
   src += "                  ],\n";
   // Piece limits
+  var limits = this.findLimits();
   src += "                  [\n";
-  // TODO
+  for (var k in limits) {
+    src += "                   { type: " + k + ", limit: " + limits[k] + " },\n";
+  }
   src += "                  ]);\n";
 
   // Register
@@ -414,3 +450,4 @@ dt.Level.prototype.canDrawBackground = function() {
 dt.Level.prototype.drawBackground = function(ctx) {
   this.def.drawBackground(ctx);
 };
+
