@@ -6,6 +6,8 @@ dt.Eraser = function() {
 dt.Eraser.prototype = new dt.BasePiece();
 dt.registerPiece(dt.Eraser, "Eraser", "dt.Eraser", true);
 
+dt.Eraser.prototype.overlayAlpha = 0.6;
+
 dt.Eraser.create = function(dir, params) {
   var piece = new dt.Eraser();
   piece.init(dir, params);
@@ -28,6 +30,8 @@ dt.GoalMode = function() {
 };
 dt.GoalMode.prototype = new dt.BasePiece();
 dt.registerPiece(dt.GoalMode, "GoalMode", "dt.GoalMode", true);
+
+dt.GoalMode.prototype.overlayAlpha = 0.7;
 
 dt.GoalMode.create = function(dir, params) {
   var piece = new dt.GoalMode();
@@ -59,6 +63,8 @@ dt.LockMode = function() {
 dt.LockMode.prototype = new dt.BasePiece();
 dt.registerPiece(dt.LockMode, "LockMode", "dt.LockMode", true);
 
+dt.LockMode.prototype.overlayAlpha = 0.7;
+
 dt.LockMode.create = function(dir, params) {
   var piece = new dt.LockMode();
   piece.init(dir, params);
@@ -87,6 +93,8 @@ dt.Forbidden = function() {
 };
 dt.Forbidden.prototype = new dt.BasePiece();
 dt.registerPiece(dt.Forbidden, "Forbidden", "dt.Forbidden", true);
+
+dt.Forbidden.prototype.overlayAlpha = 0.7;
 
 dt.Forbidden.create = function(dir, params) {
   var piece = new dt.Forbidden();
