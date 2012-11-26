@@ -45,7 +45,7 @@ dt.PieceSelector.prototype.initLevel = function() {
   var usablePieces = this.getUsablePieces();
   for (var i = 0; i < usablePieces.length; ++i) {
     var piece = usablePieces[i];
-    this.addPiece(piece.type.create(dt.Dir.E));
+    this.addPiece(piece.type.create(dt.Dir.W));
   }
 
   this.pieces.setValueXY(this.pieces.getWidth() - 1, this.pieces.getHeight() - 1,

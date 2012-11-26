@@ -23,7 +23,7 @@ dt.LevelController = function(round, renderer, selector) {
   this.params = {};
 
   this.overPos = undefined;
-  this.dir = dt.Dir.E;
+  this.dir = dt.Dir.W;
   this.highlightFrom("piece_0", this.pieceButtons);
   this.choosePieceType(this.getUsablePieces()[0].type);
 };
