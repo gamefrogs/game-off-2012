@@ -143,6 +143,7 @@ dt.View.prototype.update = function(event) {
       if (event.to === dt.STATE_ROUND_LAYOUT) {
         this.renderer.init();
         this.pieceSelector.init();
+        this.controller.displayLevelInfo();
       }
 
       if (event.to === dt.STATE_ROUND_SUCCESS) {

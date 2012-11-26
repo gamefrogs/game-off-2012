@@ -85,11 +85,11 @@ dt.Level.prototype.initObjects = function(designMode) {
     if (pieceDef.goal) {
       piece.goal = true;
     }
-    if (pieceDef.rebour1){
-        piece.setRebour1(pieceDef.rebour1);
+    if (pieceDef.endAct){
+        piece.setRebour1(pieceDef.endAct);
     }
-    if( pieceDef.rebour2){
-        piece.setRebour2(pieceDef.rebour2);
+    if( pieceDef.beginAct){
+        piece.setRebour2(pieceDef.beginAct);
     }
     this.setObject(pieceDef, piece);
   }
@@ -464,3 +464,10 @@ dt.Level.prototype.drawBackground = function(ctx) {
   this.def.drawBackground(ctx);
 };
 
+dt.Level.prototype.getTitle = function() {
+  return this.def.title;
+};
+
+dt.Level.prototype.getInformation = function() {
+  return this.def.information;
+};
