@@ -231,13 +231,13 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
                 ctx.fillStyle = "#FF0000";
                 ctx.font = "bold 15px Verdana"; 
                 ctx.textBaseline = "middle";
-                ctx.fillText(obj.getBegin(), -10, -10); 
+                ctx.fillText(obj.getBegin(), -10, -13); 
             }
             if(obj.getEnd()>0){
-                ctx.fillStyle = "#0000FF";
+                ctx.fillStyle = "#00FF00";
                 ctx.font = "bold 15px Verdana"; 
                 ctx.textBaseline = "middle";
-                ctx.fillText(obj.getEnd(), -10, 10); 
+                ctx.fillText(obj.getEnd(), -10, 13); 
             }
             
         }else{

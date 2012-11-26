@@ -31,7 +31,7 @@ dt.LEVELDEF3 =
                   [
                    { x: 6, y: 2, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 5, y: 3, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 8, y: 3, type: dt.StraightEndPiece, dir: dt.Dir.NW, goal: true,rebour2:10 },
+                   { x: 8, y: 3, type: dt.StraightEndPiece, dir: dt.Dir.NW, goal: true,beginAct:10 },
                    { x: 6, y: 4, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 1, y: 5, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
                    { x: 5, y: 5, type: dt.Wall, dir: dt.Dir.E, goal: false },
@@ -39,7 +39,7 @@ dt.LEVELDEF3 =
                    { x: 5, y: 7, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 6, y: 8, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 5, y: 9, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 8, y: 9, type: dt.StraightEndPiece, dir: dt.Dir.SW, goal: true ,rebour1: 12},
+                   { x: 8, y: 9, type: dt.StraightEndPiece, dir: dt.Dir.SW, goal: true ,endAct: 12},
                   ],
                   [{ type: dt.StraightDominoPiece, limit: 15 },
 		           { type: dt.ForkDominoPiece, limit: 1},
