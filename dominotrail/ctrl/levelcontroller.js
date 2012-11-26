@@ -101,6 +101,7 @@ dt.LevelController.prototype.exitListeners = function() {
 };
 
 dt.LevelController.prototype.destroy = function() {
+  this.closeInfo();
   this.exitListeners();
   this.destroyPieceButtons();
   this.level.removeObserver(this);
@@ -255,11 +256,13 @@ dt.LevelController.prototype.handleCellOut = function(pos) {
 };
 
 dt.LevelController.prototype.closeInfo = function() {
-  var info = document.getElementById("information");
-  info.style.display = "none";
-  var infoClose = document.getElementById("info_close");
-  infoClose.removeEventListener("click", this.closeInfoListener, false);
-  this.closeInfoListener = undefined;
+  if (this.closeInfoListener !== undefined) {
+    var info = document.getElementById("information");
+    info.style.display = "none";
+    var infoClose = document.getElementById("info_close");
+    infoClose.removeEventListener("click", this.closeInfoListener, false);
+    this.closeInfoListener = undefined;
+  }
 };
 
 dt.LevelController.prototype.displayLevelInfo = function() {
@@ -286,6 +289,7 @@ dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
     if (event.type === dt.EVENT_CELL_DOWN) {
       if (event.button === dt.BUTTON_LEFT) {
+        this.closeInfo();
         this.handleCellClick(event.pos);
       } else if (event.button === dt.BUTTON_RIGHT) {
         this.handleCellRightClick(event.pos);
