@@ -68,6 +68,15 @@ dt.BasePiece.prototype.setRebour2 = function(a){
     this.rebour2Sauv=a;
 }
 
+dt.BasePiece.prototype.getBegin = function(){
+    return this.rebour2;
+}
+
+dt.BasePiece.prototype.getEnd = function(){
+    return this.rebour1;
+}
+
+
 dt.BasePiece.prototype.getRebour = function(){
     if ( this.rebour2>0 ){
         return this.rebour2;

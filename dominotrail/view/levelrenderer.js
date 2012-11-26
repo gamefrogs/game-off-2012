@@ -227,15 +227,27 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
             ctx.fill();
             ctx.restore();
             
-            ctx.fillStyle = "#FF0000";
+            if( obj.getBegin()>0){
+                ctx.fillStyle = "#FF0000";
+                ctx.font = "bold 15px Verdana"; 
+                ctx.textBaseline = "middle";
+                ctx.fillText(obj.getBegin(), -10, -10); 
+            }
+            if(obj.getEnd()>0){
+                ctx.fillStyle = "#0000FF";
+                ctx.font = "bold 15px Verdana"; 
+                ctx.textBaseline = "middle";
+                ctx.fillText(obj.getEnd(), -10, 10); 
+            }
             
         }else{
             ctx.fillStyle = "#00FF00";
+            if( obj.getRetour()>0){
+                ctx.font = "bold 30px Verdana";
+                ctx.textBaseline = "middle";
+                ctx.fillText(obj.getRebour(), -10, 0);
+            }
         }
-        
-        ctx.font = "bold 30px Verdana";
-        ctx.textBaseline = "middle";
-        ctx.fillText(obj.getRebour(), -10, 0);
       }
     } else {
       ctx.font = "30px Verdana";
