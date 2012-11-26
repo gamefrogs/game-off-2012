@@ -1,6 +1,8 @@
 "use strict";
 
 dt.EVENT_PIECE_SELECTED = "PieceSelected";
+dt.EVENT_ROTATE_LEFT = "RotateLeft";
+dt.EVENT_ROTATE_RIGHT = "RotateRight";
 
 dt.PieceSelector = function(round, viewport, ctx) {
   this.viewport = viewport;
@@ -82,15 +84,19 @@ dt.PieceSelector.prototype.getUsablePieces = function() {
 
 dt.PieceSelector.prototype.initListeners = function() {
   var that = this;
-  this.mouseListener = function(event) {
-    that.mouseHandler(event);
-  };
-  this.viewport.addEventListener("mousedown", this.mouseListener, false);
-
-  this.keyListener = function(event) {
-    that.keyHandler(event);
-  };
-  document.body.addEventListener("keydown", this.keyListener, false);
+  if (this.mouseListener === undefined) {
+    this.mouseListener = function(event) {
+      that.mouseHandler(event);
+    };
+    this.viewport.addEventListener("mousedown", this.mouseListener, false);
+  }
+  
+  if (this.keyListener === undefined) {
+    this.keyListener = function(event) {
+      that.keyHandler(event);
+    };
+    document.body.addEventListener("keydown", this.keyListener, false);
+  }
 };
 
 dt.PieceSelector.prototype.destroy = function() {
@@ -100,9 +106,9 @@ dt.PieceSelector.prototype.destroy = function() {
 
 dt.PieceSelector.prototype.exitListeners = function() {
   this.viewport.removeEventListener("mousedown", this.mouseListener, false);
-  this.mouseListener = null;
+  this.mouseListener = undefined;
   document.body.removeEventListener("keydown", this.keyListener, false);
-  this.keyListener = null;
+  this.keyListener = undefined;
 };
 
 dt.PieceSelector.prototype.addPiece = function(piece) {
@@ -255,6 +261,14 @@ dt.PieceSelector.prototype.keyHandler = function(event) {
              (event.keyCode === 46)) { // Delete
     this.selectEraser();
     event.preventDefault();
+    
+  } else if (event.keyCode === 37) { // Left
+    this.notify({ src: this,
+                  type: dt.EVENT_ROTATE_LEFT });
+    
+  } else if (event.keyCode === 39) { // Right
+    this.notify({ src: this,
+                  type: dt.EVENT_ROTATE_RIGHT });
   }
 };
 

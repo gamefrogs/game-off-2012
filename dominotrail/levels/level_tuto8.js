@@ -1,4 +1,4 @@
-dt.LEVEL4_STR = 
+dt.LEVELTUT8_STR = 
   " . . . . . . . . . . . . . . . . . . . . . .     \n" +
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     \n" +
@@ -26,23 +26,24 @@ dt.LEVEL4_STR =
   " . . . . . . . . . . . . . . . . . . . . . .     \n" +
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
-dt.LEVELDEF4 =
-  new dt.LevelDef("Around...", 11, 13, dt.LEVEL4_STR,
+dt.LEVELDEFTUT8 =
+  new dt.LevelDef("Perfect Timing", 11, 13, dt.LEVELTUT8_STR,
                   [
-                   { x: 4, y: 6, type: dt.StraightStartPiece, dir: dt.Dir.NE, goal: false },
-                   { x: 5, y: 6, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true },
-                   { x: 4, y: 7, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 5, y: 7, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 4, y: 8, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 5, y: 8, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 6, y: 8, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 4, y: 9, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 5, y: 9, type: dt.Wall, dir: dt.Dir.E, goal: false },
+                   { x: 2, y: 10, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
+                   { x: 8, y: 10, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true,
+                     beginAct: 9, endAct: 11 },
                   ],
                   [
-                   { type: dt.TurnRightDominoPiece, limit: 8 },
-                   { type: dt.StraightDominoPiece, limit: 5 },
-                   { type: dt.TurnLeftDominoPiece, limit: 4 },
+                   { type: dt.StraightDominoPiece, limit: Infinity },
+                   { type: dt.TurnLeftDominoPiece, limit: Infinity },
+                   { type: dt.TurnRightDominoPiece, limit: Infinity },
                   ]);
+
+dt.LEVELDEFTUT8.information = (
+  "<p>You've probably guessed it by now: we are so mean that we sometimes use both green and " +
+    "red numbers to force you to get somewhere at a precise point in time.</p>" +
+
+  "<p>Punctuality is the politeness of princes, or so they say.</p>"
+);
 // Register level
-dt.LEVELS.push(dt.LEVELDEF4);
+dt.LEVELS.push(dt.LEVELDEFTUT8);
