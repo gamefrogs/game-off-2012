@@ -242,7 +242,7 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
             
         }else{
             ctx.fillStyle = "#00FF00";
-            if( obj.getRetour()>0){
+            if( obj.getRebour()>0){
                 ctx.font = "bold 30px Verdana";
                 ctx.textBaseline = "middle";
                 ctx.fillText(obj.getRebour(), -10, 0);
