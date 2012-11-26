@@ -82,15 +82,19 @@ dt.PieceSelector.prototype.getUsablePieces = function() {
 
 dt.PieceSelector.prototype.initListeners = function() {
   var that = this;
-  this.mouseListener = function(event) {
-    that.mouseHandler(event);
-  };
-  this.viewport.addEventListener("mousedown", this.mouseListener, false);
-
-  this.keyListener = function(event) {
-    that.keyHandler(event);
-  };
-  document.body.addEventListener("keydown", this.keyListener, false);
+  if (this.mouseListener === undefined) {
+    this.mouseListener = function(event) {
+      that.mouseHandler(event);
+    };
+    this.viewport.addEventListener("mousedown", this.mouseListener, false);
+  }
+  
+  if (this.keyListener === undefined) {
+    this.keyListener = function(event) {
+      that.keyHandler(event);
+    };
+    document.body.addEventListener("keydown", this.keyListener, false);
+  }
 };
 
 dt.PieceSelector.prototype.destroy = function() {
@@ -100,9 +104,9 @@ dt.PieceSelector.prototype.destroy = function() {
 
 dt.PieceSelector.prototype.exitListeners = function() {
   this.viewport.removeEventListener("mousedown", this.mouseListener, false);
-  this.mouseListener = null;
+  this.mouseListener = undefined;
   document.body.removeEventListener("keydown", this.keyListener, false);
-  this.keyListener = null;
+  this.keyListener = undefined;
 };
 
 dt.PieceSelector.prototype.addPiece = function(piece) {
