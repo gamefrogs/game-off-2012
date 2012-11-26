@@ -1,6 +1,8 @@
 "use strict";
 
 dt.EVENT_PIECE_SELECTED = "PieceSelected";
+dt.EVENT_ROTATE_LEFT = "RotateLeft";
+dt.EVENT_ROTATE_RIGHT = "RotateRight";
 
 dt.PieceSelector = function(round, viewport, ctx) {
   this.viewport = viewport;
@@ -259,6 +261,14 @@ dt.PieceSelector.prototype.keyHandler = function(event) {
              (event.keyCode === 46)) { // Delete
     this.selectEraser();
     event.preventDefault();
+    
+  } else if (event.keyCode === 37) { // Left
+    this.notify({ src: this,
+                  type: dt.EVENT_ROTATE_LEFT });
+    
+  } else if (event.keyCode === 39) { // Right
+    this.notify({ src: this,
+                  type: dt.EVENT_ROTATE_RIGHT });
   }
 };
 

@@ -332,8 +332,16 @@ dt.LevelController.prototype.update = function(event) {
       }
 
       this.fullRender(this.overPos);
-    }
-    
+      
+    } else if (event.type === dt.EVENT_ROTATE_RIGHT) {
+      this.chooseDir(this.dir.right);
+      this.fullRender(this.overPos);
+      
+    } else if (event.type === dt.EVENT_ROTATE_LEFT) {
+      this.chooseDir(this.dir.left);
+      this.fullRender(this.overPos);
+      
+    }    
   } else {
     util.log("LevelController received ", event);
   }
