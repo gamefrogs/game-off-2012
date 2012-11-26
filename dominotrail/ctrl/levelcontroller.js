@@ -254,6 +254,34 @@ dt.LevelController.prototype.handleCellOut = function(pos) {
   this.fullRender();
 };
 
+dt.LevelController.prototype.closeInfo = function() {
+  var info = document.getElementById("information");
+  info.style.display = "none";
+  var infoClose = document.getElementById("info_close");
+  infoClose.removeEventListener("click", this.closeInfoListener, false);
+  this.closeInfoListener = undefined;
+};
+
+dt.LevelController.prototype.displayLevelInfo = function() {
+  if (this.level.getInformation() === undefined) {
+    return;
+  }
+  
+  var info = document.getElementById("information");
+  info.style.display = "block";
+  var infoClose = document.getElementById("info_close");
+  var that = this;
+  this.closeInfoListener = function(event) {
+    that.closeInfo();
+  };
+  infoClose.addEventListener("click", this.closeInfoListener, false);
+
+  var infoTitle = document.getElementById("info_title");
+  infoTitle.innerHTML = this.level.getTitle();
+  var infoContent = document.getElementById("info_content");
+  infoContent.innerHTML = this.level.getInformation();
+};
+
 dt.LevelController.prototype.update = function(event) {
   if (event.src === this.renderer) {
     if (event.type === dt.EVENT_CELL_DOWN) {
@@ -282,6 +310,7 @@ dt.LevelController.prototype.update = function(event) {
       if (event.to === dt.ROUND_RUNNING) {
         this.runRound();
       }
+      
     } else {
       util.log("LevelController received ", event);
     }

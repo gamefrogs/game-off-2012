@@ -464,3 +464,10 @@ dt.Level.prototype.drawBackground = function(ctx) {
   this.def.drawBackground(ctx);
 };
 
+dt.Level.prototype.getTitle = function() {
+  return this.def.title;
+};
+
+dt.Level.prototype.getInformation = function() {
+  return this.def.information;
+};
