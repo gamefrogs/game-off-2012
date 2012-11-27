@@ -227,26 +227,23 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
             ctx.fill();
             ctx.restore();
             
-            if( obj.getBegin()>0){
-                ctx.fillStyle = "#FF0000";
-                ctx.font = "bold 15px Verdana"; 
-                ctx.textBaseline = "middle";
-                ctx.fillText(obj.getBegin(), -10, -13); 
-            }
-            if(obj.getEnd()>0){
-                ctx.fillStyle = "#00FF00";
-                ctx.font = "bold 15px Verdana"; 
-                ctx.textBaseline = "middle";
-                ctx.fillText(obj.getEnd(), -10, 13); 
-            }
+        }
             
-        }else{
-            ctx.fillStyle = "#00FF00";
-            if( obj.getRebour()>0){
-                ctx.font = "bold 30px Verdana";
-                ctx.textBaseline = "middle";
-                ctx.fillText(obj.getRebour(), -10, 0);
-            }
+        if( obj.getBegin()>0){
+          ctx.fillStyle = "#FF0000";
+          ctx.font = "bold 15px Verdana"; 
+          ctx.textBaseline = "middle";
+          var txt = "" + (obj.getBegin() - 1);
+          var metric = ctx.measureText(txt);
+          ctx.fillText(txt, dt.DCX / 2 - metric.width - 4, -11); 
+        }
+        if(obj.getEnd()>0){
+          ctx.fillStyle = "#00FF00";
+          ctx.font = "bold 15px Verdana"; 
+          ctx.textBaseline = "middle";
+          var txt = "" + (obj.getEnd() - 1);
+          var metric = ctx.measureText(txt);
+          ctx.fillText(txt, dt.DCX / 2 - metric.width - 4, 11); 
         }
       }
     } else {
