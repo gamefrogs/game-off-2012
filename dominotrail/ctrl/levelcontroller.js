@@ -337,7 +337,7 @@ dt.LevelController.prototype.update = function(event) {
 
 dt.LevelController.prototype.runRound = function() {
   var DELAY = 30;
-  var ANIM_STEP = 15;
+  var ANIM_STEP = 10;
   var that = this;
   var last = new Date().getTime() - DELAY;
   var anim = -1;
