@@ -47,6 +47,7 @@ dt.BaseDominoPiece.prototype.endStep = function(step) {
     this.fallen = true;
     this.reached = true;
   }
+  dt.BasePiece.prototype.endStep.call(this, step);
 };
 
 dt.BaseDominoPiece.prototype.reset = function() {

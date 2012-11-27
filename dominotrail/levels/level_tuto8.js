@@ -31,7 +31,7 @@ dt.LEVELDEFTUT8 =
                   [
                    { x: 2, y: 10, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
                    { x: 8, y: 10, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true,
-                     beginAct: 9, endAct: 11 },
+                     beginAct: 8, endAct: 9 },
                   ],
                   [
                    { type: dt.StraightDominoPiece, limit: Infinity },
