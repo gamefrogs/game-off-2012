@@ -259,11 +259,11 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
 // Returns the hex coordinates corresponding to some graphical "mouse" coordinates
 dt.LevelRenderer.prototype.getHexPosition = function(mx, my) {
   var cy0 = Math.floor((my - this.RADIUS) / this.DCY);
-  var cx0 = Math.floor(((mx - this.INDENT_DCX[cy0 % 2]) / this.DCX) - 0.5);
+  var cx0 = Math.floor(((mx - this.INDENT_DCX[Math.abs(cy0) % 2]) / this.DCX) - 0.5);
   var cx1 = cx0 + 1;
   var cy1 = cy0;
   var cy2 = cy0 + 1;
-  var cx2 = cx0 + (cy0 % 2);
+  var cx2 = cx0 + (Math.abs(cy0) % 2);
   var center0 = this.getCellCenter(cx0, cy0);
   var center1 = this.getCellCenter(cx1, cy1);
   var center2 = this.getCellCenter(cx2, cy2);
