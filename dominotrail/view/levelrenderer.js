@@ -231,13 +231,13 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
                 ctx.fillStyle = "#FF0000";
                 ctx.font = "bold 15px Verdana"; 
                 ctx.textBaseline = "middle";
-                ctx.fillText(obj.getBegin(), -10, -13); 
+                ctx.fillText(obj.getBegin() - 1, -10, -13); 
             }
             if(obj.getEnd()>0){
                 ctx.fillStyle = "#00FF00";
                 ctx.font = "bold 15px Verdana"; 
                 ctx.textBaseline = "middle";
-                ctx.fillText(obj.getEnd(), -10, 13); 
+                ctx.fillText(obj.getEnd() - 1, -10, 13); 
             }
             
         }else{
@@ -245,7 +245,7 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
             if( obj.getRebour()>0){
                 ctx.font = "bold 30px Verdana";
                 ctx.textBaseline = "middle";
-                ctx.fillText(obj.getRebour(), -10, 0);
+                ctx.fillText(obj.getRebour() - 1, -10, 0);
             }
         }
       }

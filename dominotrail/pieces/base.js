@@ -87,14 +87,6 @@ dt.BasePiece.prototype.getRebour = function(){
     return 0;
 }
 
-dt.BasePiece.prototype.getBegin = function(){
-    return this.rebour2;
-}
-
-dt.BasePiece.prototype.getEnd = function(){
-    return this.rebour1;
-}
-
 dt.BasePiece.prototype.asCompteur = function(){
     return (this.rebour1!=-1 || this.rebour2!=-1 );
 }
