@@ -69,10 +69,28 @@ dt.View.prototype.initEvents = function() {
 
 dt.View.prototype.createLevelButtons = function() {
   var levels = this.game.getLevels();
+  var table = "<table>";
+  var columns = 3;
+  var maxColLength = Math.ceil(levels.length / columns);
   // First create the whole HTML modifications
-  for (var l = 0; l < levels.length; ++l) {
-    this.createLevelButton(l + 1, levels[l]);
+  for (var l = 0; l < columns * maxColLength; ++l) {
+    if (l % columns === 0) {
+      table += "<tr>";
+    }
+    var lev = maxColLength * (l % columns) + Math.floor(l / columns);
+    if (lev < levels.length) {
+      table += "<td>" + this.createLevelButton(lev + 1, levels[lev]) + "</td>";
+    } else {
+      table += "<td></td>";
+    }
+    if (l % columns === columns - 1) {
+      table += "</tr>";
+    }
   }
+  table += "</table>";
+  var menuDiv = document.getElementById(dt.View.LEVELS_DIV);
+  menuDiv.innerHTML += table;
+  
   // Then add listeners
   for (l = 0; l < levels.length; ++l) {
     this.attachLevelButton(l + 1, levels[l]);
@@ -80,10 +98,11 @@ dt.View.prototype.createLevelButtons = function() {
 };
 
 dt.View.prototype.createLevelButton = function(id, level) {
-  var menuDiv = document.getElementById(dt.View.LEVELS_DIV);
+  //
   var buttonStr = ('<a id="level' + id + '" class="button" href="javascript:util.nop();">Level ' +
                    id + ': ' + level.title + '</a><br>');
-  menuDiv.innerHTML += buttonStr;
+  return buttonStr;
+  //menuDiv.innerHTML += buttonStr;
 };
 
 dt.View.prototype.attachLevelButton = function(id, level) {
