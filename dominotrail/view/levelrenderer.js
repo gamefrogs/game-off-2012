@@ -176,7 +176,7 @@ dt.FULL_CIRCLE = 2 * Math.PI;
 dt.LevelRenderer.prototype.drawGoal = function(ctx, obj) {
   var color = obj.isGoalReached() ? "#00ff00" : "#ffa000";
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.arc(0, 0, this.RADIUS - 2, 0, 2 * Math.PI, false);
   ctx.stroke();
@@ -186,7 +186,7 @@ dt.LevelRenderer.prototype.drawLocked = function(ctx) {
   ctx.strokeStyle = "#ff00ff";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(0, 0, this.RADIUS - 6, 0, 2 * Math.PI, false);
+  ctx.arc(0, 0, this.RADIUS - 8, 0, 2 * Math.PI, false);
   ctx.stroke();
 };
 
