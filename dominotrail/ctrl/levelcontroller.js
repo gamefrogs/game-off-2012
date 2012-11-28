@@ -308,7 +308,8 @@ dt.LevelController.prototype.closeInfo = function() {
 };
 
 dt.LevelController.prototype.displayLevelInfo = function() {
-  if (this.level.getInformation() === undefined) {
+  if (this.infoAlreadyDisplayed ||
+      (this.level.getInformation() === undefined)) {
     return;
   }
   
@@ -325,6 +326,8 @@ dt.LevelController.prototype.displayLevelInfo = function() {
   infoTitle.innerHTML = this.level.getTitle();
   var infoContent = document.getElementById("info_content");
   infoContent.innerHTML = this.level.getInformation();
+
+  this.infoAlreadyDisplayed = true;
 };
 
 dt.LevelController.prototype.update = function(event) {
