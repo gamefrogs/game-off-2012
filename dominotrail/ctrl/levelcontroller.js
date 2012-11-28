@@ -164,10 +164,47 @@ dt.LevelController.prototype.tryAddPiece = function(pos) {
       this.dir = outs[0].dir.opposite;
     }
     this.preparePiece();
+    return true;
+
+  } else {
+    return false;
   }
 };
 
-dt.LevelController.prototype.handleCellClick = function(pos) {
+dt.LevelController.ACTION_ROTATE_LEFT = -1;
+dt.LevelController.ACTION_ERASE = 0;
+dt.LevelController.ACTION_ROTATE_RIGHT = 1;
+dt.DELETE_RADIUS = dt.RADIUS / 3;
+
+dt.LevelController.prototype.tryDeleteRotate = function(pos, dpos) {
+  if (!this.level.canRemovePiece(pos)) {
+    return false;
+  }
+  
+  var action = ((dpos.x < -dt.DELETE_RADIUS) ? dt.LevelController.ACTION_ROTATE_LEFT :
+                (dpos.x > dt.DELETE_RADIUS) ?  dt.LevelController.ACTION_ROTATE_RIGHT :
+                                            dt.LevelController.ACTION_ERASE);
+  var piece = this.level.getObject(pos);
+  var pieceType = dt.PIECE_TYPE_BY_NAME[piece.typeName];
+  this.level.removePiece(pos);
+  var newPiece;
+
+  switch (action) {
+  case dt.LevelController.ACTION_ROTATE_LEFT:
+    newPiece = pieceType.create(piece.dir.left, this.params);
+    this.level.addPiece(pos, newPiece);
+    break;
+    
+  case dt.LevelController.ACTION_ROTATE_RIGHT:
+    newPiece = pieceType.create(piece.dir.right, this.params);
+    this.level.addPiece(pos, newPiece);
+    break;
+  }
+  this.renderFull();
+  return true;
+};
+
+dt.LevelController.prototype.handleCellClick = function(pos, dpos) {
   if (this.isRoundRunning()) {
     return;
   }
@@ -179,7 +216,9 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
     break;
     
   case dt.MODE_PIECE:
-    this.tryAddPiece(pos);
+    if (!this.tryAddPiece(pos)) {
+      this.tryDeleteRotate(pos, dpos);
+    }
     break;
 
   case dt.MODE_ERASER:
@@ -216,6 +255,8 @@ dt.LevelController.prototype.fullRender = function(pos, percent) {
     
       this.renderer.renderOverlay(pos, this.piece);
       
+    } else if (this.level.canRemovePiece(pos)) {
+      this.renderer.renderOverlay(pos, dt.DeleteRotate.create(dt.Dir.NONE));
     } else {
       this.renderer.renderOverlay(pos, dt.Forbidden.create(dt.Dir.NONE));
     }
@@ -291,7 +332,7 @@ dt.LevelController.prototype.update = function(event) {
     if (event.type === dt.EVENT_CELL_DOWN) {
       if (event.button === dt.BUTTON_LEFT) {
         this.closeInfo();
-        this.handleCellClick(event.pos);
+        this.handleCellClick(event.pos, event.dpos);
       } else if (event.button === dt.BUTTON_RIGHT) {
         this.handleCellRightClick(event.pos);
       } else { 

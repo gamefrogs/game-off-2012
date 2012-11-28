@@ -272,12 +272,12 @@ dt.LevelRenderer.prototype.getHexPosition = function(mx, my) {
   var dist2 = dt.squaredist(mx, my, center2.x, center2.y);
   if (dist0 < dist1) {
     if (dist0 < dist2) {
-      return new dt.Pos(cx0, cy0);
+      return { pos: new dt.Pos(cx0, cy0), dpos: new dt.Pos(mx - center0.x, my - center0.y) };
     }
   } else if (dist1 < dist2) {
-    return new dt.Pos(cx1, cy1);
+    return { pos: new dt.Pos(cx1, cy1), dpos: new dt.Pos(mx - center1.x, my - center1.y) };
   }
-  return new dt.Pos(cx2, cy2);
+  return { pos: new dt.Pos(cx2, cy2), dpos: new dt.Pos(mx - center2.x, my - center2.y) };
 };
 
 dt.LevelRenderer.prototype.update = function(event) {
@@ -294,7 +294,9 @@ dt.LevelRenderer.prototype.mouseHandler = function(event) {
   var mx = event.clientX + util.windowScrollX() - this.x0;
   var my = event.clientY + util.windowScrollY() - this.y0;
 
-  var hcc = this.getHexPosition(mx, my);
+  var hexPos = this.getHexPosition(mx, my);
+  var hcc = hexPos.pos;
+  var dpos = hexPos.dpos;
 
   if (event.type === "mousemove") {
     this.notify({ src: this,
@@ -304,7 +306,8 @@ dt.LevelRenderer.prototype.mouseHandler = function(event) {
     this.notify({ src: this,
                   type: dt.EVENT_CELL_DOWN,
                   button: dt.BUTTON_MAPPING[event.button],
-                  pos: hcc });
+                  pos: hcc,
+                  dpos: dpos });
     
   } else if (event.type === "mouseup") {
     this.notify({ src: this,
