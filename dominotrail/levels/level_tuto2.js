@@ -61,13 +61,10 @@ dt.LEVELDEFTUT2 =
                   ]);
 
 dt.LEVELDEFTUT2.information = (
-  "<p>Of course, you will generally have to take turns to reach the goal.</p>" +
+  "<p>Of course, you can't always reach your destination by going in a straight line.</p>" +
 
-  "<p>May we remind you that your right mouse button and the LEFT and RIGHT arrows will " +
-    "allow you to rotate a piece before you drop it.</p>" +
-
-  "<p>And use the eraser as much as you want: the removed pieces come back to your box. " +
-    "You can also select the eraser with DELETE or BACKSPACE."
+  "<p>Select the appropriate pieces from the box on the left, or using the UP and DOWN arrows " +
+    "to cycle through them.</p>"
 );
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT2);

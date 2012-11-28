@@ -139,12 +139,16 @@ dt.View.prototype.setVisible = function(name, visible) {
 dt.View.prototype.showSuccess = function() {
   var title = document.getElementById("result_title");
   title.innerHTML = "SUCCESS!";
+  var nextLevel = document.getElementById("next_level");
+  nextLevel.style.display = "inline";
   this.setVisible(dt.View.SCREEN_RESULT, true);
 };
 
 dt.View.prototype.showFailure = function() {
   var title = document.getElementById("result_title");
   title.innerHTML = "FAILURE!";
+  var nextLevel = document.getElementById("next_level");
+  nextLevel.style.display = "none";
   this.setVisible(dt.View.SCREEN_RESULT, true);
 };
 
