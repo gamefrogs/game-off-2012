@@ -263,10 +263,10 @@ dt.PieceSelector.prototype.keyHandler = function(event) {
     this.selectPreviousPiece();
     event.preventDefault();
     
-  } else if ((event.keyCode === 8) ||  // Backspace
+  /*} else if ((event.keyCode === 8) ||  // Backspace
              (event.keyCode === 46)) { // Delete
     this.selectEraser();
-    event.preventDefault();
+    event.preventDefault(); */
     
   } else if (event.keyCode === 37) { // Left
     this.notify({ src: this,
