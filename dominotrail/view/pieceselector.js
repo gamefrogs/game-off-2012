@@ -39,6 +39,7 @@ dt.PieceSelector.prototype.init = function() {
   this.selectedPos = new dt.Pos(0, 0);
   this.initLevel();
   this.initListeners();
+  this.selectDeltaPiece(0); // Make sure the level controller is aware of the piece
   this.render();
 };
 
@@ -50,12 +51,17 @@ dt.PieceSelector.prototype.initLevel = function() {
     this.addPiece(piece.type.create(dt.Dir.W));
   }
 
-  this.pieces.setValueXY(this.pieces.getWidth() - 1, this.pieces.getHeight() - 1,
-                         dt.Eraser.create(dt.Dir.NONE));
+  var j = 1;
+  //this.pieces.setValueXY(this.pieces.getWidth() - j, this.pieces.getHeight() - 1,
+  //                       dt.Eraser.create(dt.Dir.NONE));
+  //j += 1;
+
   if (this.level.designMode) {
-    this.pieces.setValueXY(this.pieces.getWidth() - 2, this.pieces.getHeight() - 1,
+    this.pieces.setValueXY(this.pieces.getWidth() - j, this.pieces.getHeight() - 1,
                            dt.GoalMode.create(dt.Dir.NONE));
-    this.pieces.setValueXY(this.pieces.getWidth() - 3, this.pieces.getHeight() - 1,
+    j += 1;
+    
+    this.pieces.setValueXY(this.pieces.getWidth() - j, this.pieces.getHeight() - 1,
                            dt.LockMode.create(dt.Dir.NONE));
   }
   this.render;
