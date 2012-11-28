@@ -28,21 +28,6 @@ dt.LevelController = function(round, renderer, selector) {
   this.choosePieceType(this.getUsablePieces()[0].type);
 };
 
-dt.LevelController.prototype.createPieceButton = function(id, label, limit, typeName) {
-  var panel = document.getElementById("piece_buttons");
-  panel.innerHTML += ('<span id="' + id + '" class="sbutton">' + label + '</span>' +
-                      '<span id="limit_' + id + '" class="limit">' + limit + '</span>' +
-                      '<br>');
-  if (typeName !== undefined) {
-    this.counters[typeName] = "limit_" + id;
-  }
-};
-
-dt.LevelController.prototype.destroyPieceButtons = function() {
-  var panel = document.getElementById("piece_buttons");
-  panel.innerHTML = "";
-};
-
 dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
   var that = this;
   return function(event) {
@@ -103,7 +88,6 @@ dt.LevelController.prototype.exitListeners = function() {
 dt.LevelController.prototype.destroy = function() {
   this.closeInfo();
   this.exitListeners();
-  this.destroyPieceButtons();
   this.level.removeObserver(this);
   this.round.removeObserver(this);
   this.selector.removeObserver(this);
