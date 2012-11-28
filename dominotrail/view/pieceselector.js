@@ -279,7 +279,9 @@ dt.PieceSelector.prototype.keyHandler = function(event) {
 };
 
 dt.PieceSelector.prototype.update = function(event) {
-  if ((event.src === this.level) && (event.type === dt.EVENT_LIMIT_CHANGE)) {
+  if ((event.src === this.level) &&
+      ((event.type === dt.EVENT_LIMIT_CHANGE) ||
+       (event.type === dt.EVENT_LEVEL_CLEARED))) {
     this.render();
   }
 };

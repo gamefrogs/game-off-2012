@@ -369,7 +369,12 @@ dt.LevelController.prototype.update = function(event) {
       this.chooseDir(this.dir.left);
       this.fullRender(this.overPos);
       
-    }    
+    }
+    
+  } else if ((event.src === this.level) &&
+             (event.type === dt.EVENT_LEVEL_CLEARED)) {
+    this.fullRender();
+
   } else {
     util.log("LevelController received ", event);
   }

@@ -67,6 +67,10 @@ dt.Round.prototype.reset = function() {
   this.init();
 };
 
+dt.Round.prototype.clear = function() {
+  this.level.clear();
+};
+
 dt.Round.prototype.setStep = function(step) {
   if (step !== this.step) {
     this.step = step;

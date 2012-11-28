@@ -111,6 +111,10 @@ dt.Game.prototype.replayRound = function() {
   this.changeState(dt.STATE_ROUND_LAYOUT);
 };
 
+dt.Game.prototype.clearRound = function() {
+  this.round.clear();
+};
+
 dt.Game.prototype.update = function(event) {
   if (event.src === this.round) {
     if (event.type === dt.EVENT_ROUND_STATUS_CHANGE) {
