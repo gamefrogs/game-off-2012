@@ -179,6 +179,8 @@ dt.View.prototype.update = function(event) {
       this.pieceSelector = new dt.PieceSelector(event.round, selectorCanvas,
                                                 selectorCanvas.getContext("2d"));
       this.controller = new dt.LevelController(event.round, this.renderer, this.pieceSelector);
+      var levelTitle = document.getElementById("show_title");
+      levelTitle.innerHTML = event.round.level.getTitle();
 
     } else if (event.type === dt.EVENT_DESTROY_ROUND) {
       this.controller.destroy();
