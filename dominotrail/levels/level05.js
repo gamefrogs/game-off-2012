@@ -66,5 +66,14 @@ dt.LEVELDEF5 =
                    { type: dt.StraightDominoPiece, limit: Infinity },
                    { type: dt.TurnLeftDominoPiece, limit: Infinity },
                   ]);
+
+// Loads an image from an URL. Can be an absolute URL too.
+dt.loadImageInto("resources/ireland.jpg", dt.LEVELDEF5, "img");
+
+dt.LEVELDEF5.drawBackground = function(ctx) {
+  dt.drawImageWithOverlay(ctx, this.img, this.getWidth(), this.getHeight(), 0.9, 0.1);
+};
+
+
 // Register level
 dt.LEVELS.push(dt.LEVELDEF5);

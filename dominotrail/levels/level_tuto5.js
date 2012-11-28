@@ -29,6 +29,7 @@ dt.LEVELTUT5_STR =
 dt.LEVELDEFTUT5 =
   new dt.LevelDef("Forced Passage", 11, 13, dt.LEVELTUT5_STR,
                   [
+                   { x: 3, y: 5, type: dt.Wall, dir: dt.Dir.W, goal: false },
                    { x: 2, y: 6, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
                    { x: 3, y: 7, type: dt.StraightDominoPiece, dir: dt.Dir.E, goal: true },
                    { x: 5, y: 7, type: dt.Wall, dir: dt.Dir.E, goal: false },

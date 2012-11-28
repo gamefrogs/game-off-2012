@@ -41,5 +41,11 @@ dt.LEVELDEFLV3 =
                    { type: dt.TurnLeftDominoPiece, limit: 3 },
                    { type: dt.TurnRightDominoPiece, limit: 10 },
                   ]);
+// Loads an image from an URL. Can be an absolute URL too.
+dt.loadImageInto("resources/face.jpg", dt.LEVELDEFLV3, "img");
+
+dt.LEVELDEFLV3.drawBackground = function(ctx) {
+  dt.drawImageWithOverlay(ctx, this.img, this.getWidth(), this.getHeight(), 1, 0.2);
+};
 // Register level
 dt.LEVELS.push(dt.LEVELDEFLV3);
