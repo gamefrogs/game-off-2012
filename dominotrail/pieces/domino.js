@@ -47,6 +47,7 @@ dt.BaseDominoPiece.prototype.endStep = function(step) {
     this.fallen = true;
     this.reached = true;
   }
+  dt.BasePiece.prototype.endStep.call(this, step);
 };
 
 dt.BaseDominoPiece.prototype.reset = function() {
@@ -83,7 +84,7 @@ dt.StraightDominoPiece.prototype.draw = function(ctx, percent) {
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 2, 0, 0, 1], 1, ratio);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 2, 0, 0, 1], 0, ratio);
   ctx.restore();
 };
 
@@ -223,7 +224,7 @@ dt.TurnRightDominoPiece.prototype.draw = function(ctx, percent) {
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 0, 2, 0, 1], 1, ratio);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 0, 2, 0, 1], 0, ratio);
   ctx.restore();
 };
 
@@ -251,7 +252,7 @@ dt.TurnLeftDominoPiece.prototype.draw = function(ctx, percent) {
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 0, 0, 0, 1], 1, ratio);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 0, 0, 0, 1], 0, ratio);
   ctx.restore();
 };
 
@@ -280,7 +281,7 @@ dt.RForkDominoPiece.prototype.draw = function(ctx, percent) {
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 2, 2, 0, 1], 1, ratio);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 0, 2, 2, 0, 1], 0, ratio);
   ctx.restore();
   
 };
@@ -309,7 +310,7 @@ dt.LForkDominoPiece.prototype.draw = function(ctx, percent) {
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 2, 0, 0, 1], 1, ratio);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 2, 0, 0, 1], 0, ratio);
   ctx.restore();
   
 };
@@ -339,7 +340,7 @@ dt.ForkDominoPiece.prototype.draw = function(ctx, percent) {
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 0, 2, 0, 1], 1, ratio);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 0, 2, 0, 1], 0, ratio);
   ctx.restore();
   
 };
@@ -370,7 +371,7 @@ dt.TriForkDominoPiece.prototype.draw = function(ctx, percent) {
   var ratio = (this.fallen ? 1 :
                this.active ? (percent / 100) :
                0);
-  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 2, 2, 0, 1], 1, ratio);
+  dt.draw_hex(ctx, 0, 0, dt.RADIUS, [0, 0, 0, 0, 0, 0], [0, 2, 2, 2, 0, 1], 0, ratio);
   ctx.restore();
   
 };

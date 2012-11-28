@@ -9,11 +9,11 @@ dt.PieceSelector = function(round, viewport, ctx) {
   this.ctx = ctx;
   this.level = round.level;
 
-  this.grid = new dt.Hexgrid(4, 6);
+  this.grid = new dt.Hexgrid(3, 6);
   this.pieces = new dt.Hexgrid(this.grid.getWidth(), this.grid.getHeight());
 
   // Some drawing constants
-  this.RADIUS = 25;
+  this.RADIUS = 30;
   this.DCX = this.RADIUS * Math.sqrt(3);
   this.INDENT_DCX = [0, this.DCX / 2];
   this.DCY = this.RADIUS * 1.5;

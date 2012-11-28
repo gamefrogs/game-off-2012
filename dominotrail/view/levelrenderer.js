@@ -176,7 +176,7 @@ dt.FULL_CIRCLE = 2 * Math.PI;
 dt.LevelRenderer.prototype.drawGoal = function(ctx, obj) {
   var color = obj.isGoalReached() ? "#00ff00" : "#ffa000";
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.arc(0, 0, this.RADIUS - 2, 0, 2 * Math.PI, false);
   ctx.stroke();
@@ -186,7 +186,7 @@ dt.LevelRenderer.prototype.drawLocked = function(ctx) {
   ctx.strokeStyle = "#ff00ff";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(0, 0, this.RADIUS - 6, 0, 2 * Math.PI, false);
+  ctx.arc(0, 0, this.RADIUS - 8, 0, 2 * Math.PI, false);
   ctx.stroke();
 };
 
@@ -227,15 +227,24 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
             ctx.fill();
             ctx.restore();
             
-            ctx.fillStyle = "#FF0000";
-            
-        }else{
-            ctx.fillStyle = "#00FF00";
         }
-        
-        ctx.font = "bold 30px Verdana";
-        ctx.textBaseline = "middle";
-        ctx.fillText(obj.getRebour(), -10, 0);
+            
+        if( obj.getBegin()>0){
+          ctx.fillStyle = "#FF0000";
+          ctx.font = "bold 15px Verdana"; 
+          ctx.textBaseline = "middle";
+          var txt = "" + (obj.getBegin() - 1);
+          var metric = ctx.measureText(txt);
+          ctx.fillText(txt, dt.DCX / 2 - metric.width - 4, -11); 
+        }
+        if(obj.getEnd()>0){
+          ctx.fillStyle = "#00FF00";
+          ctx.font = "bold 15px Verdana"; 
+          ctx.textBaseline = "middle";
+          var txt = "" + (obj.getEnd() - 1);
+          var metric = ctx.measureText(txt);
+          ctx.fillText(txt, dt.DCX / 2 - metric.width - 4, 11); 
+        }
       }
     } else {
       ctx.font = "30px Verdana";
@@ -249,12 +258,12 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
 
 // Returns the hex coordinates corresponding to some graphical "mouse" coordinates
 dt.LevelRenderer.prototype.getHexPosition = function(mx, my) {
-  var cy0 = Math.floor(my / this.DCY);
-  var cx0 = Math.floor((mx - this.INDENT_DCX[cy0 % 2]) / this.DCX);
+  var cy0 = Math.floor((my - this.RADIUS) / this.DCY);
+  var cx0 = Math.floor(((mx - this.INDENT_DCX[Math.abs(cy0) % 2]) / this.DCX) - 0.5);
   var cx1 = cx0 + 1;
   var cy1 = cy0;
   var cy2 = cy0 + 1;
-  var cx2 = cx0 + (cy0 % 2);
+  var cx2 = cx0 + (Math.abs(cy0) % 2);
   var center0 = this.getCellCenter(cx0, cy0);
   var center1 = this.getCellCenter(cx1, cy1);
   var center2 = this.getCellCenter(cx2, cy2);

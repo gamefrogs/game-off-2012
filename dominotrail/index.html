@@ -29,8 +29,17 @@ body {
   height: 600px;
   border: 1px solid #808080;
   font-family: Verdana, Arial, sans;
+  font-size: 14px;
   overflow: auto;
   padding: 0;
+}
+
+a {
+  color: black;
+}
+
+a:hover {
+  color: #c0c0c0;
 }
 
 .screen {
@@ -158,6 +167,21 @@ h1 {
     <script src="levels/level06.js"></script>
     <script src="levels/levelOB01.js"></script>
     <script src="levels/levelOB02.js"></script>
+    <script src="levels/levelOB03.js"></script>
+    <script src="levels/levelOB04.js"></script>
+    <script src="levels/levelOB05.js"></script>
+    <script src="levels/levelOB06.js"></script>
+    <script src="levels/levelOB07.js"></script>
+    
+    <script src="levels/levelLV01.js"></script>
+    <script src="levels/levelLV02.js"></script>
+    <script src="levels/levelLV03.js"></script>
+    <script src="levels/levelLV04.js"></script>
+    <script src="levels/levelLV05.js"></script>
+
+    <script src="levels/levelCR01.js"></script>
+    <script src="levels/levelCR02.js"></script>
+    <script src="levels/levelCR3.js"></script>
 
     <script src="levels/leveleditor.js"></script>
     <!-- 'View' part of the game -->
@@ -204,7 +228,7 @@ h1 {
       
       <!-- Level round screen -->
       <div id="round" class="screen">
-        <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 200px; overflow: hidden; background-color: white">
+        <div id="toolbox" style="position: absolute; top: 0; left: 0; height: 600px; width: 199px; overflow: hidden; background-color: white; border-right: 1px solid #ccc">
 <br>
 <div align="center">
 	<a id="round_run" class="button" href="javascript:util.nop();"><img src="resources/run.png"></img></a>
@@ -212,7 +236,7 @@ h1 {
 <hr>          
           <div id="piece_buttons" style="width: 200px">
           </div>
-          <canvas id="piece_selector" width="200" height="250"></canvas>
+          <canvas id="piece_selector" width="200" height="310"></canvas>
           <hr>
           <div id="editor_pane" style="display: none">
             Title: <input type="text" id="level_title" value="New level" class="allow_select"></input>

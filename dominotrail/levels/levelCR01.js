@@ -1,4 +1,4 @@
-dt.LEVELTUT5_STR = 
+dt.LEVELCRR1_STR = 
   " . . . . . . . . . . . . . . . . . . . . . .     \n" +
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     \n" +
@@ -26,31 +26,27 @@ dt.LEVELTUT5_STR =
   " . . . . . . . . . . . . . . . . . . . . . .     \n" +
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
-dt.LEVELDEFTUT5 =
-  new dt.LevelDef("Forced Passage", 11, 13, dt.LEVELTUT5_STR,
+dt.LEVELCRRDEF1 =
+  new dt.LevelDef("Petit Obsede", 11, 13, dt.LEVELCRR1_STR,
                   [
-                   { x: 3, y: 5, type: dt.Wall, dir: dt.Dir.W, goal: false },
-                   { x: 2, y: 6, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
-                   { x: 3, y: 7, type: dt.StraightDominoPiece, dir: dt.Dir.E, goal: true },
-                   { x: 5, y: 7, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 3, y: 8, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 4, y: 8, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 3, y: 9, type: dt.StraightDominoPiece, dir: dt.Dir.W, goal: true },
-                   { x: 2, y: 10, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 3, y: 10, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 4, y: 10, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 5, y: 10, type: dt.Wall, dir: dt.Dir.E, goal: false },
-                   { x: 2, y: 11, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true },
+                   { x: 0, y: 5, type: dt.StraightEndPiece, dir: dt.Dir.NE, goal: true },
+                   { x: 1, y: 5, type: dt.Wall, dir: dt.Dir.NW, goal: false },
+                   { x: 9, y: 5, type: dt.TurnRightDominoPiece, dir: dt.Dir.W, goal: true },
+                   { x: 1, y: 6, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
+                   { x: 4, y: 6, type: dt.Wall, dir: dt.Dir.NW, goal: false },
+                   { x: 9, y: 6, type: dt.Wall, dir: dt.Dir.NW, goal: false },
+                   { x: 0, y: 7, type: dt.StraightEndPiece, dir: dt.Dir.SE, goal: true },
+                   { x: 1, y: 7, type: dt.Wall, dir: dt.Dir.NW, goal: false },
+                   { x: 3, y: 7, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true },
                   ],
                   [
-                   { type: dt.StraightDominoPiece, limit: 6 },
-                   { type: dt.TurnRightDominoPiece, limit: 7 },
                    { type: dt.TurnLeftDominoPiece, limit: 4 },
+                   { type: dt.TurnRightDominoPiece, limit: 6 },
+                   { type: dt.StraightDominoPiece, limit: 10 },
+                   { type: dt.TriForkDominoPiece, limit: 1 },
                   ]);
-
-dt.LEVELDEFTUT5.information = (
-  "<p>Goal pieces are not always the final destination, but you have to go through them anyway.</p>" +
-    "<p>Once a goal is cleared, the circle around it turns green.</p>"
-);
 // Register level
-dt.LEVELS.push(dt.LEVELDEFTUT5);
+dt.LEVELS.push(dt.LEVELCRRDEF1);
+
+
+
