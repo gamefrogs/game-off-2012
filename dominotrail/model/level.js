@@ -64,6 +64,7 @@ dt.LEVELS = [];
 // Events ------------------
 dt.EVENT_CELL_CHANGE = "CellChange";
 dt.EVENT_LIMIT_CHANGE = "LimitChange";
+dt.EVENT_LEVEL_CLEARED = "LevelCleared";
 
 // A runtime playable level, modifiable by the player -----------
 dt.Level = function(def, designMode) {
@@ -110,6 +111,13 @@ dt.Level.prototype.initLimits = function(designMode) {
       this.limits[pieceType.prototype.typeName] = (pieceType.defaultLimit || 0);
     }
   }
+};
+
+dt.Level.prototype.clear = function() {
+  this.initObjects(this.designMode);
+  this.initLimits(this.designMode);
+  this.notify({ src: this,
+                type: dt.EVENT_LEVEL_CLEARED });
 };
 
 dt.Level.prototype.getWidth = function() {

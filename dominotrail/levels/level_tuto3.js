@@ -46,7 +46,9 @@ dt.LEVELDEFTUT3 =
 
 dt.LEVELDEFTUT3.information = (
   "<p>Those pieces aren't cheap, mind you. That's why we don't always provide an infinite " +
-    "supply of each.</p>"
+    "supply of each.</p>" +
+
+  "<p>But if you want to get one back, just click the red cross on it.</p>"
 );
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT3);

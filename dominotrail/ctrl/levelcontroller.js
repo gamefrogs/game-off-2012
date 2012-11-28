@@ -1,4 +1,3 @@
-
 "use strict";
 
 dt.MODE_PIECE = "ModePiece";
@@ -27,21 +26,6 @@ dt.LevelController = function(round, renderer, selector) {
   this.dir = dt.Dir.W;
   this.highlightFrom("piece_0", this.pieceButtons);
   this.choosePieceType(this.getUsablePieces()[0].type);
-};
-
-dt.LevelController.prototype.createPieceButton = function(id, label, limit, typeName) {
-  var panel = document.getElementById("piece_buttons");
-  panel.innerHTML += ('<span id="' + id + '" class="sbutton">' + label + '</span>' +
-                      '<span id="limit_' + id + '" class="limit">' + limit + '</span>' +
-                      '<br>');
-  if (typeName !== undefined) {
-    this.counters[typeName] = "limit_" + id;
-  }
-};
-
-dt.LevelController.prototype.destroyPieceButtons = function() {
-  var panel = document.getElementById("piece_buttons");
-  panel.innerHTML = "";
 };
 
 dt.LevelController.prototype.makePieceListener = function(id, pieceType) {
@@ -104,7 +88,6 @@ dt.LevelController.prototype.exitListeners = function() {
 dt.LevelController.prototype.destroy = function() {
   this.closeInfo();
   this.exitListeners();
-  this.destroyPieceButtons();
   this.level.removeObserver(this);
   this.round.removeObserver(this);
   this.selector.removeObserver(this);
@@ -164,10 +147,46 @@ dt.LevelController.prototype.tryAddPiece = function(pos) {
       this.dir = outs[0].dir.opposite;
     }
     this.preparePiece();
+    return true;
+
+  } else {
+    return false;
   }
 };
 
-dt.LevelController.prototype.handleCellClick = function(pos) {
+dt.LevelController.ACTION_ROTATE_LEFT = -1;
+dt.LevelController.ACTION_ERASE = 0;
+dt.LevelController.ACTION_ROTATE_RIGHT = 1;
+dt.DELETE_RADIUS = dt.RADIUS / 3;
+
+dt.LevelController.prototype.tryDeleteRotate = function(pos, dpos) {
+  if (!this.level.canRemovePiece(pos)) {
+    return false;
+  }
+  
+  var action = ((dpos.x < -dt.DELETE_RADIUS) ? dt.LevelController.ACTION_ROTATE_LEFT :
+                (dpos.x > dt.DELETE_RADIUS) ?  dt.LevelController.ACTION_ROTATE_RIGHT :
+                                            dt.LevelController.ACTION_ERASE);
+  var piece = this.level.getObject(pos);
+  var pieceType = dt.PIECE_TYPE_BY_NAME[piece.typeName];
+  this.level.removePiece(pos);
+  var newPiece;
+
+  switch (action) {
+  case dt.LevelController.ACTION_ROTATE_LEFT:
+    newPiece = pieceType.create(piece.dir.left, this.params);
+    this.level.addPiece(pos, newPiece);
+    break;
+    
+  case dt.LevelController.ACTION_ROTATE_RIGHT:
+    newPiece = pieceType.create(piece.dir.right, this.params);
+    this.level.addPiece(pos, newPiece);
+    break;
+  }
+  return true;
+};
+
+dt.LevelController.prototype.handleCellClick = function(pos, dpos) {
   if (this.isRoundRunning()) {
     return;
   }
@@ -179,7 +198,10 @@ dt.LevelController.prototype.handleCellClick = function(pos) {
     break;
     
   case dt.MODE_PIECE:
-    this.tryAddPiece(pos);
+    if (!this.tryAddPiece(pos)) {
+      this.tryDeleteRotate(pos, dpos);
+    }
+    this.fullRender(this.overPos);
     break;
 
   case dt.MODE_ERASER:
@@ -216,6 +238,8 @@ dt.LevelController.prototype.fullRender = function(pos, percent) {
     
       this.renderer.renderOverlay(pos, this.piece);
       
+    } else if (this.level.canRemovePiece(pos)) {
+      this.renderer.renderOverlay(pos, dt.DeleteRotate.create(dt.Dir.NONE));
     } else {
       this.renderer.renderOverlay(pos, dt.Forbidden.create(dt.Dir.NONE));
     }
@@ -267,7 +291,8 @@ dt.LevelController.prototype.closeInfo = function() {
 };
 
 dt.LevelController.prototype.displayLevelInfo = function() {
-  if (this.level.getInformation() === undefined) {
+  if (this.infoAlreadyDisplayed ||
+      (this.level.getInformation() === undefined)) {
     return;
   }
   
@@ -284,6 +309,8 @@ dt.LevelController.prototype.displayLevelInfo = function() {
   infoTitle.innerHTML = this.level.getTitle();
   var infoContent = document.getElementById("info_content");
   infoContent.innerHTML = this.level.getInformation();
+
+  this.infoAlreadyDisplayed = true;
 };
 
 dt.LevelController.prototype.update = function(event) {
@@ -291,7 +318,7 @@ dt.LevelController.prototype.update = function(event) {
     if (event.type === dt.EVENT_CELL_DOWN) {
       if (event.button === dt.BUTTON_LEFT) {
         this.closeInfo();
-        this.handleCellClick(event.pos);
+        this.handleCellClick(event.pos, event.dpos);
       } else if (event.button === dt.BUTTON_RIGHT) {
         this.handleCellRightClick(event.pos);
       } else { 
@@ -342,13 +369,20 @@ dt.LevelController.prototype.update = function(event) {
       this.chooseDir(this.dir.left);
       this.fullRender(this.overPos);
       
-    }    
+    }
+    
+  } else if ((event.src === this.level) &&
+             (event.type === dt.EVENT_LEVEL_CLEARED)) {
+    this.fullRender();
+
   } else {
     util.log("LevelController received ", event);
   }
 };
 
 dt.LevelController.prototype.runRound = function() {
+  this.closeInfo();
+
   var DELAY = 30;
   var ANIM_STEP = 15;
   var that = this;

@@ -34,6 +34,9 @@ dt.Controller.prototype.initEvents = function() {
   dt.Controller.attachButton("round_quit", function(event) {
     that.game.quitRound();
   });
+  dt.Controller.attachButton("round_clear", function(event) {
+    that.game.clearRound();
+  });
   dt.Controller.attachButton("round_run", function(event) {
     that.runRound();
   });

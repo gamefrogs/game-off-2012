@@ -39,6 +39,7 @@ dt.PieceSelector.prototype.init = function() {
   this.selectedPos = new dt.Pos(0, 0);
   this.initLevel();
   this.initListeners();
+  this.selectDeltaPiece(0); // Make sure the level controller is aware of the piece
   this.render();
 };
 
@@ -50,12 +51,17 @@ dt.PieceSelector.prototype.initLevel = function() {
     this.addPiece(piece.type.create(dt.Dir.W));
   }
 
-  this.pieces.setValueXY(this.pieces.getWidth() - 1, this.pieces.getHeight() - 1,
-                         dt.Eraser.create(dt.Dir.NONE));
+  var j = 1;
+  //this.pieces.setValueXY(this.pieces.getWidth() - j, this.pieces.getHeight() - 1,
+  //                       dt.Eraser.create(dt.Dir.NONE));
+  //j += 1;
+
   if (this.level.designMode) {
-    this.pieces.setValueXY(this.pieces.getWidth() - 2, this.pieces.getHeight() - 1,
+    this.pieces.setValueXY(this.pieces.getWidth() - j, this.pieces.getHeight() - 1,
                            dt.GoalMode.create(dt.Dir.NONE));
-    this.pieces.setValueXY(this.pieces.getWidth() - 3, this.pieces.getHeight() - 1,
+    j += 1;
+    
+    this.pieces.setValueXY(this.pieces.getWidth() - j, this.pieces.getHeight() - 1,
                            dt.LockMode.create(dt.Dir.NONE));
   }
   this.render;
@@ -257,10 +263,10 @@ dt.PieceSelector.prototype.keyHandler = function(event) {
     this.selectPreviousPiece();
     event.preventDefault();
     
-  } else if ((event.keyCode === 8) ||  // Backspace
+  /*} else if ((event.keyCode === 8) ||  // Backspace
              (event.keyCode === 46)) { // Delete
     this.selectEraser();
-    event.preventDefault();
+    event.preventDefault(); */
     
   } else if (event.keyCode === 37) { // Left
     this.notify({ src: this,
@@ -273,7 +279,9 @@ dt.PieceSelector.prototype.keyHandler = function(event) {
 };
 
 dt.PieceSelector.prototype.update = function(event) {
-  if ((event.src === this.level) && (event.type === dt.EVENT_LIMIT_CHANGE)) {
+  if ((event.src === this.level) &&
+      ((event.type === dt.EVENT_LIMIT_CHANGE) ||
+       (event.type === dt.EVENT_LEVEL_CLEARED))) {
     this.render();
   }
 };
