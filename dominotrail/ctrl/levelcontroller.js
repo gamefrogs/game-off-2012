@@ -1,4 +1,3 @@
-
 "use strict";
 
 dt.MODE_PIECE = "ModePiece";
@@ -393,6 +392,8 @@ dt.LevelController.prototype.update = function(event) {
 };
 
 dt.LevelController.prototype.runRound = function() {
+  this.closeInfo();
+
   var DELAY = 30;
   var ANIM_STEP = 15;
   var that = this;
