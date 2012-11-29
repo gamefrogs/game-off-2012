@@ -50,5 +50,6 @@ dt.LEVELDEFTUT3.information = (
 
   "<p>But if you want to get one back, just click the red cross on it.</p>"
 );
+dt.LEVELDEFTUT3.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT3);

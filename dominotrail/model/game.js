@@ -27,12 +27,18 @@ dt.Game = function() {
   this.levelId = -1;
   // Current game round
   this.round = null;
+  // Profile storing locked levels
+  this.profile = new dt.Profile("defaultProfile");
 };
 
 util.Observable.makeObservable(dt.Game);
 
 dt.Game.prototype.getLevels = function() {
   return this.levels;
+};
+
+dt.Game.prototype.isLevelLocked = function(level) {
+  return this.profile.isLocked(level);
 };
 
 dt.Game.prototype.changeState = function(nextState) {

@@ -9,6 +9,10 @@ dt.LevelDef = function(title, width, height, str, pieces, limits) {
   this.limits = limits;
 };
 
+dt.LevelDef.prototype.getTitle = function() {
+  return this.title;
+};
+
 dt.LevelDef.prototype.getWidth = function() {
   return this.grid.width;
 };
