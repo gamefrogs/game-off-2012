@@ -52,5 +52,6 @@ dt.LEVELDEFTUT5.information = (
   "<p>Goal pieces are not always the final destination, but you have to go through them anyway.</p>" +
     "<p>Once a goal is cleared, the circle around it turns green.</p>"
 );
+dt.LEVELDEFTUT5.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT5);

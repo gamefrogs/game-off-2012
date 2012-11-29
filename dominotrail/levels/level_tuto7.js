@@ -44,5 +44,6 @@ dt.LEVELDEFTUT7.information = (
 
   "<p>Don't be too hasty!</p>"
 );
+dt.LEVELDEFTUT7.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT7);
