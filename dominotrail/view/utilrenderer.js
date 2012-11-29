@@ -130,10 +130,11 @@ dt.draw_hex = function(ctx, centerI, centerJ, side, edges, paths, center, progre
 			break;
 		case 3:
 			ctx.beginPath();
-			ctx.lineWidth = thick_line_width;
+			ctx.lineWidth = normal_line_width;
 			ctx.moveTo(centerX, centerY);
 			ctx.lineTo(baseX[5], baseY[5]),
 			ctx.stroke();
+			ctx.lineWidth = thick_line_width;
 			ctx.arc(centerX, centerY, 1.5*ctx.lineWidth, 0, 2*Math.PI);
 			ctx.stroke();
 			ctx.fill();
