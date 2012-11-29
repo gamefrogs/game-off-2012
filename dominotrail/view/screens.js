@@ -94,21 +94,14 @@ dt.View.prototype.createLevelButtons = function() {
   
   // Then add listeners
   for (l = 0; l < levels.length; ++l) {
-    if (!this.game.isLevelLocked(levels[l])) {
-      this.attachLevelButton(l + 1, levels[l]);
-    }
+    this.attachLevelButton(l + 1, levels[l]);
   }
 };
 
 dt.View.prototype.createLevelButton = function(id, level, locked) {
-  if (locked) {
-    return ('<span id="level' + id + '" class="button">Level ' +
-            id + ': ' + level.title + '</span>');
-  } else {
-    return ('<a id="level' + id + '" class="button" href="javascript:util.nop();">Level ' +
-            id + ': ' + level.title + '</a>');
-
-  }
+  var className = "button" + (locked ? "_locked" : "");
+  return ('<a id="level' + id + '" class="' + className + '" href="javascript:util.nop();">Level ' +
+          id + ': ' + level.title + '</a>');
 };
 
 dt.View.prototype.attachLevelButton = function(id, level) {
@@ -120,9 +113,21 @@ dt.View.prototype.attachLevelButton = function(id, level) {
   } 
   document.getElementById("level" + id).addEventListener("click",
                                                          function() {
-                                                           that.game.startRound(id);
+                                                           if (!that.game.isLevelLocked(level)) {
+                                                             that.game.startRound(id);
+                                                           }
                                                          },
                                                          false); 
+};
+
+dt.View.prototype.updateLevelButtons = function() {
+  var levels = this.game.getLevels();
+  for (var l = 0; l < levels.length; ++l) {
+    var link = document.getElementById("level" + (l + 1));
+    var level = levels[l];
+    var className = (this.game.isLevelLocked(level) ? "button_locked" : "button");
+    link.className = className;
+  }
 };
 
 dt.View.prototype.switchTo = function(name) {
@@ -176,6 +181,7 @@ dt.View.prototype.update = function(event) {
       }
 
       if (event.to === dt.STATE_ROUND_SUCCESS) {
+        this.updateLevelButtons();
         this.showSuccess();
       } else if (event.to === dt.STATE_ROUND_FAILURE) {
         this.showFailure();

@@ -29,6 +29,7 @@ dt.Game = function() {
   this.round = null;
   // Profile storing locked levels
   this.profile = new dt.Profile("defaultProfile");
+  this.profile.load();
 };
 
 util.Observable.makeObservable(dt.Game);
@@ -39,6 +40,28 @@ dt.Game.prototype.getLevels = function() {
 
 dt.Game.prototype.isLevelLocked = function(level) {
   return this.profile.isLocked(level);
+};
+
+dt.Game.prototype.setLevelDone = function() {
+  var level = this.levels[this.levelId - 1];
+  var newlyDone = !this.profile.isDone(level);
+  if (newlyDone) {
+    this.profile.setDone(level, true);
+  }
+  return newlyDone;
+};
+
+dt.Game.prototype.unlockOneLevel = function() {
+  var oneUnlocked = false;
+  for (var l = 0; l < this.levels.length; ++l) {
+    var level = this.levels[l];
+    if (this.isLevelLocked(level)) {
+      this.profile.setLocked(level, false);
+      oneUnlocked = true;
+      break;
+    }
+  }
+  return oneUnlocked;
 };
 
 dt.Game.prototype.changeState = function(nextState) {
@@ -97,8 +120,17 @@ dt.Game.prototype.runRound = function() {
   this.round.start();
 };
 
+dt.Game.prototype.winLevel = function() {
+  var newlyDone = this.setLevelDone();
+  if (newlyDone) {
+    this.unlockOneLevel();
+    this.profile.save();
+  }
+};
+
 dt.Game.prototype.endRound = function(success) {
   if (success) {
+    this.winLevel();
     this.changeState(dt.STATE_ROUND_SUCCESS);
   } else {
     this.changeState(dt.STATE_ROUND_FAILURE);
