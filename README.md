@@ -1,6 +1,12 @@
 This is the fork of the GitHub game off 2012 project for the team "Gamefrogs".
 
-## Proof of Concept / Work in Progress
+## Actual Game
+Domino Trail: http://gamefrogs.github.com/game-off-2012
+
+## Screenshot
+![Domino Trail screenshot](ScreenShot.jpg)
+
+## Proofs of Concept / Work in Progress
 http://gamefrogs.github.com/game-off-2012
 
 ## Discussion group (in French)
