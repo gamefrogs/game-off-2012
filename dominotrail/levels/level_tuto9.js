@@ -96,5 +96,6 @@ dt.LEVELDEFTUT9.information = (
   "<p>And if you wonder why it's called <i>Domino Trail</i>, when the graphics look more like " +
     "electrical networks, well... let's say dominos are far more difficult to draw.</p>"
 );
+dt.LEVELDEFTUT9.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT9);

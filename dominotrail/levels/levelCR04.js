@@ -1,3 +1,4 @@
+
 dt.LEVELCR4_STR = 
   " . . . . . . . . . . . . . . . . . . . . . .     \n" +
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
@@ -29,11 +30,11 @@ dt.LEVELCR4_STR =
 dt.LEVELCR4DEF1 =
   new dt.LevelDef("Recumbent", 11, 13, dt.LEVELCR4_STR,
                   [
-                   { x: 10, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true },
-                   { x: 2, y: 2, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
+                   { x: 6, y: 2, type: dt.StraightEndPiece, dir: dt.Dir.SW, goal: true, beginAct:6, endAct:7 },
                    { x: 10, y: 2, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true },
-                   { x: 2, y: 6, type: dt.StraightEndPiece, dir: dt.Dir.E, goal: true },
-                   { x: 9, y: 6, type: dt.StraightEndPiece, dir: dt.Dir.NW, goal: true },
+                   { x: 0, y: 3, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
+                   { x: 10, y: 3, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true },
+               { x: 4, y: 5, type: dt.TurnLeftDominoPiece, dir: dt.Dir.NW, goal: true, beginAct:5, endAct: 6 },
                   ],
                   [
                                     { type: dt.LForkDominoPiece, limit: Infinity },

@@ -46,5 +46,6 @@ dt.LEVELDEFTUT6.information = (
   "<p>It counts down, and when it's down to zero, the piece is locked and will not work " +
     "any longer.</p>"
 );
+dt.LEVELDEFTUT6.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT6);

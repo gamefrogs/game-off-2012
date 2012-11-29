@@ -60,10 +60,10 @@ a:hover {
 .popup {
   padding: 5px;
   margin: 5px;
-  left: 300px;
-  top: 250px;
+  left: 400px;
+  top: 240px;
   width: 200px;
-  height: 100px;
+  height: 120px;
   position: relative;
   box-shadow: 2px 2px 10px 2px #808080;
 }
@@ -127,6 +127,11 @@ h1 {
   background-image:url('resources/btnPlay2.png');
 }
 
+.button_locked, .button_locked:hover, .button_locked:active {
+  text-decoration: none;
+  color: grey;
+}
+
 .sbutton {
   border: 1px solid grey;
   padding: 1px;
@@ -157,6 +162,7 @@ h1 {
 
     <script src="model/level.js"></script>
     <script src="model/round.js"></script>
+    <script src="model/profile.js"></script>
     <script src="model/game.js"></script>
     <!-- Actual levels -->
     <script src="view/levelutil.js"></script>
@@ -191,6 +197,7 @@ h1 {
     <script src="levels/levelCR01.js"></script>
     <script src="levels/levelCR02.js"></script>
     <script src="levels/levelCR3.js"></script>
+    <script src="levels/levelCR04.js"></script>
 
     <script src="levels/leveleditor.js"></script>
     <!-- 'View' part of the game -->
@@ -292,6 +299,6 @@ h1 {
 
       
     </div>
-    Some images courtesy of <a href="http://www.pdphoto.org">PDPhoto.org</a>.
+    Some images courtesy of <a href="http://www.pdphoto.org">PDPhoto.org</a>, icons by <a href="http://www.iconarchive.com/show/kids-icons-icons-by-everaldo.html">Everaldo / Yellowicon</a>.
   </body>
 </html>

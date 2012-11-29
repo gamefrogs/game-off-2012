@@ -45,5 +45,6 @@ dt.LEVELDEFTUT8.information = (
 
   "<p>Punctuality is the politeness of princes, or so they say.</p>"
 );
+dt.LEVELDEFTUT8.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT8);

@@ -47,5 +47,6 @@ dt.LEVELDEFTUT4.information = (
   "<p>All pieces circled in orange must be reached for the level to be successful.</p>" +
     "<p>That's where fork or branch pieces come in handy.</p>"
 );
+dt.LEVELDEFTUT4.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT4);
