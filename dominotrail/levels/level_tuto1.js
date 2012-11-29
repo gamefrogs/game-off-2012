@@ -45,6 +45,7 @@ dt.LEVELDEFTUT1.information = (
 
   "<p>Once you're happy with your work, click the 'play' button to watch the signal go.</p>"
 );
+dt.LEVELDEFTUT1.locked = false;
 
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT1);

@@ -66,5 +66,6 @@ dt.LEVELDEFTUT2.information = (
   "<p>Select the appropriate pieces from the box on the left, or using the UP and DOWN arrows " +
     "to cycle through them.</p>"
 );
+dt.LEVELDEFTUT2.locked = false;
 // Register level
 dt.LEVELS.push(dt.LEVELDEFTUT2);
