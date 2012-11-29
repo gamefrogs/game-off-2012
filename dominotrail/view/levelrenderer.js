@@ -238,7 +238,7 @@ dt.LevelRenderer.prototype.renderCellContent = function(x, y, percent) {
           ctx.fillText(txt, dt.DCX / 2 - metric.width - 4, -11); 
         }
         if(obj.getEnd()>0){
-          ctx.fillStyle = "#00FF00";
+          ctx.fillStyle = "#60ff60";
           ctx.font = "bold 15px Verdana"; 
           ctx.textBaseline = "middle";
           var txt = "" + (obj.getEnd() - 1);

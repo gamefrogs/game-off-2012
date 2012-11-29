@@ -38,8 +38,12 @@ a {
   color: black;
 }
 
+a img {
+  border: none;
+}
+
 a:hover {
-  color: #c0c0c0;
+  color: #ffffff; //#c0c0c0;
 }
 
 .screen {
@@ -65,7 +69,7 @@ a:hover {
 }
 
 .popup_info {
-  background-color: #7d9ac7;
+  background-color: #8daad7;
   padding: 5px;
   left: 300px;
   top: 50px;
@@ -94,7 +98,7 @@ h1 {
   display: none;
 }
 #menu {
-  background-color: grey;
+  background-color: #a0a0a0;
   background-image:url('resources/grosDomino.png');
   background-repeat:no-repeat;
   display: none;
@@ -104,8 +108,13 @@ h1 {
   display: none;
 }
 #result {
-  background-color: #80c080;
+  background-color: #d0d0d0;
   display: none;
+}
+#result_title {
+  font-weight: bold;
+  text-alignment: center;
+  font-size: 120%;
 }
 #btnPlay {
   margin-top:20%;
@@ -217,7 +226,7 @@ h1 {
 
       
       <!-- Level selection screen -->
-      <div id="menu" class="screen">Select level...
+      <div id="menu" class="screen"><center><h1>Select level...</h1></center><br>
         <div id="levels">
         </div>
         <hr>
@@ -237,9 +246,8 @@ h1 {
               <img src="resources/run.png"></img>
             </a>
             <a id="round_clear" class="button" href="javascript:util.nop();"
-               style="text-decoration: none" title="Clear">
-              Clear
-              <!--img src="resources/run.png"></img-->
+               style="text-decoration: none" title="Reset">
+              <img src="resources/reset.png"></img>
             </a>
             <a id="round_quit" class="button" href="javascript:util.nop();"
                style="text-decoration: none" title="Menu">
@@ -269,11 +277,16 @@ h1 {
           <a id="info_close" class="button" href="javascript:util.nop();">Close</a>
         </div>
         <!-- Level result popup -->
-        <div id="result" class="popup"><p id="result_title">Success/Failure</p>
+        <div id="result" class="popup"><center><p id="result_title">Success/Failure</p></center>
           <hr>
-          <a id="next_level" class="button" href="javascript:util.nop();">Next</a>
-          <a id="replay_level" class="button" href="javascript:util.nop();">Retry</a>
-          <a id="result_quit" class="button" href="javascript:util.nop();">Menu</a>
+          <center>
+          <a id="replay_level" class="button" href="javascript:util.nop();" title="Re-run">
+            <img src="resources/back.png"></img></a>
+          <a id="result_quit" class="button" href="javascript:util.nop();" title="Menu">
+            <img src="resources/quit.png"></img></a>
+          <a id="next_level" class="button" href="javascript:util.nop();" title="Next">
+            <img src="resources/forward.png"></img></a>
+          </center>
         </div>
       </div>
 

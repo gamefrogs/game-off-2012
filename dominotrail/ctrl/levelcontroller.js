@@ -183,7 +183,6 @@ dt.LevelController.prototype.tryDeleteRotate = function(pos, dpos) {
     this.level.addPiece(pos, newPiece);
     break;
   }
-  this.renderFull();
   return true;
 };
 
@@ -202,6 +201,7 @@ dt.LevelController.prototype.handleCellClick = function(pos, dpos) {
     if (!this.tryAddPiece(pos)) {
       this.tryDeleteRotate(pos, dpos);
     }
+    this.fullRender(this.overPos);
     break;
 
   case dt.MODE_ERASER:
