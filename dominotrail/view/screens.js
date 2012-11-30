@@ -79,8 +79,7 @@ dt.View.prototype.createLevelButtons = function() {
     }
     var lev = maxColLength * (l % columns) + Math.floor(l / columns);
     if (lev < levels.length) {
-      var locked = this.game.isLevelLocked(levels[lev]);
-      table += "<td>" + this.createLevelButton(lev + 1, levels[lev], locked) + "</td>";
+      table += "<td>" + this.createLevelButton(lev + 1, levels[lev]) + "</td>";
     } else {
       table += "<td></td>";
     }
@@ -98,8 +97,14 @@ dt.View.prototype.createLevelButtons = function() {
   }
 };
 
-dt.View.prototype.createLevelButton = function(id, level, locked) {
-  var className = "button" + (locked ? "_locked" : "");
+dt.View.prototype.getLevelButtonClassName = function(level) {
+  return "button" + (this.game.isLevelDone(level) ? "_done" :
+                     this.game.isLevelLocked(level) ? "_locked" :
+                     "");
+};
+
+dt.View.prototype.createLevelButton = function(id, level) {
+  var className = this.getLevelButtonClassName(level);
   return ('<a id="level' + id + '" class="' + className + '" href="javascript:util.nop();">Level ' +
           id + ': ' + level.title + '</a>');
 };
@@ -125,7 +130,7 @@ dt.View.prototype.updateLevelButtons = function() {
   for (var l = 0; l < levels.length; ++l) {
     var link = document.getElementById("level" + (l + 1));
     var level = levels[l];
-    var className = (this.game.isLevelLocked(level) ? "button_locked" : "button");
+    var className = this.getLevelButtonClassName(level);
     link.className = className;
   }
 };
