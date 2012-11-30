@@ -87,10 +87,15 @@ a:hover {
 h1 {
   margin: 0;
 }
-
+#btnSplash{
+ background-image:url('resources/splash.jpg');
+  background-repeat:no-repeat;
+  width: 800px;
+  height: 600px;
+}
 #splash {
-  background-color: pink;
-  background-image:url('resources/splash.png');
+#  background-color: pink;
+ # background-image:url('resources/splash.jpg');
   background-repeat:no-repeat;
 }
 #profile {
@@ -99,7 +104,7 @@ h1 {
 }
 #menu {
   background-color: #a0a0a0;
-  background-image:url('resources/level.png');
+  background-image:url('resources/level.jpg');
   background-repeat:no-repeat;
   display: none;
 }
@@ -117,7 +122,7 @@ h1 {
   font-size: 120%;
 }
 #btnPlay {
-  margin-top:20%;
+  margin-top:18%;
   margin-left:45%;
   width: 100px;
   height: 40px;
@@ -153,6 +158,9 @@ h1 {
   color: white;
   background-color: black;
 }
+#levels{
+margin-top:50px;
+}
 
     </style>
     <!-- Generic utility functions -->
@@ -180,29 +188,31 @@ h1 {
     <script src="levels/level_tuto7.js"></script>
     <script src="levels/level_tuto8.js"></script>
     <script src="levels/level_tuto9.js"></script>
-    
+
+
     <script src="levels/level03.js"></script>
-    <script src="levels/level05.js"></script>
-    <script src="levels/level06.js"></script>
-    <script src="levels/levelOB01.js"></script>
-    <script src="levels/levelOB02.js"></script>
-    <script src="levels/levelOB03.js"></script>
     <script src="levels/levelOB04.js"></script>
-    <script src="levels/levelOB05.js"></script>
-    <script src="levels/levelOB06.js"></script>
-    <script src="levels/levelOB07.js"></script>
-    
-    <script src="levels/levelLV01.js"></script>
     <script src="levels/levelLV02.js"></script>
-    <script src="levels/levelLV03.js"></script>
+    <script src="levels/level06.js"></script>
+    <script src="levels/levelOB03.js"></script>
     <script src="levels/levelLV04.js"></script>
-    <script src="levels/levelLV05.js"></script>
-
     <script src="levels/levelCR01.js"></script>
-    <script src="levels/levelCR02.js"></script>
-    <script src="levels/levelCR3.js"></script>
+    <script src="levels/levelOB10.js"></script>
+    <script src="levels/levelOB01.js"></script>
     <script src="levels/levelCR04.js"></script>
+    <script src="levels/levelCR02.js"></script>
+    <script src="levels/levelLV03.js"></script>
+    <script src="levels/levelOB07.js"></script>
+    <script src="levels/levelLV01.js"></script>
+    <script src="levels/levelCR3.js"></script>
+    <script src="levels/level05.js"></script>
+    <script src="levels/levelOB05.js"></script>
+    <script src="levels/levelOB02.js"></script>
+    <script src="levels/levelOB08.js"></script>
+    <script src="levels/levelLV05.js"></script>
+    <script src="levels/levelOB09.js"></script>
 
+    
     <script src="levels/leveleditor.js"></script>
     <!-- 'View' part of the game -->
     <script src="view/utilrenderer.js"></script>
@@ -219,9 +229,9 @@ h1 {
     <div id="gamearea">
       <!-- Splash screen -->
       <div id="splash" class="screen">
-        <center><h1>Domino Trail</h1></center>
-        <a id="play" class="button" href="javascript:util.nop();"><div id="btnPlay"></div></a>
-      </div>
+	      <!--        <a id="play" class="button" href="javascript:util.nop();"><div id="btnPlay"></div></a>-->
+        <a id="play" class="button" href="javascript:util.nop();"><div id="btnSplash"></div></a>
+  </div>
 
 
       
@@ -236,7 +246,7 @@ h1 {
 
       
       <!-- Level selection screen -->
-      <div id="menu" class="screen"><center><h1>Select level...</h1></center><br>
+      <div id="menu" class="screen"><br>
         <div id="levels">
         </div>
         <hr>
@@ -299,7 +309,6 @@ h1 {
           </center>
         </div>
       </div>
-
 
       
     </div>

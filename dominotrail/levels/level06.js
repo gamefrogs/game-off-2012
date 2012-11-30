@@ -27,7 +27,7 @@ dt.LEVEL6_STR =
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
 dt.LEVELDEF7 =
-  new dt.LevelDef("jdd", 11, 13, dt.LEVEL6_STR,
+  new dt.LevelDef("Sinus", 11, 13, dt.LEVEL6_STR,
                   [
                    { x: 1, y: 2, type: dt.StraightStartPiece, dir: dt.Dir.W, goal: false },
                    { x: 10, y: 2, type: dt.StraightEndPiece, dir: dt.Dir.W, goal: true },

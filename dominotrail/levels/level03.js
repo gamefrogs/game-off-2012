@@ -27,7 +27,7 @@ dt.LEVEL3_STR =
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
 dt.LEVELDEF3 =
-  new dt.LevelDef("Third level", 11, 13, dt.LEVEL3_STR,
+  new dt.LevelDef("Fork", 11, 13, dt.LEVEL3_STR,
                   [
                    { x: 6, y: 2, type: dt.Wall, dir: dt.Dir.E, goal: false },
                    { x: 5, y: 3, type: dt.Wall, dir: dt.Dir.E, goal: false },

@@ -27,7 +27,7 @@ dt.LEVELCR2_STR =
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
 dt.LEVELCR2DEF1 =
-  new dt.LevelDef("Floraison", 11, 13, dt.LEVELCR2_STR,
+  new dt.LevelDef("Petite Fleur", 11, 13, dt.LEVELCR2_STR,
                   [
                    { x: 5, y: 0, type: dt.StraightStartPiece, dir: dt.Dir.NE, goal: false },
                    { x: 9, y: 1, type: dt.StraightEndPiece, dir: dt.Dir.SW, goal: true },
