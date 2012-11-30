@@ -87,10 +87,15 @@ a:hover {
 h1 {
   margin: 0;
 }
-
+#btnSplash{
+ background-image:url('resources/splash.jpg');
+  background-repeat:no-repeat;
+  width: 800px;
+  height: 600px;
+}
 #splash {
 #  background-color: pink;
-  background-image:url('resources/splash.jpg');
+ # background-image:url('resources/splash.jpg');
   background-repeat:no-repeat;
 }
 #profile {
@@ -117,7 +122,7 @@ h1 {
   font-size: 120%;
 }
 #btnPlay {
-  margin-top:20%;
+  margin-top:18%;
   margin-left:45%;
   width: 100px;
   height: 40px;
@@ -221,9 +226,9 @@ h1 {
     <div id="gamearea">
       <!-- Splash screen -->
       <div id="splash" class="screen">
-        <center><h1>Domino Trail</h1></center>
-        <a id="play" class="button" href="javascript:util.nop();"><div id="btnPlay"></div></a>
-      </div>
+	      <!--        <a id="play" class="button" href="javascript:util.nop();"><div id="btnPlay"></div></a>-->
+        <a id="play" class="button" href="javascript:util.nop();"><div id="btnSplash"></div></a>
+  </div>
 
 
       
@@ -301,7 +306,6 @@ h1 {
           </center>
         </div>
       </div>
-
 
       
     </div>

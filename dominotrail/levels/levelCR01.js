@@ -27,7 +27,7 @@ dt.LEVELCRR1_STR =
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
 dt.LEVELCRRDEF1 =
-  new dt.LevelDef("Petit Obsede", 11, 13, dt.LEVELCRR1_STR,
+  new dt.LevelDef("Parental restriction", 11, 13, dt.LEVELCRR1_STR,
                   [
                    { x: 0, y: 5, type: dt.StraightEndPiece, dir: dt.Dir.NE, goal: true },
                    { x: 1, y: 5, type: dt.Wall, dir: dt.Dir.NW, goal: false },
