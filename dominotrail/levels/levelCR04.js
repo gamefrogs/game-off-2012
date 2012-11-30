@@ -37,12 +37,10 @@ dt.LEVELCR4DEF1 =
                { x: 4, y: 5, type: dt.TurnLeftDominoPiece, dir: dt.Dir.NW, goal: true, beginAct:5, endAct: 6 },
                   ],
                   [
-                                    { type: dt.LForkDominoPiece, limit: Infinity },
-                   { type: dt.TurnRightDominoPiece, limit: Infinity },
-                   { type: dt.TurnLeftDominoPiece, limit: Infinity },
-                   { type: dt.TriForkDominoPiece, limit: Infinity },
-                   { type: dt.StraightDominoPiece, limit: Infinity },
-                   { type: dt.RForkDominoPiece, limit: Infinity }
+                   { type: dt.RForkDominoPiece, limit: 2 },
+                   { type: dt.TurnRightDominoPiece, limit: 3 },
+                   { type: dt.TurnLeftDominoPiece, limit: 4 },
+                   { type: dt.StraightDominoPiece, limit: 5 },
                   ]);
                   
 // Loads an image from an URL. Can be an absolute URL too.
