@@ -27,7 +27,7 @@ dt.LEVELOB04_STR =
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
 dt.LEVELOB04 =
-  new dt.LevelDef("OB 4", 11, 13, dt.LEVELOB04_STR,
+  new dt.LevelDef("Left or Right?", 11, 13, dt.LEVELOB04_STR,
                   [
                    { x: 2, y: 3, type: dt.Wall, dir: dt.Dir.SE, goal: false },
                    { x: 4, y: 3, type: dt.Wall, dir: dt.Dir.E, goal: false },

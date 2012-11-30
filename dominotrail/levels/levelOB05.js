@@ -27,7 +27,7 @@ dt.LEVELOB05_STR =
   ". 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .    \n" +
   " . . . . . . . . . . . . . . . . . . . . . .     ";
 dt.LEVELOB05 =
-  new dt.LevelDef("OB 5", 11, 13, dt.LEVELOB05_STR,
+  new dt.LevelDef("Neither easy nor...", 11, 13, dt.LEVELOB05_STR,
                   [
                    { x: 2, y: 3, type: dt.StraightEndPiece, dir: dt.Dir.SE, goal: true, beginAct:15, endAct:16 },
                    { x: 7, y: 6, type: dt.StraightStartPiece, dir: dt.Dir.E, goal: false },
