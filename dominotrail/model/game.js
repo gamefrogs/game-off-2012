@@ -42,6 +42,10 @@ dt.Game.prototype.isLevelLocked = function(level) {
   return this.profile.isLocked(level);
 };
 
+dt.Game.prototype.isLevelDone = function(level) {
+  return this.profile.isDone(level);
+};
+
 dt.Game.prototype.setLevelDone = function() {
   var level = this.levels[this.levelId - 1];
   var newlyDone = !this.profile.isDone(level);
